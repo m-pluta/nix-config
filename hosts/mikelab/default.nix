@@ -8,6 +8,7 @@
     ../../modules/zfs.nix
     ../../modules/networking.nix
     ../../modules/nix-settings.nix
+    ../../modules/tailscale.nix
     ../../modules/users.nix
   ];
 
