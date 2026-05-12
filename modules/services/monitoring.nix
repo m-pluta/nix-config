@@ -55,11 +55,11 @@ in
     enable = true;
     dataDir = "/var/lib/grafana";
     settings.server = {
-      # 0.0.0.0 + trustedInterfaces tailscale0 = tailnet-only access
-      # can switch to 127.0.0.1 once caddy reverse-proxies it
-      http_addr = "0.0.0.0";
+      # 127.0.0.1 + trustedInterfaces tailscale0 = tailnet-only access
+      http_addr = "127.0.0.1";
       http_port = 3000;
-      domain = "mikelab";
+      domain = "grafana.${config.my.domain}";
+      root_url = "https://grafana.${config.my.domain}/";
     };
     provision = {
       enable = true;

@@ -11,5 +11,10 @@
       default = "tail5724d6.ts.net";
       description = "Tailscale MagicDNS domain";
     };
+    adminEmail = lib.mkOption {
+      type = lib.types.str;
+      default = "michal@mpluta.dev";
+      description = "Admin email used for ACME registration and alerts";
+    };
   };
 }

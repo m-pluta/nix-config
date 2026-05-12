@@ -12,6 +12,7 @@
     ../../modules/users.nix
     ../../modules/zfs.nix
     ../../modules/services/monitoring.nix
+    ../../modules/services/caddy.nix
   ];
 
   # Host identity

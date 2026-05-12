@@ -10,4 +10,5 @@ in
 {
   "wifi.age".publicKeys = admins ++ [ mikelab ];
   "users/michal.age".publicKeys = admins ++ [ mikelab ];
+  "cloudflare-dns-api.age".publicKeys = admins ++ [ mikelab ];
 }

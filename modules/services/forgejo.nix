@@ -7,15 +7,11 @@
 
     settings = {
       server = {
-        # 0.0.0.0 + trustedInterfaces tailscale0 = tailnet-only access
-        # switch HTTP_ADDR to 127.0.0.1 once caddy reverse-proxies it
-        HTTP_ADDR = "0.0.0.0";
+        # 127.0.0.1 + trustedInterfaces tailscale0 = tailnet-only access
+        HTTP_ADDR = "127.0.0.1";
         HTTP_PORT = 3001;
-        DOMAIN = "mikelab";
-        ROOT_URL = "http://mikelab:3001/";
-        # Can use once caddy is configured
-        # DOMAIN = "git.${config.my.domain}";
-        # ROOT_URL = "https://git.${config.my.domain}/";
+        DOMAIN = "git.${config.my.domain}";
+        ROOT_URL = "https://git.${config.my.domain}/";
       };
 
       # personal instance = no public signups
@@ -23,9 +19,7 @@
 
       repository.DEFAULT_BRANCH = "main";
 
-      # session cookie restricted to https connections only
-      # false while accessed over http - will flip to true when caddy serves https
-      session.COOKIE_SECURE = false;
+      session.COOKIE_SECURE = true;
     };
   };
 }
