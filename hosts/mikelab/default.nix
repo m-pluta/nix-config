@@ -5,11 +5,12 @@
     ./hardware-configuration.nix
     ./disko.nix
     ../../modules/boot.nix
-    ../../modules/zfs.nix
     ../../modules/networking.nix
     ../../modules/nix-settings.nix
     ../../modules/tailscale.nix
     ../../modules/users.nix
+    ../../modules/zfs.nix
+    ../../modules/services/monitoring.nix
   ];
 
   # Host identity
