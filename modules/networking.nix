@@ -3,6 +3,10 @@
   age.secrets.wifi.file = ../secrets/wifi.age;
 
   networking.firewall.enable = true;
+  networking.nameservers = [
+    "1.1.1.1"
+    "8.8.8.8"
+  ];
 
   # NM and wpa_supplicant are mutually exclusive
   networking.networkmanager.enable = false;
