@@ -13,16 +13,37 @@
     };
   };
 
-  outputs = { self, nixpkgs, disko, agenix, ... }: {
-    formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
-
-    nixosConfigurations.mikelab = nixpkgs.lib.nixosSystem {
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      disko,
+      agenix,
+      ...
+    }:
+    let
       system = "x86_64-linux";
-      modules = [
-        disko.nixosModules.disko
-        agenix.nixosModules.default
-        ./hosts/mikelab
-      ];
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+    {
+      formatter.${system} = pkgs.nixfmt-tree;
+
+      devShells.${system}.default = pkgs.mkShell {
+        packages = [
+          pkgs.nixos-rebuild
+          pkgs.nixfmt-tree
+          pkgs.just
+          agenix.packages.${system}.default
+        ];
+      };
+
+      nixosConfigurations.mikelab = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          disko.nixosModules.disko
+          agenix.nixosModules.default
+          ./hosts/mikelab
+        ];
+      };
     };
-  };
 }

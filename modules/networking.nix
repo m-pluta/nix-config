@@ -1,11 +1,11 @@
 { config, ... }:
-
 {
   age.secrets.wifi.file = ../secrets/wifi.age;
 
-  networking.networkmanager.enable = false;
   networking.firewall.enable = true;
 
+  # NM and wpa_supplicant are mutually exclusive
+  networking.networkmanager.enable = false;
   networking.wireless = {
     enable = true;
     secretsFile = config.age.secrets.wifi.path;
@@ -13,6 +13,8 @@
       pskRaw = "ext:PSK_HOME";
     };
   };
+  # Better stability over WiFi
+  programs.mosh.enable = true;
 
   services.openssh = {
     enable = true;
@@ -21,6 +23,9 @@
       PasswordAuthentication = false;
       PermitRootLogin = "no";
       KbdInteractiveAuthentication = false;
+      # AllowUsers = [ "michal" ];
+      ClientAliveInterval = 60;
+      ClientAliveCountMax = 5;
     };
   };
 }

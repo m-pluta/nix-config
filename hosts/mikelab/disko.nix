@@ -3,7 +3,7 @@
     disk = {
       system = {
         type = "disk";
-        device = "/dev/nvme0n1";
+        device = "/dev/disk/by-id/nvme-KINGSTON_SA2000M8250G_50026B76846156F0";
         content = {
           type = "gpt";
           partitions = {
@@ -14,46 +14,87 @@
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
+                # umask=0077 so only root can read /boot contents
                 mountOptions = [ "umask=0077" ];
               };
             };
             zfs = {
               size = "100%";
-              content = { type = "zfs"; pool = "rpool"; };
+              content = {
+                type = "zfs";
+                pool = "rpool";
+              };
             };
           };
         };
       };
       data = {
         type = "disk";
-        device = "/dev/nvme1n1";
+        device = "/dev/disk/by-id/nvme-ADATA_SX8200PNP_2K452L1N5EEP";
         content = {
           type = "gpt";
           partitions = {
             zfs = {
               size = "100%";
-              content = { type = "zfs"; pool = "tank"; };
+              content = {
+                type = "zfs";
+                pool = "tank";
+              };
             };
           };
         };
       };
     };
+
     zpool = {
       rpool = {
         type = "zpool";
+        # 4K sector alignment, correct for all modern NVMe/SSD, 2^12 Bytes
         options.ashift = "12";
+        # inherited by all child datasets unless overridden
+        # Datasets inherit all FS options from the root
         rootFsOptions = {
           compression = "zstd";
+          # posix ACLs stored in extended attributes, NixOS standard
           acltype = "posixacl";
           xattr = "sa";
+          # pool root not mountable, only specified datasets are
           mountpoint = "none";
         };
         datasets = {
-          "root" = { type = "zfs_fs"; mountpoint = "/"; };
-          "nix"  = { type = "zfs_fs"; mountpoint = "/nix"; options.atime = "off"; };
-          "home" = { type = "zfs_fs"; mountpoint = "/home"; };
+          "root" = {
+            type = "zfs_fs";
+            mountpoint = "/";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "nix" = {
+            type = "zfs_fs";
+            mountpoint = "/nix";
+            options = {
+              # nix store is read from constantly, atime updates are wasted writes
+              atime = "off";
+              # store is rebuildable from the flake, snapshots waste space
+              "com.sun:auto-snapshot" = "false";
+            };
+          };
+          "home" = {
+            type = "zfs_fs";
+            mountpoint = "/home";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          # carves out space nothing can use, keeps pool from hitting 100%
+          "reserved" = {
+            type = "zfs_fs";
+            options = {
+              reservation = "5G";
+              canmount = "off";
+              mountpoint = "none";
+              "com.sun:auto-snapshot" = "false";
+            };
+          };
         };
       };
+
       tank = {
         type = "zpool";
         options.ashift = "12";
@@ -64,7 +105,21 @@
           mountpoint = "none";
         };
         datasets = {
-          "data" = { type = "zfs_fs"; mountpoint = "/tank"; };
+          "data" = {
+            type = "zfs_fs";
+            mountpoint = "/tank";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          # carves out space nothing can use, keeps pool from hitting 100%
+          "reserved" = {
+            type = "zfs_fs";
+            options = {
+              reservation = "20G";
+              canmount = "off";
+              mountpoint = "none";
+              "com.sun:auto-snapshot" = "false";
+            };
+          };
         };
       };
     };

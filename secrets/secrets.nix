@@ -5,11 +5,9 @@ let
   # Hosts (machines that decrypt secrets at activation)
   mikelab = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBi0Jv3D/hErShkePfS3LfX66NRRJMlZ8TnhmjeEocVt root@mikelab";
 
-  # Groups
   admins = [ michal ];
-  allHosts = [ mikelab ];
 in
 {
-  "wifi.age".publicKeys = admins ++ allHosts;
-  "users/michal.age".publicKeys = admins ++ allHosts;
+  "wifi.age".publicKeys = admins ++ [ mikelab ];
+  "users/michal.age".publicKeys = admins ++ [ mikelab ];
 }
