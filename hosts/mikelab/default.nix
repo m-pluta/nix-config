@@ -6,6 +6,7 @@
     ../../modules/boot.nix
     ../../modules/networking.nix
     ../../modules/nix-settings.nix
+    ../../modules/options.nix
     ../../modules/tailscale.nix
     ../../modules/users.nix
     ../../modules/zfs.nix
