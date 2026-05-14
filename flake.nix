@@ -11,6 +11,16 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+    disko-zfs = {
+      url = "github:numtide/disko-zfs";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.disko.follows = "disko";
+      inputs.flake-parts.follows = "flake-parts";
+    };
   };
 
   outputs =
@@ -19,6 +29,8 @@
       nixpkgs,
       disko,
       agenix,
+      flake-parts,
+      disko-zfs,
       ...
     }:
     let
@@ -41,6 +53,7 @@
         inherit system;
         modules = [
           disko.nixosModules.disko
+          disko-zfs.nixosModules.default
           agenix.nixosModules.default
           ./hosts/mikelab
         ];

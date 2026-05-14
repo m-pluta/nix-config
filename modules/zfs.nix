@@ -4,6 +4,9 @@
   # add zfs kernel modules and userspace tools
   boot.supportedFilesystems = [ "zfs" ];
 
+  # reconcile zfs datasets on every rebuild from disko config
+  disko.zfs.enable = true;
+
   services.zfs = {
     # Snapshots can be disabled per-dataset with com.sun:auto-snapshot=false property
     autoSnapshot = {

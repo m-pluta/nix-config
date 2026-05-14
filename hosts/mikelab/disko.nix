@@ -110,6 +110,24 @@
             mountpoint = "/tank";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "none";
+              canmount = "off";
+              "com.sun:auto-snapshot" = "false";
+            };
+          };
+          "services/grafana" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/grafana";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "services/victoriametrics" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/private/victoriametrics";
+            options."com.sun:auto-snapshot" = "true";
+          };
           # carves out space nothing can use, keeps pool from hitting 100%
           "reserved" = {
             type = "zfs_fs";
