@@ -5,16 +5,16 @@ default:
 check:
     nix flake check
 
-build:
+build: check
     nixos-rebuild build --flake .#mikelab
 
-dry:
+dry: check
     nixos-rebuild dry-activate --flake .#mikelab --target-host mikelab --sudo
 
-test:
+test: check
     nixos-rebuild test --flake .#mikelab --target-host mikelab --sudo
 
-deploy:
+deploy: check
     nixos-rebuild switch --flake .#mikelab --target-host mikelab --sudo
 
 # kexec into in-RAM installer for offline maintenance
