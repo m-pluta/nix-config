@@ -128,6 +128,11 @@
             mountpoint = "/var/lib/private/victoriametrics";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services/forgejo" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/forgejo";
+            options."com.sun:auto-snapshot" = "true";
+          };
           # carves out space nothing can use, keeps pool from hitting 100%
           "reserved" = {
             type = "zfs_fs";

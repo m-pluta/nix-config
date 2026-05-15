@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     ./disko.nix
     ../../modules/boot.nix
+    ../../modules/services/forgejo.nix
     ../../modules/networking.nix
     ../../modules/nix-settings.nix
     ../../modules/options.nix
