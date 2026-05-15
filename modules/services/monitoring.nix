@@ -23,6 +23,7 @@ in
 {
   services.victoriametrics = {
     enable = true;
+    stateDir = "victoriametrics";
     # localhost only, queried via grafana on same host
     listenAddress = "127.0.0.1:8428";
     retentionPeriod = "5y";
@@ -52,6 +53,7 @@ in
 
   services.grafana = {
     enable = true;
+    dataDir = "/var/lib/grafana";
     settings.server = {
       # 0.0.0.0 + trustedInterfaces tailscale0 = tailnet-only access
       # can switch to 127.0.0.1 once caddy reverse-proxies it
