@@ -133,6 +133,42 @@
             mountpoint = "/var/lib/forgejo";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services/jellyfin" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/jellyfin";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "services/sonarr" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/sonarr";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "services/radarr" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/radarr";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "services/prowlarr" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/prowlarr";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "media" = {
+            type = "zfs_fs";
+            mountpoint = "/tank/media";
+            options = {
+              "com.sun:auto-snapshot" = "false";
+              recordsize = "1M";
+            };
+          };
+          "downloads" = {
+            type = "zfs_fs";
+            mountpoint = "/tank/downloads";
+            options = {
+              "com.sun:auto-snapshot" = "false";
+              recordsize = "1M";
+            };
+          };
           # carves out space nothing can use, keeps pool from hitting 100%
           "reserved" = {
             type = "zfs_fs";
