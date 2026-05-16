@@ -21,6 +21,10 @@
       inputs.disko.follows = "disko";
       inputs.flake-parts.follows = "flake-parts";
     };
+    nixflix = {
+      url = "github:kiriwalawren/nixflix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -31,6 +35,7 @@
       agenix,
       flake-parts,
       disko-zfs,
+      nixflix,
       ...
     }:
     let
@@ -56,6 +61,7 @@
           disko.nixosModules.disko
           disko-zfs.nixosModules.default
           agenix.nixosModules.default
+          nixflix.nixosModules.default
           ./hosts/mikelab
         ];
       };

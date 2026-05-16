@@ -1,19 +1,20 @@
 { config, pkgs, ... }:
 {
   imports = [
-    ./hardware-configuration.nix
     ./disko.nix
+    ./hardware-configuration.nix
     ../../modules/amdgpu.nix
     ../../modules/boot.nix
-    ../../modules/services/forgejo.nix
     ../../modules/networking.nix
     ../../modules/nix-settings.nix
     ../../modules/options.nix
     ../../modules/tailscale.nix
     ../../modules/users.nix
     ../../modules/zfs.nix
-    ../../modules/services/monitoring.nix
     ../../modules/services/caddy.nix
+    ../../modules/services/forgejo.nix
+    ../../modules/services/monitoring.nix
+    ../../modules/services/nixflix.nix
   ];
 
   # Host identity
