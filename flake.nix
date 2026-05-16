@@ -45,6 +45,7 @@
           pkgs.nixos-rebuild
           pkgs.nixfmt-tree
           pkgs.just
+          pkgs.mosh
           agenix.packages.${system}.default
         ];
       };
