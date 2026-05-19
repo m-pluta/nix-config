@@ -44,6 +44,16 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    disko-zfs = {
+      url = "github:numtide/disko-zfs";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.disko.follows = "disko";
+      inputs.flake-parts.follows = "flake-parts";
+    };
     nix-darwin = {
       url = "github:LnL7/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs-d351";
@@ -83,6 +93,7 @@
         imports = [
           ./modules/machines/nixos
           ./modules/machines/darwin
+          ./modules/machines/mikelab
           ./modules/devshell.nix
         ];
         _module.args.rootPath = ./.;

@@ -54,11 +54,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1778924277,
-        "narHash": "sha256-d9mlh+yuz04p+4JuG/pOuPJyFyHYES/uCg5ZMKxpW00=",
+        "lastModified": 1778878917,
+        "narHash": "sha256-+G0acg7pu6ASlQ9i6LQb/BKULj3QwaOvM94l3EsjvSI=",
         "owner": "Tenzer",
         "repo": "alga",
-        "rev": "e66f425122e88106f8b1f4189a8af6c6839c23d3",
+        "rev": "47ac9824891f4db7b4377bdc09ef3a06c14dc78f",
         "type": "github"
       },
       "original": {
@@ -106,6 +106,52 @@
         "owner": "lnl7",
         "ref": "master",
         "repo": "nix-darwin",
+        "type": "github"
+      }
+    },
+    "disko": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1778958912,
+        "narHash": "sha256-6pvS9rIF9mZRj1ENwu9fDLHeG1JFDTCpRyy6vJhXkTA=",
+        "owner": "nix-community",
+        "repo": "disko",
+        "rev": "6e8dc7aa0e65fce67c76e18227a13a7d529f2cdf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "disko",
+        "type": "github"
+      }
+    },
+    "disko-zfs": {
+      "inputs": {
+        "disko": [
+          "disko"
+        ],
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773422739,
+        "narHash": "sha256-nfl7tj3TN8MZI5JpidUjlqax+2ly2BHay3tpM/cc9ik=",
+        "owner": "numtide",
+        "repo": "disko-zfs",
+        "rev": "adaef72fba88b4f313fcb3f7cf02e24b2a09b648",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "disko-zfs",
         "type": "github"
       }
     },
@@ -253,11 +299,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779072205,
-        "narHash": "sha256-Bu5Za7ZIfBfFv93ujdWpIYf2K8L5A+11Pp38PLBG3FA=",
+        "lastModified": 1778876681,
+        "narHash": "sha256-9XOIxYLBp+sJsPWNnNyk1aVfYXuuRJZ4Anpplm9Tn8g=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "355734d876f103b6f8cd38ba853b7c7d74d2a82f",
+        "rev": "c7fad8197070948d8aa02cb8922240ee129cab2e",
         "type": "github"
       },
       "original": {
@@ -274,11 +320,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778905220,
-        "narHash": "sha256-ox/5IHc8uwy6UTw6N7Shp6uCHIgu/S2PsWeuXsOHSo8=",
+        "lastModified": 1778606796,
+        "narHash": "sha256-P2krpSkFVYJ89bgsnAZ9RtQiGwiTW77sfSJp9SEDscM=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "d1686dc7d36cbd1234cb226ad6ef97e882716acb",
+        "rev": "e1fd7350f4410972bcb8c42a697d8c924ffe642a",
         "type": "github"
       },
       "original": {
@@ -427,11 +473,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778999127,
-        "narHash": "sha256-V5GquqJvAqwFTcpN6hxKSQAtwuJFRUEHmyNKbeaTQDg=",
+        "lastModified": 1778393439,
+        "narHash": "sha256-mOtQxUjtKaPHLeoLOY/YEDctmud1X9KwJr4kE1MJ3Wc=",
         "owner": "Mic92",
         "repo": "nix-index-database",
-        "rev": "f680e0d3c1dbefe298c423691662e238496890f2",
+        "rev": "01466c414c7357ae2ce32be4a272a7c69e94ab5f",
         "type": "github"
       },
       "original": {
@@ -474,11 +520,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1778930970,
-        "narHash": "sha256-FqqcYr0c5in/HRL5bkRWykAGp/Q10Vj/zUiSr1P8URE=",
+        "lastModified": 1778843877,
+        "narHash": "sha256-BxYhb8H0aVtiM1kGRt+S49NbsJMUMIHvOXxziE9u0nY=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "5a51fe22e18a6ce886b3cffa4c255378c151323c",
+        "rev": "758b562bc257084aef30b8e3efbdd61d292806c3",
         "type": "github"
       },
       "original": {
@@ -607,6 +653,8 @@
         "agenix": "agenix",
         "alga": "alga",
         "autoaspm": "autoaspm",
+        "disko": "disko",
+        "disko-zfs": "disko-zfs",
         "flake-parts": "flake-parts",
         "fmatrix": "fmatrix",
         "home-manager": "home-manager_2",
