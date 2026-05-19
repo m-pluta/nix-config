@@ -4,6 +4,12 @@
   ...
 }:
 {
+  imports = [
+    ./hardware-configuration.nix
+    ./disko.nix
+    ./networking.nix
+    ./homelab.nix
+  ];
   networking.hostName = "mikelab";
   networking.hostId = "deadbeef";
   time.timeZone = "Europe/London";

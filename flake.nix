@@ -97,7 +97,6 @@
         imports = [
           ./modules/machines/nixos
           ./modules/machines/darwin
-          ./modules/machines/mikelab
           ./modules/devshell.nix
         ];
         _module.args.rootPath = ./.;

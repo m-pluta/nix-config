@@ -6,24 +6,24 @@
 let
   entries = builtins.attrNames (builtins.readDir ./.);
   configs = builtins.filter (dir: builtins.pathExists (./. + "/${dir}/configuration.nix")) entries;
-  homeManagerCfg = userPackages: extraImports: {
-    home-manager.useGlobalPkgs = false;
-    home-manager.extraSpecialArgs = {
-      inherit (self) inputs;
-    };
-    home-manager.users.notthebee.imports = [
-      self.inputs.agenix.homeManagerModules.default
-      self.inputs.nix-index-database.homeModules.nix-index
-      #self.inputs.nixvim.homeModules.nixvim
-      ../../users/notthebee/dots.nix
-      ../../users/notthebee/age.nix
-      ../../dots/tmux
-      #../../dots/nvim
-    ]
-    ++ extraImports;
-    home-manager.backupFileExtension = "bak";
-    home-manager.useUserPackages = userPackages;
-  };
+  #homeManagerCfg = userPackages: extraImports: {
+  #  home-manager.useGlobalPkgs = false;
+  #  home-manager.extraSpecialArgs = {
+  #    inherit (self) inputs;
+  #  };
+  #  home-manager.users.notthebee.imports = [
+  #    self.inputs.agenix.homeManagerModules.default
+  #    self.inputs.nix-index-database.homeModules.nix-index
+  #    #self.inputs.nixvim.homeModules.nixvim
+  #    ../../users/notthebee/dots.nix
+  #    ../../users/notthebee/age.nix
+  #    ../../dots/tmux
+  #    #../../dots/nvim
+  #  ]
+  #  ++ extraImports;
+  #  home-manager.backupFileExtension = "bak";
+  #  home-manager.useUserPackages = userPackages;
+  #};
 in
 {
 
@@ -58,17 +58,19 @@ in
               ../../misc/mover
               ../../misc/withings2intervals
               self.inputs.agenix.nixosModules.default
+              self.inputs.disko.nixosModules.disko
+              self.inputs.disko-zfs.nixosModules.default
               self.inputs.adios-bot.nixosModules.default
               self.inputs.autoaspm.nixosModules.default
               self.inputs.fmatrix.nixosModules.default
               self.inputs.invoiceplane.nixosModules.default
-              self.inputs."home-manager${
-                lib.attrsets.attrByPath [ name ] "" nixpkgsMap
-              }".nixosModules.home-manager
+              #self.inputs."home-manager${
+              #  lib.attrsets.attrByPath [ name ] "" nixpkgsMap
+              #}".nixosModules.home-manager
               (./. + "/_common/default.nix")
               (./. + "/${name}/configuration.nix")
-              ../../users/notthebee
-              (homeManagerCfg false [ ])
+              ../../users/michal
+              #(homeManagerCfg false [ ])
             ];
           }
         )

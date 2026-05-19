@@ -52,19 +52,19 @@
   imports = [
     ./filesystems
     ./nix
-    "${inputs.secrets}/networks.nix"
+    #"${inputs.secrets}/networks.nix"
   ];
 
   time.timeZone = "Europe/Berlin";
 
-  users.users = {
-    notthebee = {
-      hashedPasswordFile = config.age.secrets.hashedUserPassword.path;
-    };
-    root = {
-      initialHashedPassword = config.age.secrets.hashedUserPassword.path;
-    };
-  };
+  #users.users = {
+  #  notthebee = {
+  #    hashedPasswordFile = config.age.secrets.hashedUserPassword.path;
+  #  };
+  #  root = {
+  #    initialHashedPassword = config.age.secrets.hashedUserPassword.path;
+  #  };
+  #};
 
   services.openssh = {
     enable = lib.mkDefault true;
@@ -97,29 +97,28 @@
     defaultEditor = true;
   };
 
-  age = {
-    identityPaths = [
-      "/persist/ssh/ssh_host_ed25519_key"
-    ];
-    secrets = {
-      hashedUserPassword.file = "${inputs.secrets}/hashedUserPassword.age";
-      smtpPassword = {
-        file = "${inputs.secrets}/smtpPassword.age";
-        owner = "notthebee";
-        group = "notthebee";
-        mode = "0440";
-      };
-    };
-
-  };
-  email = {
-    enable = true;
-    fromAddress = "moe@notthebe.ee";
-    toAddress = "server_announcements@mailbox.org";
-    smtpServer = "email-smtp.eu-west-1.amazonaws.com";
-    smtpUsername = "AKIAYYXVLL34J7LSXFZF";
-    smtpPasswordPath = config.age.secrets.smtpPassword.path;
-  };
+  #age = {
+  #  identityPaths = [
+  #    "/persist/ssh/ssh_host_ed25519_key"
+  #  ];
+  #  secrets = {
+  #    hashedUserPassword.file = "${inputs.secrets}/hashedUserPassword.age";
+  #    smtpPassword = {
+  #      file = "${inputs.secrets}/smtpPassword.age";
+  #      owner = "notthebee";
+  #      group = "notthebee";
+  #      mode = "0440";
+  #    };
+  #  };
+  #};
+  #email = {
+  #  enable = true;
+  #  fromAddress = "moe@notthebe.ee";
+  #  toAddress = "server_announcements@mailbox.org";
+  #  smtpServer = "email-smtp.eu-west-1.amazonaws.com";
+  #  smtpUsername = "AKIAYYXVLL34J7LSXFZF";
+  #  smtpPasswordPath = config.age.secrets.smtpPassword.path;
+  #};
 
   security = {
     doas.enable = lib.mkDefault false;
