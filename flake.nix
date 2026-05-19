@@ -1,69 +1,92 @@
 {
-  description = "mikelab homelab";
-
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    disko = {
-      url = "github:nix-community/disko";
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixos-25.11";
+    };
+    nixpkgs-d351 = {
+      url = "github:nixos/nixpkgs/d351d0653aeb7877273920cd3e823994e7579b0b";
+    };
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+    jj-starship.url = "github:dmmulroy/jj-starship/76cf006";
+    nixvim = {
+      url = "github:nix-community/nixvim/nixos-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    invoiceplane = {
+      url = "git+https://git.notthebe.ee/notthebee/invoiceplane-nixos";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    home-manager-unstable = {
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    autoaspm = {
+      url = "git+https://git.notthebe.ee/notthebee/AutoASPM";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    fmatrix = {
+      url = "github:zerw0/fmatrix/dd859e33117f78e4042204022d57bd671111d852";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs-lib.follows = "nixpkgs";
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
+      inputs.nixpkgs.follows = "nixpkgs-d351";
     };
-    disko-zfs = {
-      url = "github:numtide/disko-zfs";
+    adios-bot = {
+      url = "git+https://git.notthebe.ee/notthebee/adiosbot";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.disko.follows = "disko";
-      inputs.flake-parts.follows = "flake-parts";
     };
-    nixflix = {
-      url = "github:kiriwalawren/nixflix";
+    nix-index-database = {
+      url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    secrets = {
+      url = "git+ssh://forgejo@git.notthebe.ee:69/notthebee/nix-private.git";
+      flake = false;
+    };
+    jovian = {
+      url = "github:Jovian-Experiments/Jovian-NixOS";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    alga = {
+      url = "github:Tenzer/alga";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
 
   outputs =
-    inputs@{
-      self,
-      nixpkgs,
-      disko,
-      agenix,
-      flake-parts,
-      disko-zfs,
-      nixflix,
-      ...
-    }:
-    let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
-    {
-      formatter.${system} = pkgs.nixfmt-tree;
-
-      devShells.${system}.default = pkgs.mkShell {
-        packages = [
-          pkgs.nixos-rebuild
-          pkgs.nixfmt-tree
-          pkgs.just
-          pkgs.mosh
-          agenix.packages.${system}.default
+    inputs@{ ... }:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } (
+      { ... }:
+      {
+        systems = [
+          "x86_64-linux"
+          "aarch64-linux"
+          "aarch64-darwin"
         ];
-      };
-
-      nixosConfigurations.mikelab = nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [
-          disko.nixosModules.disko
-          disko-zfs.nixosModules.default
-          agenix.nixosModules.default
-          nixflix.nixosModules.default
-          ./hosts/mikelab
+        imports = [
+          ./modules/machines/nixos
+          ./modules/machines/darwin
+          ./modules/devshell.nix
         ];
-      };
-    };
+        _module.args.rootPath = ./.;
+      }
+    );
+
 }

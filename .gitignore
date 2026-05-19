@@ -1,3 +1,11 @@
+*~
+.Trash-1000
+..bfg-report
+.DS_Store
+/secrets
 .direnv
+.env
 result
-result-*
+.terraform
+.claude
+

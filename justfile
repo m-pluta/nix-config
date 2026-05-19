@@ -1,51 +1,26 @@
-default:
-    @just --list
+# vim: set ft=make :
+set quiet
 
-# Build and deployment
-check:
-    nix flake check
-
-build: check
-    nixos-rebuild build --flake .#mikelab
-
-dry: check
-    nixos-rebuild dry-activate --flake .#mikelab --target-host mikelab --sudo
-
-test: check
-    nixos-rebuild test --flake .#mikelab --target-host mikelab --sudo
-
-deploy: check
-    nixos-rebuild switch --flake .#mikelab --target-host mikelab --sudo
-
-# kexec into in-RAM installer for offline maintenance
-# Uses ethernet IP because the installer image has no wifi or tailscale
-mikelab_eth := "192.168.0.107"
-kexec:
-    test -f /tmp/kexec.tar.gz || curl -L -o /tmp/kexec.tar.gz \
-      https://github.com/nix-community/nixos-images/releases/download/nixos-25.05/nixos-kexec-installer-noninteractive-x86_64-linux.tar.gz
-    nix run github:nix-community/nixos-anywhere -- \
-      --flake .#mikelab \
-      --kexec /tmp/kexec.tar.gz \
-      --target-host michal@{{ mikelab_eth }} \
-      --phases kexec
-
-# ssh as root into the in-RAM installer (after `just kexec`)
-kexec-shell:
-    ssh root@{{ mikelab_eth }}
-
-# Secret management
-secret name:
-    cd secrets && agenix -e {{ name }}.age
-
-rekey:
-    cd secrets && agenix -r
-
-# Helpers
 update:
-    nix flake update
+  nix flake update
 
-logs:
-    ssh mikelab "journalctl -f"
+build-iso $host:
+	just copy {{ host }}; ssh {{ host }} "nix-shell -p nixos-generators.out --run 'nixos-generate -c /etc/nixos/machines/installer/default.nix -f install-iso -I nixpkgs=channel:nixos-25.05'"
 
-fmt:
-    nix fmt
+check:
+  nix flake check
+
+dry-run $host:
+	nixos-rebuild-ng dry-activate --flake .#{{host}} --target-host {{host}} --build-host {{host}} --no-reexec --sudo
+
+deploy $host: (copy host)
+	nixos-rebuild-ng switch --flake .#{{host}} --target-host {{host}} --build-host {{host}} --no-reexec --sudo
+
+boot $host: (copy host)
+	nixos-rebuild-ng boot --flake .#{{host}} --target-host {{host}} --build-host {{host}} --no-reexec --sudo
+
+check-clean:
+	if [ -n "$(git status --porcelain)" ]; then echo -e "\e[31merror\e[0m: git tree is dirty. Refusing to copy configuration." >&2; exit 1; fi
+
+copy $host:
+	rsync -ax --delete --rsync-path="sudo rsync" ./ {{host}}:/etc/nixos/
