@@ -66,6 +66,7 @@ in
               }".nixosModules.home-manager
               (./. + "/_common/default.nix")
               (./. + "/${name}/configuration.nix")
+              ../../users/root
               ../../users/michal
               (homeManagerCfg false [ ])
             ];

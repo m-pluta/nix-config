@@ -57,14 +57,6 @@
 
   time.timeZone = "Europe/Berlin";
 
-  #users.users = {
-  #  notthebee = {
-  #    hashedPasswordFile = config.age.secrets.hashedUserPassword.path;
-  #  };
-  #  root = {
-  #    initialHashedPassword = config.age.secrets.hashedUserPassword.path;
-  #  };
-  #};
 
   services.openssh = {
     enable = lib.mkDefault true;
