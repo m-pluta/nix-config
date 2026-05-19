@@ -423,6 +423,22 @@
         "type": "github"
       }
     },
+    "mikelab-secrets": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779156085,
+        "narHash": "sha256-gUW6t8SsWMMIQZ1Cbc5UuRy5St3MU5YTQRbftzTX9Ow=",
+        "ref": "refs/heads/main",
+        "rev": "0a7ac94695080070eb3f3714c4f5c45062b5bc17",
+        "revCount": 1,
+        "type": "git",
+        "url": "ssh://git@github.com/m-pluta/nix-secrets.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/m-pluta/nix-secrets.git"
+      }
+    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -662,6 +678,7 @@
         "invoiceplane": "invoiceplane",
         "jj-starship": "jj-starship",
         "jovian": "jovian",
+        "mikelab-secrets": "mikelab-secrets",
         "nix-darwin": "nix-darwin",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs_2",

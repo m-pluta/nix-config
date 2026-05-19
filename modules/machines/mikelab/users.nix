@@ -1,6 +1,6 @@
-{ config, ... }:
+{ config, inputs, ... }:
 {
-  age.secrets.user-password-michal.file = ../../../secrets/users/michal.age;
+  age.secrets.user-password-michal.file = "${inputs.mikelab-secrets}/users/michal.age";
 
   users.users.michal = {
     isNormalUser = true;

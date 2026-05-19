@@ -1,6 +1,6 @@
-{ config, ... }:
+{ config, inputs, ... }:
 {
-  age.secrets.wifi.file = ../../../secrets/wifi.age;
+  age.secrets.wifi.file = "${inputs.mikelab-secrets}/wifi.age";
 
   networking.firewall.enable = true;
   networking.firewall.checkReversePath = "loose";
