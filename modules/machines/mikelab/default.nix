@@ -17,7 +17,7 @@
       ./configuration.nix
       ./hardware-configuration.nix
       ./disko.nix
-      ./users.nix
+      ../../users/michal
       ./networking.nix
       ./homelab.nix
     ];
