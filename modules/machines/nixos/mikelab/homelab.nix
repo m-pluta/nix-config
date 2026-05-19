@@ -31,5 +31,5 @@
   };
 
   # Override ACME contact email
-  security.acme.defaults.email = lib.mkForce "michal@mpluta.dev";
+  security.acme.defaults.email = lib.mkForce "mikey@mpluta.dev";
 }

@@ -1,30 +1,30 @@
 { config, inputs, ... }:
 {
-  nix.settings.trusted-users = [ "michal" ];
+  nix.settings.trusted-users = [ "mikey" ];
 
   users = {
     mutableUsers = false;
     users = {
-      michal = {
+      mikey = {
         uid = 1000;
         isNormalUser = true;
-        hashedPasswordFile = config.age.secrets.user-password-michal.path;
+        hashedPasswordFile = config.age.secrets.user-password-mikey.path;
         extraGroups = [
           "wheel"
           "users"
         ];
-        group = "michal";
+        group = "mikey";
         openssh.authorizedKeys.keys = [
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINe+skoB2pgfMgyvHY0XRc/ki+8X7eTxzWzPH/DDrTaj mikey@mikebook"
         ];
       };
     };
     groups = {
-      michal = {
+      mikey = {
         gid = 1000;
       };
     };
   };
 
-  age.secrets.user-password-michal.file = "${inputs.mikelab-secrets}/users/michal.age";
+  age.secrets.user-password-mikey.file = "${inputs.mikelab-secrets}/users/mikey.age";
 }

@@ -25,7 +25,7 @@
       '';
     };
 
-  system.stateVersion = "22.11";
+  system.stateVersion = "25.11";
 
   services.ntp = {
     enable = true;
@@ -55,7 +55,7 @@
     #"${inputs.secrets}/networks.nix"
   ];
 
-  time.timeZone = "Europe/Berlin";
+  time.timeZone = "Europe/London";
 
 
   services.openssh = {
@@ -65,7 +65,7 @@
       LoginGraceTime = 0;
       PermitRootLogin = "no";
     };
-    ports = [ 69 ];
+    ports = [ 22 ];
     hostKeys = [
       {
         path = "/persist/ssh/ssh_host_ed25519_key";

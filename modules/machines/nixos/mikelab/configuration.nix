@@ -12,7 +12,6 @@
   ];
   networking.hostName = "mikelab";
   networking.hostId = "deadbeef";
-  time.timeZone = "Europe/London";
   i18n.defaultLocale = "en_GB.UTF-8";
   console.keyMap = "uk";
 
@@ -47,21 +46,10 @@
   hardware.enableRedistributableFirmware = true;
 
   # Nix
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-    trusted-users = [
-      "root"
-      "@wheel"
-    ];
-  };
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 30d";
-  };
+  nix.settings.trusted-users = [
+    "root"
+    "@wheel"
+  ];
   zramSwap.enable = true;
 
   # Secrets
@@ -69,35 +57,13 @@
     "/etc/ssh/ssh_host_ed25519_key"
   ];
 
-  # Programs
-  programs.git.enable = true;
-  programs.neovim = {
-    enable = true;
-    viAlias = true;
-    vimAlias = true;
-    defaultEditor = true;
-  };
-
   environment.systemPackages = with pkgs; [
-    vim
-    htop
     btop
-    wget
     curl
-    rsync
     tree
     pciutils
     usbutils
     smartmontools
-    iperf3
-    eza
-    fastfetch
-    tmux
-    ncdu
-    nmap
-    jq
-    ripgrep
-    lm_sensors
     libva-utils
     nvtopPackages.amd
   ];

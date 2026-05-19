@@ -426,10 +426,10 @@
     "mikelab-secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1779156085,
-        "narHash": "sha256-gUW6t8SsWMMIQZ1Cbc5UuRy5St3MU5YTQRbftzTX9Ow=",
+        "lastModified": 1779235207,
+        "narHash": "sha256-cOy1/zKy3FKe65uz+gDSI00SXG982gilCiiApQ2u05M=",
         "ref": "refs/heads/main",
-        "rev": "0a7ac94695080070eb3f3714c4f5c45062b5bc17",
+        "rev": "55dbe9143e5e069ecf21c2dbf29daf3ba6cd8855",
         "revCount": 1,
         "type": "git",
         "url": "ssh://git@github.com/m-pluta/nix-secrets.git"

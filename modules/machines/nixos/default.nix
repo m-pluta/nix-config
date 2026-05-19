@@ -11,11 +11,11 @@ let
     home-manager.extraSpecialArgs = {
       inherit (self) inputs;
     };
-    home-manager.users.michal.imports = [
+    home-manager.users.mikey.imports = [
       self.inputs.agenix.homeManagerModules.default
       self.inputs.nix-index-database.homeModules.nix-index
-      ../../users/michal/dots.nix
-      ../../users/michal/age.nix
+      ../../users/mikey/dots.nix
+      ../../users/mikey/age.nix
     ]
     ++ extraImports;
     home-manager.backupFileExtension = "bak";
@@ -67,7 +67,7 @@ in
               (./. + "/_common/default.nix")
               (./. + "/${name}/configuration.nix")
               ../../users/root
-              ../../users/michal
+              ../../users/mikey
               (homeManagerCfg false [ ])
             ];
           }
