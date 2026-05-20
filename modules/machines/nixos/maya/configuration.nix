@@ -1,19 +1,12 @@
 {
   pkgs,
   lib,
-  config,
   inputs,
   ...
 }:
-let
-  iot = config.homelab.networks.local.iot.reservations;
-  tvIpAddress = iot.lgtv.Address;
-  tvMacAddress = iot.lgtv.MACAddress;
-in
 {
   imports = [
     ../../../misc/ryzen-undervolting
-    ../../../misc/lgtv
     inputs.jovian.nixosModules.default
     ./lact.nix
     ./boot.nix
@@ -51,13 +44,6 @@ in
   services = {
     openssh.enable = true;
     desktopManager.plasma6.enable = true;
-    lgtv = {
-      enable = true;
-      ipAddress = tvIpAddress;
-      macAddress = tvMacAddress;
-      user = "notthebee";
-      group = "notthebee";
-    };
     ryzen-undervolting = {
       enable = true;
       offset = -25;

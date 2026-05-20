@@ -25,7 +25,6 @@ let
     ../../misc/wifi
     ../../misc/tg-notify
     ../../misc/mover
-    ../../misc/withings2intervals
     self.inputs.agenix.nixosModules.default
     self.inputs.disko.nixosModules.disko
     self.inputs.disko-zfs.nixosModules.default
