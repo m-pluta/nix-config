@@ -31,7 +31,7 @@ in
 
     secretsFile = lib.mkOption {
       type = lib.types.str;
-      default = "${inputs.secrets}/wifi.age";
+      default = "${inputs.secrets}/network/wifi.age";
       description = "Path to the agenix-encrypted wifi secrets file.";
     };
   };

@@ -675,11 +675,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1779235207,
-        "narHash": "sha256-cOy1/zKy3FKe65uz+gDSI00SXG982gilCiiApQ2u05M=",
+        "lastModified": 1779315994,
+        "narHash": "sha256-AbGyyo4jh1D72BPtRN7n/LTF+VIb1PF4QiyiRw5ehgQ=",
         "ref": "refs/heads/main",
-        "rev": "55dbe9143e5e069ecf21c2dbf29daf3ba6cd8855",
-        "revCount": 1,
+        "rev": "b936353e68c799a86c992f328a6c6911f031d183",
+        "revCount": 2,
         "type": "git",
         "url": "ssh://git@github.com/m-pluta/nix-secrets.git"
       },
