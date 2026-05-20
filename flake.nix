@@ -67,10 +67,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     secrets = {
-      url = "git+ssh://forgejo@git.notthebe.ee:69/notthebee/nix-private.git";
-      flake = false;
-    };
-    mikelab-secrets = {
       url = "git+ssh://git@github.com/m-pluta/nix-secrets.git";
       flake = false;
     };

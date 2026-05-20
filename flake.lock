@@ -423,22 +423,6 @@
         "type": "github"
       }
     },
-    "mikelab-secrets": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1779235207,
-        "narHash": "sha256-cOy1/zKy3FKe65uz+gDSI00SXG982gilCiiApQ2u05M=",
-        "ref": "refs/heads/main",
-        "rev": "55dbe9143e5e069ecf21c2dbf29daf3ba6cd8855",
-        "revCount": 1,
-        "type": "git",
-        "url": "ssh://git@github.com/m-pluta/nix-secrets.git"
-      },
-      "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/m-pluta/nix-secrets.git"
-      }
-    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -678,7 +662,6 @@
         "invoiceplane": "invoiceplane",
         "jj-starship": "jj-starship",
         "jovian": "jovian",
-        "mikelab-secrets": "mikelab-secrets",
         "nix-darwin": "nix-darwin",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs_2",
@@ -692,17 +675,17 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1771167009,
-        "narHash": "sha256-m0yUx3UKmyq8UTsVHg4lrBVoqGs0g8yKZsZgDtGaIw8=",
+        "lastModified": 1779235207,
+        "narHash": "sha256-cOy1/zKy3FKe65uz+gDSI00SXG982gilCiiApQ2u05M=",
         "ref": "refs/heads/main",
-        "rev": "f18d89b68c1171dab8ecd7e6bf128ddfab0e56b9",
-        "revCount": 113,
+        "rev": "55dbe9143e5e069ecf21c2dbf29daf3ba6cd8855",
+        "revCount": 1,
         "type": "git",
-        "url": "ssh://forgejo@git.notthebe.ee:69/notthebee/nix-private.git"
+        "url": "ssh://git@github.com/m-pluta/nix-secrets.git"
       },
       "original": {
         "type": "git",
-        "url": "ssh://forgejo@git.notthebe.ee:69/notthebee/nix-private.git"
+        "url": "ssh://git@github.com/m-pluta/nix-secrets.git"
       }
     },
     "systems": {

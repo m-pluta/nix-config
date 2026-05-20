@@ -17,7 +17,7 @@
     };
   };
 
-  age.secrets.cloudflare-dns-api.file = "${inputs.mikelab-secrets}/cloudflare-dns-api.age";
+  age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/cloudflare-dns-api.age";
 
   # Override forgejo defaults from wolfgang's module
   services.forgejo = {

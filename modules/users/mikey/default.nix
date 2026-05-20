@@ -26,5 +26,5 @@
     };
   };
 
-  age.secrets.user-password-mikey.file = "${inputs.mikelab-secrets}/users/mikey.age";
+  age.secrets.user-password-mikey.file = "${inputs.secrets}/users/mikey.age";
 }
