@@ -6,57 +6,25 @@
   ...
 }:
 {
-
-  programs.ssh =
-    let
-      gitAddress = "git.notthebe.ee";
-    in
-    {
-      knownHosts = {
-        "[${gitAddress}]:69".publicKey =
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILWsWVmk8Zozdap4MlAe5rf7wfR3k3FaawnlUUclBENC";
-      };
-      extraConfig = ''
-        Host ${gitAddress}
-          IdentityFile /persist/ssh/ssh_host_ed25519_key
-          IdentitiesOnly yes
-          User forgejo
-          Port 69
-      '';
-    };
-
-  system.stateVersion = "25.11";
-
-  services.ntp = {
-    enable = true;
-  };
-
-  nix.gc.automatic = true;
-  systemd.services.nixos-upgrade.preStart = ''
-    cd /etc/nixos
-    chown -R root:root .
-    git reset --hard HEAD
-    git pull
-  '';
-  system.autoUpgrade = {
-    enable = true;
-    flake = "/etc/nixos#${config.networking.hostName}";
-    flags = [
-      "-L"
-      "--accept-flake-config"
-    ];
-    dates = "Sat *-*-* 02:30:00";
-    allowReboot = true;
-  };
-
   imports = [
     ./filesystems
     ./nix
     #"${inputs.secrets}/networks.nix"
   ];
 
-  time.timeZone = "Europe/London";
+  i18n.defaultLocale = lib.mkDefault "en_GB.UTF-8";
+  console.keyMap = lib.mkDefault "uk";
+  time.timeZone = lib.mkDefault "Europe/London";
 
+  boot = {
+    loader.systemd-boot.enable = lib.mkDefault true;
+    loader.systemd-boot.configurationLimit = lib.mkDefault 10;
+    loader.efi.canTouchEfiVariables = lib.mkDefault true;
+    loader.timeout = lib.mkDefault 0;
+    tmp.cleanOnBoot = lib.mkDefault true;
+  };
+
+  services.ntp.enable = true;
 
   services.openssh = {
     enable = lib.mkDefault true;
@@ -66,17 +34,14 @@
       PermitRootLogin = "no";
     };
     ports = [ 22 ];
-    hostKeys = [
-      {
-        path = "/persist/ssh/ssh_host_ed25519_key";
-        type = "ed25519";
-      }
-      {
-        path = "/persist/ssh/ssh_host_rsa_key";
-        type = "rsa";
-        bits = 4096;
-      }
-    ];
+  };
+
+  security = {
+    doas.enable = lib.mkDefault false;
+    sudo = {
+      enable = lib.mkDefault true;
+      wheelNeedsPassword = lib.mkDefault false;
+    };
   };
 
   programs.git.enable = true;
@@ -89,52 +54,56 @@
     defaultEditor = true;
   };
 
-  #age = {
-  #  identityPaths = [
-  #    "/persist/ssh/ssh_host_ed25519_key"
-  #  ];
-  #  secrets = {
-  #    hashedUserPassword.file = "${inputs.secrets}/hashedUserPassword.age";
-  #    smtpPassword = {
-  #      file = "${inputs.secrets}/smtpPassword.age";
-  #      owner = "notthebee";
-  #      group = "notthebee";
-  #      mode = "0440";
-  #    };
-  #  };
-  #};
-  #email = {
-  #  enable = true;
-  #  fromAddress = "moe@notthebe.ee";
-  #  toAddress = "server_announcements@mailbox.org";
-  #  smtpServer = "email-smtp.eu-west-1.amazonaws.com";
-  #  smtpUsername = "AKIAYYXVLL34J7LSXFZF";
-  #  smtpPasswordPath = config.age.secrets.smtpPassword.path;
-  #};
-
-  security = {
-    doas.enable = lib.mkDefault false;
-    sudo = {
-      enable = lib.mkDefault true;
-      wheelNeedsPassword = lib.mkDefault false;
-    };
-  };
-
   homelab.motd.enable = true;
 
+  age = {
+    identityPaths = [
+      "/etc/ssh/ssh_host_ed25519_key"
+    ];
+    # secrets = {
+    #   hashedUserPassword.file = "${inputs.secrets}/hashedUserPassword.age";
+    #   smtpPassword = {
+    #     file = "${inputs.secrets}/smtpPassword.age";
+    #     owner = "notthebee";
+    #     group = "notthebee";
+    #     mode = "0440";
+    #   };
+    # };
+  };
+
+  # email = {
+  #   enable = true;
+  #   fromAddress = "moe@notthebe.ee";
+  #   toAddress = "server_announcements@mailbox.org";
+  #   smtpServer = "email-smtp.eu-west-1.amazonaws.com";
+  #   smtpUsername = "AKIAYYXVLL34J7LSXFZF";
+  #   smtpPasswordPath = config.age.secrets.smtpPassword.path;
+  # };
+
   environment.systemPackages = with pkgs; [
-    wget
-    iperf3
-    eza
-    fastfetch
-    tmux
-    rsync
-    iotop
-    ncdu
-    nmap
+    # Shell essentials
     jq
     ripgrep
-    lm_sensors
-  ];
+    tmux
+    tree
 
+    # Networking
+    curl
+    wget
+    iperf3
+    nmap
+    rsync
+
+    # System monitoring
+    btop
+    fastfetch
+    iotop
+    lm_sensors
+    ncdu
+
+    # Hardware diagnostics
+    pciutils
+    usbutils
+    smartmontools
+  ];
 }
