@@ -62,7 +62,7 @@ in
 
   imports = [
     ../../../misc/zfs-root
-    ../../../misc/agenix
+    ../../../misc/secrets
     ../../../misc/tailscale
     ./filesystems
     ./syncthing

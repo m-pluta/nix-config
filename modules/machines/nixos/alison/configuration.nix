@@ -41,7 +41,7 @@
 
   imports = [
     ../../../misc/zfs-root
-    ../../../misc/agenix
+    ../../../misc/secrets
     ./router
     ./filesystems
     ./secrets

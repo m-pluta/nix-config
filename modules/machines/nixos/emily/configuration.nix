@@ -146,7 +146,7 @@ in
   imports = [
     ../../../misc/tailscale
     ../../../misc/zfs-root
-    ../../../misc/agenix
+    ../../../misc/secrets
     ./filesystems
     ./backup
     ./homelab

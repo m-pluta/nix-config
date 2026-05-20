@@ -42,7 +42,7 @@ in
 
   imports = [
     ../../../misc/notthebe.ee
-    ../../../misc/agenix
+    ../../../misc/secrets
     ./secrets.nix
     ./homelab.nix
     (modulesPath + "/profiles/qemu-guest.nix")
