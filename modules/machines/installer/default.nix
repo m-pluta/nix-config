@@ -4,7 +4,7 @@
   imports = [
     <nixpkgs/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix>
     <nixpkgs/nixos/modules/installer/cd-dvd/channel.nix>
-    ../../users/notthebee
+    ../../users/mikey
   ];
 
   nix.settings.experimental-features = [
@@ -13,9 +13,11 @@
   ];
 
   i18n.supportedLocales = [
-    "en_US.UTF-8/UTF-8"
+    "en_GB.UTF-8/UTF-8"
   ];
-  i18n.defaultLocale = "en_US.UTF-8";
+  i18n.defaultLocale = "en_GB.UTF-8";
+  console.keyMap = "uk";
+  time.timeZone = "Europe/London";
 
   security.sudo.wheelNeedsPassword = false;
 
@@ -40,5 +42,5 @@
     };
   };
 
-  system.stateVersion = "25.05";
+  system.stateVersion = "25.11";
 }
