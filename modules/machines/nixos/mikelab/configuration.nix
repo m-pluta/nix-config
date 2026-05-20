@@ -9,6 +9,7 @@
     ./disko.nix
     ./networking.nix
     ./homelab.nix
+    ../../../misc/mpluta.dev
   ];
   networking.hostName = "mikelab";
   networking.hostId = "deadbeef";
