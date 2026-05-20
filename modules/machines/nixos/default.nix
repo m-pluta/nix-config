@@ -39,17 +39,11 @@ let
 
   homeManagerCfg = {
     home-manager.useGlobalPkgs = false;
+    home-manager.useUserPackages = false;
+    home-manager.backupFileExtension = "bak";
     home-manager.extraSpecialArgs = {
       inherit (self) inputs;
     };
-    home-manager.users.mikey.imports = [
-      self.inputs.agenix.homeManagerModules.default
-      self.inputs.nix-index-database.homeModules.nix-index
-      ../../users/mikey/dots.nix
-      ../../users/mikey/age.nix
-    ];
-    home-manager.backupFileExtension = "bak";
-    home-manager.useUserPackages = false;
   };
 in
 {
