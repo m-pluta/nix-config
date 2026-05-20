@@ -22,6 +22,7 @@ let
   commonModules = [
     ../../homelab
     ../../misc/email
+    ../../misc/wifi
     ../../misc/tg-notify
     ../../misc/mover
     ../../misc/withings2intervals

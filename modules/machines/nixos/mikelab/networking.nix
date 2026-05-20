@@ -1,20 +1,11 @@
-{ config, inputs, ... }:
+{ ... }:
 {
-  age.secrets.wifi.file = "${inputs.secrets}/wifi.age";
+  homelab.wifi.ssids = [ "ItHurtsWhenIP" ];
 
-  networking = {
-    firewall = {
-      enable = true;
-      checkReversePath = "loose";
-      trustedInterfaces = [ "tailscale0" ];
-    };
-    wireless = {
-      enable = true;
-      secretsFile = config.age.secrets.wifi.path;
-      networks."ItHurtsWhenIP" = {
-        pskRaw = "ext:PSK_HOME";
-      };
-    };
+  networking.firewall = {
+    enable = true;
+    checkReversePath = "loose";
+    trustedInterfaces = [ "tailscale0" ];
   };
 
   services.tailscale = {
