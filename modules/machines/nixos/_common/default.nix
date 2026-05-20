@@ -24,14 +24,24 @@
     tmp.cleanOnBoot = lib.mkDefault true;
   };
 
-  services.ntp.enable = true;
+  networking.nameservers = lib.mkDefault [
+    "1.1.1.1"
+    "8.8.8.8"
+  ];
+  networking.networkmanager.enable = lib.mkDefault false;
+
+  services.ntp.enable = lib.mkDefault true;
 
   services.openssh = {
     enable = lib.mkDefault true;
+    openFirewall = lib.mkDefault true;
     settings = {
-      PasswordAuthentication = lib.mkDefault false;
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
       LoginGraceTime = 0;
       PermitRootLogin = "no";
+      ClientAliveInterval = lib.mkDefault 60;
+      ClientAliveCountMax = lib.mkDefault 5;
     };
     ports = [ 22 ];
   };
@@ -40,21 +50,21 @@
     doas.enable = lib.mkDefault false;
     sudo = {
       enable = lib.mkDefault true;
-      wheelNeedsPassword = lib.mkDefault false;
+      wheelNeedsPassword = false;
     };
   };
 
-  programs.git.enable = true;
-  programs.mosh.enable = true;
-  programs.htop.enable = true;
+  programs.git.enable = lib.mkDefault true;
+  programs.mosh.enable = lib.mkDefault true;
+  programs.htop.enable = lib.mkDefault true;
   programs.neovim = {
-    enable = true;
-    viAlias = true;
-    vimAlias = true;
-    defaultEditor = true;
+    enable = lib.mkDefault true;
+    viAlias = lib.mkDefault true;
+    vimAlias = lib.mkDefault true;
+    defaultEditor = lib.mkDefault true;
   };
 
-  homelab.motd.enable = true;
+  homelab.motd.enable = lib.mkDefault true;
 
   age = {
     identityPaths = [
