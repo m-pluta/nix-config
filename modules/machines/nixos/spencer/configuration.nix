@@ -41,7 +41,6 @@ in
   ];
 
   imports = [
-    ../../../misc/notthebe.ee
     ../../../misc/secrets
     ./secrets.nix
     ./homelab.nix
