@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.homelab.wifi;
+  cfg = config.wifi;
 
   knownNetworks = {
     "ItHurtsWhenIP" = "ext:PSK_HOME";
@@ -22,7 +22,7 @@ let
   }) cfg.ssids;
 in
 {
-  options.homelab.wifi = {
+  options.wifi = {
     ssids = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];

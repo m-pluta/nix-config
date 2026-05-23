@@ -13,7 +13,7 @@
   networking.hostName = "mikelab";
   networking.hostId = "deadbeef";
 
-  homelab.wifi.ssids = [ "ItHurtsWhenIP" ];
+  wifi.ssids = [ "ItHurtsWhenIP" ];
 
   system.stateVersion = "25.11";
 
