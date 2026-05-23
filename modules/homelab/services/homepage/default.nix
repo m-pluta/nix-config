@@ -13,6 +13,10 @@ in
     enable = lib.mkEnableOption {
       description = "Enable ${service}";
     };
+    url = lib.mkOption {
+      type = lib.types.str;
+      default = "home.${homelab.baseDomain}";
+    };
     monitoredServices = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
@@ -47,7 +51,7 @@ in
     services.glances.enable = true;
     services.${service} = {
       enable = true;
-      environmentFile = builtins.toFile "homepage.env" "HOMEPAGE_ALLOWED_HOSTS=${homelab.baseDomain}";
+      environmentFile = builtins.toFile "homepage.env" "HOMEPAGE_ALLOWED_HOSTS=${cfg.url}";
       customCSS = ''
         body, html {
           font-family: SF Pro Display, Helvetica, Arial, sans-serif !important;
@@ -163,7 +167,7 @@ in
                     widget = {
                       type = "glances";
                       url = "http://localhost:${port}";
-                      metric = "sensor:Package id 0";
+                      metric = "sensor:Tctl";
                       chart = false;
                       version = 4;
                     };
@@ -185,7 +189,7 @@ in
                     widget = {
                       type = "glances";
                       url = "http://localhost:${port}";
-                      metric = "network:enp2s0";
+                      metric = "network:enp6s0";
                       chart = false;
                       version = 4;
                     };
@@ -195,7 +199,7 @@ in
           }
         ];
     };
-    services.caddy.virtualHosts."${homelab.baseDomain}" = {
+    services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString config.services.${service}.listenPort}

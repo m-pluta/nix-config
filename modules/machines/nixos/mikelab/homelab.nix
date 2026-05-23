@@ -14,6 +14,7 @@
     services = {
       enable = true;
       forgejo.enable = true;
+      homepage.enable = true;
     };
   };
 
