@@ -18,18 +18,11 @@
   };
 
   age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare-dns-api.age";
+  security.acme.defaults.email = lib.mkForce "mikey@mpluta.dev";
 
-  # Override forgejo defaults from wolfgang's module
   services.forgejo = {
-    package = lib.mkForce pkgs.forgejo;
-    database.type = lib.mkForce "sqlite3";
-    settings.server = {
-      LANDING_PAGE = lib.mkForce "/explore/repos";
-      HTTP_PORT = lib.mkForce 3001;
-    };
-    settings.mailer.ENABLED = lib.mkForce false;
+    database.type = "sqlite3";
+    settings.server.HTTP_PORT = 3001;
   };
 
-  # Override ACME contact email
-  security.acme.defaults.email = lib.mkForce "mikey@mpluta.dev";
 }

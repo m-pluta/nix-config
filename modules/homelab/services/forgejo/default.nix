@@ -39,16 +39,16 @@ in
   config = lib.mkIf cfg.enable {
     services.openssh.settings.AcceptEnv = "GIT_PROTOCOL";
     services.forgejo = {
-      package = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.forgejo;
+      package = pkgs.forgejo;
       enable = true;
-      database.type = "postgres";
+      database.type = lib.mkDefault "postgres";
       lfs.enable = true;
       settings = {
         server = {
           DOMAIN = cfg.url;
           ROOT_URL = "https://${cfg.url}/";
-          HTTP_PORT = 3000;
-          LANDING_PAGE = "/notthebee";
+          HTTP_PORT = lib.mkDefault 3000;
+          LANDING_PAGE = lib.mkDefault "/explore/repos";
           SSH_PORT = lib.head config.services.openssh.ports;
         };
         log = {
@@ -60,7 +60,7 @@ in
           REGISTER_EMAIL_CONFIRM = true;
         };
         mailer = {
-          ENABLED = true;
+          ENABLED = lib.mkDefault false;
           FROM = config.email.fromAddress;
           PROTOCOL = "sendmail";
           SENDMAIL_PATH = "/run/wrappers/bin/sendmail";
