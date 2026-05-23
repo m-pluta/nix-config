@@ -72,8 +72,8 @@ in
         div#footer {
           display: none;
         }
-        .services-group.basis-full.flex-1.px-1.-my-1 {
-          padding-bottom: 3rem;
+        .services-group {
+          padding-bottom: 1.5rem;
         };
       '';
       settings = {
@@ -81,6 +81,20 @@ in
           {
             Glances = {
               header = false;
+              style = "row";
+              columns = 4;
+            };
+          }
+          {
+            Services = {
+              header = true;
+              style = "row";
+              columns = 4;
+            };
+          }
+          {
+            Media = {
+              header = true;
               style = "row";
               columns = 4;
             };
@@ -98,13 +112,13 @@ in
             };
           }
           {
-            Media = {
+            Observability = {
               header = true;
               style = "column";
             };
           }
           {
-            Services = {
+            "Smart Home" = {
               header = true;
               style = "column";
             };
