@@ -7,12 +7,13 @@
   imports = [
     ./hardware-configuration.nix
     ./disko.nix
-    ./networking.nix
     ./homelab.nix
     ../../../misc/mpluta.dev
   ];
   networking.hostName = "mikelab";
   networking.hostId = "deadbeef";
+
+  homelab.wifi.ssids = [ "ItHurtsWhenIP" ];
 
   system.stateVersion = "25.11";
 
