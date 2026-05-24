@@ -144,7 +144,6 @@ in
     };
   };
   imports = [
-    ../../../misc/tailscale
     ../../../misc/zfs-root
     ../../../misc/secrets
     ./filesystems

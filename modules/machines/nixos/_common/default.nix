@@ -27,19 +27,9 @@
     "8.8.8.8"
   ];
   networking.networkmanager.enable = lib.mkDefault false;
-  networking.firewall = {
-    enable = lib.mkDefault true;
-    checkReversePath = lib.mkDefault "loose";
-    trustedInterfaces = lib.mkDefault [ "tailscale0" ];
-  };
+  networking.firewall.enable = lib.mkDefault true;
 
   services.ntp.enable = lib.mkDefault true;
-
-  services.tailscale = {
-    enable = lib.mkDefault true;
-    openFirewall = lib.mkDefault true;
-    useRoutingFeatures = lib.mkDefault "client";
-  };
 
   services.openssh = {
     enable = lib.mkDefault true;

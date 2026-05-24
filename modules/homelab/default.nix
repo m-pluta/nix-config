@@ -76,6 +76,7 @@ in
     ./networks
     ./motd
     ./fail2ban-cloudflare
+    ./tailscale
   ];
   config = lib.mkIf cfg.enable {
     users = {

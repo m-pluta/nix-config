@@ -10,6 +10,7 @@
     baseDomain = "mpluta.dev";
     cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
     timeZone = "Europe/London";
+    tailscale.enable = true;
     monitoring.exporters = {
       smartctl.enable = true;
       zfs.enable = true;
