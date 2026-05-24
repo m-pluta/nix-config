@@ -2,6 +2,7 @@
 {
   systems = [
     "aarch64-darwin"
+    "x86_64-linux"
   ];
   imports = [ inputs.treefmt-nix.flakeModule ];
   perSystem =
