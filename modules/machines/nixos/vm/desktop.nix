@@ -1,7 +1,12 @@
 { ... }:
 {
-  # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
+  services.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.gnome = {
+    core-developer-tools.enable = false;
+    games.enable = false;
+  };
+
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -10,17 +15,7 @@
     pulse.enable = true;
   };
 
-  programs = {
-    firefox.enable = true;
-  };
-
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
-
-  services.gnome = {
-    core-developer-tools.enable = false;
-    games.enable = false;
-  };
+  programs.firefox.enable = true;
 
   programs.dconf.profiles.user.databases = [
     {
@@ -38,5 +33,4 @@
   ];
 
   services.spice-vdagentd.enable = true;
-
 }
