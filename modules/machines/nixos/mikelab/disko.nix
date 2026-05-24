@@ -150,7 +150,27 @@
           };
           "services/prowlarr" = {
             type = "zfs_fs";
-            mountpoint = "/var/lib/prowlarr";
+            mountpoint = "/var/lib/private/prowlarr";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "services/bazarr" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/bazarr";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "services/jellyseerr" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/private/jellyseerr";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "services/sabnzbd" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/sabnzbd";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "services/deluge" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/deluge";
             options."com.sun:auto-snapshot" = "true";
           };
           "media" = {

@@ -22,6 +22,14 @@
         port = 3001;
       };
       homepage.enable = true;
+      jellyfin.enable = true;
+      sabnzbd.enable = true;
+      deluge.enable = true;
+      sonarr.enable = true;
+      radarr.enable = true;
+      bazarr.enable = true;
+      prowlarr.enable = true;
+      jellyseerr.enable = true;
       grafana.enable = true;
       victoriametrics = {
         enable = true;
