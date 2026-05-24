@@ -1,40 +1,19 @@
 { config, lib, ... }:
 let
+  serviceLib = import ../../lib.nix { inherit lib; };
   homelab = config.homelab;
   cfg = config.homelab.services.homeassistant;
 in
 {
-  options.homelab.services.homeassistant = {
-    enable = lib.mkEnableOption {
-      description = "Enable Home Assistant";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/persist/opt/services/homeassistant";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "home.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Home Assistant";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Home automation platform";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "home-assistant.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8123;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Smart Home";
+  options.homelab.services.homeassistant = serviceLib.mkServiceOptions {
+    port = 8123;
+    url = "home.${homelab.baseDomain}";
+    configDir = "/persist/opt/services/homeassistant";
+    homepage = {
+      name = "Home Assistant";
+      description = "Home automation platform";
+      icon = "home-assistant.svg";
+      category = "Smart Home";
     };
   };
   config = lib.mkIf cfg.enable {

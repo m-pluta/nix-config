@@ -5,42 +5,22 @@
 }:
 let
   service = "miniflux";
+  serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.${service};
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8067;
+    url = "news.goose.party";
+    configDir = "/var/lib/${service}";
+    homepage = {
+      name = "Miniflux";
+      description = "Minimalist and opinionated feed reader";
+      icon = "miniflux-light.svg";
+      category = "Services";
     };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "news.goose.party";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Miniflux";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Minimalist and opinionated feed reader";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "miniflux-light.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8067;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
-    };
+  } // {
     adminCredentialsFile = lib.mkOption {
       description = "File with admin credentials";
       type = lib.types.path;

@@ -5,25 +5,25 @@
 }:
 let
   service = "navidrome";
+  serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.${service};
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 4533;
+    url = "music.goose.party";
+    configDir = "/var/lib/${service}";
+    homepage = {
+      name = "Navidrome";
+      description = "Self-hosted music streaming service";
+      icon = "navidrome.svg";
+      category = "Media";
     };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
+  } // {
     musicDir = lib.mkOption {
       type = lib.types.str;
       default = "${hl.mounts.fast}/Media/Music/Library";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "music.goose.party";
     };
     environmentFile = lib.mkOption {
       type = lib.types.path;
@@ -33,26 +33,6 @@ in
           ND_LASTFM_SECRET=abcabc
         '''
       '';
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Navidrome";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Self-hosted music streaming service";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "navidrome.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 4533;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Media";
     };
     role = lib.mkOption {
       type = lib.types.enum [

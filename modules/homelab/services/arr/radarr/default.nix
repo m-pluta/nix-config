@@ -1,41 +1,20 @@
 { config, lib, ... }:
 let
   service = "radarr";
+  serviceLib = import ../../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "${service}.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Radarr";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Movie collection manager";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "radarr.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 7878;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Arr";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 7878;
+    url = "${service}.${homelab.baseDomain}";
+    configDir = "/var/lib/${service}";
+    homepage = {
+      name = "Radarr";
+      description = "Movie collection manager";
+      icon = "radarr.svg";
+      category = "Arr";
     };
   };
   config = lib.mkIf cfg.enable {

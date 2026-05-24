@@ -1,37 +1,20 @@
 { config, lib, ... }:
 let
   service = "lidarr";
+  serviceLib = import ../../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "${service}.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Lidarr";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Music collection manager";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "lidarr.svg";
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Arr";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8686;
+    url = "${service}.${homelab.baseDomain}";
+    configDir = "/var/lib/${service}";
+    homepage = {
+      name = "Lidarr";
+      description = "Music collection manager";
+      icon = "lidarr.svg";
+      category = "Arr";
     };
   };
   config = lib.mkIf cfg.enable {
@@ -43,9 +26,8 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:8686
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };
-
 }

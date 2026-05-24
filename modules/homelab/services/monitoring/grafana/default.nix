@@ -5,37 +5,19 @@
 }:
 let
   service = "grafana";
+  serviceLib = import ../../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "grafana.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Grafana";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Platform for data analytics and monitoring";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "grafana.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 3000;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Observability";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 3000;
+    url = "grafana.${homelab.baseDomain}";
+    homepage = {
+      name = "Grafana";
+      description = "Platform for data analytics and monitoring";
+      icon = "grafana.svg";
+      category = "Observability";
     };
   };
   config = lib.mkIf cfg.enable {

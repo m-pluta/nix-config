@@ -1,40 +1,19 @@
 { config, lib, ... }:
 let
   service = "vaultwarden";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/bitwarden_rs";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "pass.goose.party";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Vaultwarden";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Password manager";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "bitwarden.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8222;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8222;
+    url = "pass.goose.party";
+    configDir = "/var/lib/bitwarden_rs";
+    homepage = {
+      name = "Vaultwarden";
+      description = "Password manager";
+      icon = "bitwarden.svg";
+      category = "Services";
     };
   };
   config = lib.mkIf cfg.enable {

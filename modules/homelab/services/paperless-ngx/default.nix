@@ -1,14 +1,28 @@
 { config, lib, ... }:
 let
   service = "paperless";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 28981;
+    url = "paperless.${homelab.baseDomain}";
+    configDir = "/var/lib/${service}";
+    monitoredServices = [
+      "paperless-consumer"
+      "paperless-scheduler"
+      "paperless-task-queue"
+      "paperless-web"
+    ];
+    homepage = {
+      name = "Paperless-ngx";
+      description = "Document management system";
+      icon = "paperless.svg";
+      category = "Services";
     };
+  } // {
     mediaDir = lib.mkOption {
       type = lib.types.str;
       default = "${homelab.mounts.fast}/Documents/Paperless/Documents";
@@ -20,44 +34,6 @@ in
     passwordFile = lib.mkOption {
       type = lib.types.path;
     };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "paperless.${homelab.baseDomain}";
-    };
-    monitoredServices = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      default = [
-        "paperless-consumer"
-        "paperless-scheduler"
-        "paperless-task-queue"
-        "paperless-web"
-      ];
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Paperless-ngx";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Document management system";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "paperless.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 28981;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
-    };
-
   };
   config = lib.mkIf cfg.enable {
     services = {

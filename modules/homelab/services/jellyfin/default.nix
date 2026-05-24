@@ -5,41 +5,20 @@
 }:
 let
   service = "jellyfin";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "jellyfin.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Jellyfin";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "The Free Software Media System";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "jellyfin.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8096;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Media";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8096;
+    url = "jellyfin.${homelab.baseDomain}";
+    configDir = "/var/lib/${service}";
+    homepage = {
+      name = "Jellyfin";
+      description = "The Free Software Media System";
+      icon = "jellyfin.svg";
+      category = "Media";
     };
   };
   config = lib.mkIf cfg.enable {

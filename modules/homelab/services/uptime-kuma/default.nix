@@ -1,41 +1,20 @@
 { config, lib, ... }:
 let
   service = "uptime-kuma";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/uptime-kuma";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "uptime.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Uptime Kuma";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Service monitoring tool";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "uptime-kuma.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 3001;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 3001;
+    url = "uptime.${homelab.baseDomain}";
+    configDir = "/var/lib/uptime-kuma";
+    homepage = {
+      name = "Uptime Kuma";
+      description = "Service monitoring tool";
+      icon = "uptime-kuma.svg";
+      category = "Services";
     };
   };
   config = lib.mkIf cfg.enable {

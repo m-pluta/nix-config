@@ -1,41 +1,20 @@
 { config, lib, ... }:
 let
   service = "audiobookshelf";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "audiobooks.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Audiobookshelf";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Audiobook and podcast player";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "audiobookshelf.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8113;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Media";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8113;
+    url = "audiobooks.${homelab.baseDomain}";
+    configDir = "/var/lib/${service}";
+    homepage = {
+      name = "Audiobookshelf";
+      description = "Audiobook and podcast player";
+      icon = "audiobookshelf.svg";
+      category = "Media";
     };
   };
   config = lib.mkIf cfg.enable {

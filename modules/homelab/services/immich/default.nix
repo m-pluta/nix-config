@@ -4,12 +4,25 @@
   ...
 }:
 let
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.immich;
   homelab = config.homelab;
 in
 {
-  options.homelab.services.immich = {
-    enable = lib.mkEnableOption "Self-hosted photo and video management solution";
+  options.homelab.services.immich = serviceLib.mkServiceOptions {
+    port = 2283;
+    url = "photos.${homelab.baseDomain}";
+    monitoredServices = [
+      "immich-server"
+      "immich-machine-learning"
+    ];
+    homepage = {
+      name = "Immich";
+      description = "Self-hosted photo and video management solution";
+      icon = "immich.svg";
+      category = "Media";
+    };
+  } // {
     user = lib.mkOption {
       default = config.homelab.user;
       type = lib.types.str;
@@ -24,40 +37,9 @@ in
         Group to run the Immich container as
       '';
     };
-    monitoredServices = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      default = [
-        "immich-server"
-        "immich-machine-learning"
-      ];
-    };
     mediaDir = lib.mkOption {
       type = lib.types.path;
       default = "${config.homelab.mounts.fast}/Photos/Immich";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "photos.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Immich";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Self-hosted photo and video management solution";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "immich.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 2283;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Media";
     };
   };
   config = lib.mkIf cfg.enable {

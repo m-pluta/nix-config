@@ -1,41 +1,20 @@
 { config, lib, ... }:
 let
   service = "sabnzbd";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "sabnzbd.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "SABnzbd";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "The free and easy binary newsreader";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "sabnzbd.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8080;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Downloads";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8080;
+    url = "sabnzbd.${homelab.baseDomain}";
+    configDir = "/var/lib/${service}";
+    homepage = {
+      name = "SABnzbd";
+      description = "The free and easy binary newsreader";
+      icon = "sabnzbd.svg";
+      category = "Downloads";
     };
   };
   config = lib.mkIf cfg.enable {

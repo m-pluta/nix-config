@@ -6,20 +6,24 @@
 }:
 let
   service = "slskd";
+  serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.${service};
   ns = hl.services.wireguard-netns.namespace;
 in
 {
   imports = [ ./beets.nix ];
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 5030;
+    url = "slskd.${hl.baseDomain}";
+    configDir = "/var/lib/${service}";
+    homepage = {
+      name = "slskd";
+      description = "Web-based Soulseek client";
+      icon = "slskd.svg";
+      category = "Downloads";
     };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
+  } // {
     musicDir = lib.mkOption {
       type = lib.types.str;
       default = "${hl.mounts.fast}/Media/Music/Library";
@@ -31,10 +35,6 @@ in
     incompleteDownloadDir = lib.mkOption {
       type = lib.types.str;
       default = "${hl.mounts.fast}/Media/Music/Import.tmp";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "slskd.${hl.baseDomain}";
     };
     beetsConfigFile = lib.mkOption {
       type = lib.types.path;
@@ -49,26 +49,6 @@ in
           SLSKD_JWT=secret
         '''
       '';
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "slskd";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Web-based Soulseek client";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "slskd.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 5030;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Downloads";
     };
   };
   config = lib.mkIf cfg.enable {

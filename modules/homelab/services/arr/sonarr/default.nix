@@ -1,41 +1,20 @@
 { config, lib, ... }:
 let
   service = "sonarr";
+  serviceLib = import ../../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "${service}.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Sonarr";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "TV show collection manager";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "sonarr.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8989;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Arr";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8989;
+    url = "${service}.${homelab.baseDomain}";
+    configDir = "/var/lib/${service}";
+    homepage = {
+      name = "Sonarr";
+      description = "TV show collection manager";
+      icon = "sonarr.svg";
+      category = "Arr";
     };
   };
   config = lib.mkIf cfg.enable {

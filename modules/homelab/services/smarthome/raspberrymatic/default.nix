@@ -5,41 +5,20 @@
   ...
 }:
 let
+  serviceLib = import ../../lib.nix { inherit lib; };
   cfg = config.homelab.services.raspberrymatic;
   homelab = config.homelab;
 in
 {
-  options.homelab.services.raspberrymatic = {
-    enable = lib.mkEnableOption {
-      description = "Enable RaspberryMatic";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/persist/opt/services/ccu";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "ccu.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "RaspberryMatic";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Homematic IP CCU";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "raspberrymatic.png";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8124;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Smart Home";
+  options.homelab.services.raspberrymatic = serviceLib.mkServiceOptions {
+    port = 8124;
+    url = "ccu.${homelab.baseDomain}";
+    configDir = "/persist/opt/services/ccu";
+    homepage = {
+      name = "RaspberryMatic";
+      description = "Homematic IP CCU";
+      icon = "raspberrymatic.png";
+      category = "Smart Home";
     };
   };
   config = lib.mkIf cfg.enable {

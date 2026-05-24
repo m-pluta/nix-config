@@ -16,21 +16,21 @@ let
     hash = "sha256-xKOZ3W9Ii8l6NUbjR2dHs+cUyZxXuUcxVMb7jSWbk4E=";
   };
   service = "microbin";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8069;
+    url = "bin.goose.party";
+    configDir = "/var/lib/microbin";
+    homepage = {
+      name = "Microbin";
+      description = "A minimal pastebin";
+      icon = "microbin.png";
+      category = "Services";
     };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/microbin";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "bin.goose.party";
-    };
+  } // {
     passwordFile = lib.mkOption {
       default = "";
       type = lib.types.str;
@@ -41,26 +41,6 @@ in
           MICROBIN_UPLOADER_PASSWORD
         '''
       '';
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Microbin";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "A minimal pastebin";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "microbin.png";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8069;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
     };
     role = lib.mkOption {
       type = lib.types.enum [

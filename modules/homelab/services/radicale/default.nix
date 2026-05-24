@@ -1,35 +1,20 @@
 { config, lib, ... }:
 let
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.radicale;
   homelab = config.homelab;
 in
 {
-  options.homelab.services.radicale = {
-    enable = lib.mkEnableOption "Free and Open-Source CalDAV and CardDAV Server";
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "cal.${homelab.baseDomain}";
+  options.homelab.services.radicale = serviceLib.mkServiceOptions {
+    port = 5232;
+    url = "cal.${homelab.baseDomain}";
+    homepage = {
+      name = "Radicale";
+      description = "Free and Open-Source CalDAV and CardDAV Server";
+      icon = "radicale.svg";
+      category = "Services";
     };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Radicale";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Free and Open-Source CalDAV and CardDAV Server";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "radicale.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 5232;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
-    };
+  } // {
     passwordFile = lib.mkOption {
       description = "Path to Radicale user credentials";
       type = lib.types.path;

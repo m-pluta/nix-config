@@ -5,48 +5,26 @@
   ...
 }:
 let
+  serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.deluge;
   ns = hl.services.wireguard-netns.namespace;
 in
 {
-  options.homelab.services.deluge = {
-    enable = lib.mkEnableOption "Deluge torrent client (bound to a Wireguard VPN network)";
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/deluge";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "deluge.${hl.baseDomain}";
-    };
-    monitoredServices = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      default = [
-        "delugeweb"
-        "deluged-proxy"
-        "deluged"
-      ];
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Deluge";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Torrent client";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "deluge.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8112;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Downloads";
+  options.homelab.services.deluge = serviceLib.mkServiceOptions {
+    port = 8112;
+    url = "deluge.${hl.baseDomain}";
+    configDir = "/var/lib/deluge";
+    monitoredServices = [
+      "delugeweb"
+      "deluged-proxy"
+      "deluged"
+    ];
+    homepage = {
+      name = "Deluge";
+      description = "Torrent client";
+      icon = "deluge.svg";
+      category = "Downloads";
     };
   };
   config = lib.mkIf cfg.enable {

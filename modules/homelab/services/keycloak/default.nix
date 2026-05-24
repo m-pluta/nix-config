@@ -6,37 +6,20 @@
 }:
 let
   service = "keycloak";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8821;
+    url = "login.goose.party";
+    homepage = {
+      name = "Keycloak";
+      description = "Open Source Identity and Access Management";
+      icon = "keycloak.svg";
+      category = "Services";
     };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "login.goose.party";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Keycloak";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Open Source Identity and Access Management";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "keycloak.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8821;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
-    };
+  } // {
     dbPasswordFile = lib.mkOption {
       type = lib.types.path;
     };

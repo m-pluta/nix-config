@@ -6,39 +6,22 @@
 }:
 let
   service = "jellyseerr";
+  serviceLib = import ../../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 5055;
+    url = "${service}.${homelab.baseDomain}";
+    homepage = {
+      name = "Jellyseerr";
+      description = "Media request and discovery manager";
+      icon = "jellyseerr.svg";
+      category = "Arr";
     };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "${service}.${homelab.baseDomain}";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 5055;
-    };
+  } // {
     package = lib.mkPackageOption pkgs "jellyseerr" { };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Jellyseerr";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Media request and discovery manager";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "jellyseerr.svg";
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Arr";
-    };
   };
   config = lib.mkIf cfg.enable {
     services.${service} = {

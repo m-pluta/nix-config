@@ -6,51 +6,28 @@
 }:
 let
   service = "nextcloud";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   hl = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8009;
+    url = "cloud.goose.party";
+    configDir = "/var/lib/${service}";
+    monitoredServices = [
+      "phpfpm-nextcloud"
+    ];
+    homepage = {
+      name = "Nextcloud";
+      description = "Enterprise File Storage and Collaboration";
+      icon = "nextcloud.svg";
+      category = "Services";
     };
+  } // {
     dataDir = lib.mkOption {
       type = lib.types.str;
       default = "${hl.mounts.fast}/Media/Nextcloud";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "cloud.goose.party";
-    };
-    monitoredServices = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      default = [
-        "phpfpm-nextcloud"
-      ];
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Nextcloud";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Enterprise File Storage and Collaboration";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "nextcloud.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8009;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
     };
     admin.username = lib.mkOption {
       type = lib.types.str;

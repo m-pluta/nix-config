@@ -5,27 +5,22 @@
 }:
 let
   service = "victoriametrics";
+  serviceLib = import ../../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
-  vmUrl = "http://${cfg.listenAddress}:${toString cfg.port}";
+  vmUrl = "http://127.0.0.1:${toString cfg.port}";
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8428;
+    url = "vm.${homelab.baseDomain}";
+    homepage = {
+      name = "VictoriaMetrics";
+      description = "Time series database and monitoring";
+      icon = "victoriametrics.svg";
+      category = "Observability";
     };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "vm.${homelab.baseDomain}";
-    };
-    listenAddress = lib.mkOption {
-      type = lib.types.str;
-      default = "127.0.0.1";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8428;
-    };
+  } // {
     retentionPeriod = lib.mkOption {
       type = lib.types.str;
       default = "5y";
@@ -53,22 +48,6 @@ in
         )
       );
       default = { };
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "VictoriaMetrics";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Time series database and monitoring";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "victoriametrics.svg";
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Observability";
     };
   };
 

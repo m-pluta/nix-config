@@ -7,37 +7,19 @@
 }:
 let
   service = "forgejo";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   hl = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "git.${hl.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Forgejo";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "A painless, self-hosted Git service";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "forgejo.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 3000;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 3000;
+    url = "git.${hl.baseDomain}";
+    homepage = {
+      name = "Forgejo";
+      description = "A painless, self-hosted Git service";
+      icon = "forgejo.svg";
+      category = "Services";
     };
   };
   config = lib.mkIf cfg.enable {

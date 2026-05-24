@@ -5,18 +5,21 @@
 }:
 let
   service = "plausible";
+  serviceLib = import ../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   hl = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 8000;
+    url = "numbers.${hl.baseDomain}";
+    homepage = {
+      name = "Plausible";
+      description = "Open-source web analytics platform";
+      icon = "plausible.svg";
+      category = "Observability";
     };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "numbers.${hl.baseDomain}";
-    };
+  } // {
     secretKeybaseFile = lib.mkOption {
       type = lib.types.str;
       example = lib.literalExpression ''
@@ -24,26 +27,6 @@ in
           foobar
         '''
       '';
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Plausible";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Open-source web analytics platform";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "plausible.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8000;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Observability";
     };
   };
   config = lib.mkIf cfg.enable {

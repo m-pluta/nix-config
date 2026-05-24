@@ -1,41 +1,20 @@
 { config, lib, ... }:
 let
   service = "prowlarr";
+  serviceLib = import ../../lib.nix { inherit lib; };
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "${service}.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Prowlarr";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "PVR indexer";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "prowlarr.svg";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 9696;
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Arr";
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 9696;
+    url = "${service}.${homelab.baseDomain}";
+    configDir = "/var/lib/${service}";
+    homepage = {
+      name = "Prowlarr";
+      description = "PVR indexer";
+      icon = "prowlarr.svg";
+      category = "Arr";
     };
   };
   config = lib.mkIf cfg.enable {
