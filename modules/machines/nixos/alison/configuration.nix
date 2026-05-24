@@ -63,21 +63,6 @@
       raspberrymatic.enable = true;
       uptime-kuma.enable = true;
       grafana.enable = true;
-      prometheus = {
-        enable = true;
-        scrapeTargets = lib.lists.forEach [ "smartctl" "node" "systemd" "shellyplug" ] (exporter: {
-          job_name = exporter;
-          static_configs = [
-            {
-              targets = (
-                lib.lists.forEach [ "localhost" "aria" "emily" ] (
-                  target: "${target}:${toString config.services.prometheus.exporters.${exporter}.port}"
-                )
-              );
-            }
-          ];
-        });
-      };
     };
   };
   services.caddy.globalConfig = ''
