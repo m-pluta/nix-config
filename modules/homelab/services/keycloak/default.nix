@@ -10,36 +10,38 @@ let
   cfg = config.homelab.services.${service};
 in
 {
-  options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 8821;
-    url = "login.goose.party";
-    homepage = {
-      name = "Keycloak";
-      description = "Open Source Identity and Access Management";
-      icon = "keycloak.svg";
-      category = "Services";
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      port = 8821;
+      url = "login.goose.party";
+      homepage = {
+        name = "Keycloak";
+        description = "Open Source Identity and Access Management";
+        icon = "keycloak.svg";
+        category = "Services";
+      };
+    }
+    // {
+      dbPasswordFile = lib.mkOption {
+        type = lib.types.path;
+      };
+      oauth2ProxyEnvFile = lib.mkOption {
+        type = lib.types.path;
+        example = lib.literalExpression ''
+          pkgs.writeText "oauth2proxy-envfile" '''
+            OAUTH2_PROXY_CLIENT_SECRET=foobar
+            OAUTH2_PROXY_COOKIE_SECRET=barfoo
+          '''
+        '';
+      };
+      role = lib.mkOption {
+        type = lib.types.enum [
+          "client"
+          "server"
+        ];
+        default = "client";
+      };
     };
-  } // {
-    dbPasswordFile = lib.mkOption {
-      type = lib.types.path;
-    };
-    oauth2ProxyEnvFile = lib.mkOption {
-      type = lib.types.path;
-      example = lib.literalExpression ''
-        pkgs.writeText "oauth2proxy-envfile" '''
-          OAUTH2_PROXY_CLIENT_SECRET=foobar
-          OAUTH2_PROXY_COOKIE_SECRET=barfoo
-        '''
-      '';
-    };
-    role = lib.mkOption {
-      type = lib.types.enum [
-        "client"
-        "server"
-      ];
-      default = "client";
-    };
-  };
   config =
     let
       mkIfElse =

@@ -11,44 +11,46 @@ let
   hl = config.homelab;
 in
 {
-  options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 8009;
-    url = "cloud.goose.party";
-    configDir = "/var/lib/${service}";
-    monitoredServices = [
-      "phpfpm-nextcloud"
-    ];
-    homepage = {
-      name = "Nextcloud";
-      description = "Enterprise File Storage and Collaboration";
-      icon = "nextcloud.svg";
-      category = "Services";
-    };
-  } // {
-    dataDir = lib.mkOption {
-      type = lib.types.str;
-      default = "${hl.mounts.fast}/Media/Nextcloud";
-    };
-    admin.username = lib.mkOption {
-      type = lib.types.str;
-      example = "admin";
-    };
-    admin.passwordFile = lib.mkOption {
-      type = lib.types.str;
-      example = lib.literalExpression ''
-        pkgs.writeText "nc-admin-password" '''
-        super-secret-password
-        '''
-      '';
-    };
-    role = lib.mkOption {
-      type = lib.types.enum [
-        "client"
-        "server"
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      port = 8009;
+      url = "cloud.goose.party";
+      configDir = "/var/lib/${service}";
+      monitoredServices = [
+        "phpfpm-nextcloud"
       ];
-      default = "client";
+      homepage = {
+        name = "Nextcloud";
+        description = "Enterprise File Storage and Collaboration";
+        icon = "nextcloud.svg";
+        category = "Services";
+      };
+    }
+    // {
+      dataDir = lib.mkOption {
+        type = lib.types.str;
+        default = "${hl.mounts.fast}/Media/Nextcloud";
+      };
+      admin.username = lib.mkOption {
+        type = lib.types.str;
+        example = "admin";
+      };
+      admin.passwordFile = lib.mkOption {
+        type = lib.types.str;
+        example = lib.literalExpression ''
+          pkgs.writeText "nc-admin-password" '''
+          super-secret-password
+          '''
+        '';
+      };
+      role = lib.mkOption {
+        type = lib.types.enum [
+          "client"
+          "server"
+        ];
+        default = "client";
+      };
     };
-  };
   config =
     let
       mkIfElse =

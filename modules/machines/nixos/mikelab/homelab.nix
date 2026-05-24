@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   lib,
   inputs,
   ...
@@ -27,7 +26,12 @@
         enable = true;
         targets.mikelab = {
           address = "localhost";
-          exporters = [ "node" "systemd" "smartctl" "zfs" ];
+          exporters = [
+            "node"
+            "systemd"
+            "smartctl"
+            "zfs"
+          ];
         };
       };
     };

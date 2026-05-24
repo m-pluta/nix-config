@@ -5,21 +5,23 @@ let
   homelab = config.homelab;
 in
 {
-  options.homelab.services.radicale = serviceLib.mkServiceOptions {
-    port = 5232;
-    url = "cal.${homelab.baseDomain}";
-    homepage = {
-      name = "Radicale";
-      description = "Free and Open-Source CalDAV and CardDAV Server";
-      icon = "radicale.svg";
-      category = "Services";
+  options.homelab.services.radicale =
+    serviceLib.mkServiceOptions {
+      port = 5232;
+      url = "cal.${homelab.baseDomain}";
+      homepage = {
+        name = "Radicale";
+        description = "Free and Open-Source CalDAV and CardDAV Server";
+        icon = "radicale.svg";
+        category = "Services";
+      };
+    }
+    // {
+      passwordFile = lib.mkOption {
+        description = "Path to Radicale user credentials";
+        type = lib.types.path;
+      };
     };
-  } // {
-    passwordFile = lib.mkOption {
-      description = "Path to Radicale user credentials";
-      type = lib.types.path;
-    };
-  };
   config = lib.mkIf cfg.enable {
     systemd.services.radicale.serviceConfig.LoadCredential = "radicale.htpasswd:${cfg.passwordFile}";
     services.radicale = {

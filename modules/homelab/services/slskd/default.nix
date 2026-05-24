@@ -13,44 +13,46 @@ let
 in
 {
   imports = [ ./beets.nix ];
-  options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 5030;
-    url = "slskd.${hl.baseDomain}";
-    configDir = "/var/lib/${service}";
-    homepage = {
-      name = "slskd";
-      description = "Web-based Soulseek client";
-      icon = "slskd.svg";
-      category = "Downloads";
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      port = 5030;
+      url = "slskd.${hl.baseDomain}";
+      configDir = "/var/lib/${service}";
+      homepage = {
+        name = "slskd";
+        description = "Web-based Soulseek client";
+        icon = "slskd.svg";
+        category = "Downloads";
+      };
+    }
+    // {
+      musicDir = lib.mkOption {
+        type = lib.types.str;
+        default = "${hl.mounts.fast}/Media/Music/Library";
+      };
+      downloadDir = lib.mkOption {
+        type = lib.types.str;
+        default = "${hl.mounts.fast}/Media/Music/Import";
+      };
+      incompleteDownloadDir = lib.mkOption {
+        type = lib.types.str;
+        default = "${hl.mounts.fast}/Media/Music/Import.tmp";
+      };
+      beetsConfigFile = lib.mkOption {
+        type = lib.types.path;
+      };
+      environmentFile = lib.mkOption {
+        description = "File with slskd credentials";
+        type = lib.types.path;
+        example = lib.literalExpression ''
+          pkgs.writeText "slskd-env" '''
+            SLSKD_PASSWORD=slskd
+            SLSKD_USERNAME=slskd
+            SLSKD_JWT=secret
+          '''
+        '';
+      };
     };
-  } // {
-    musicDir = lib.mkOption {
-      type = lib.types.str;
-      default = "${hl.mounts.fast}/Media/Music/Library";
-    };
-    downloadDir = lib.mkOption {
-      type = lib.types.str;
-      default = "${hl.mounts.fast}/Media/Music/Import";
-    };
-    incompleteDownloadDir = lib.mkOption {
-      type = lib.types.str;
-      default = "${hl.mounts.fast}/Media/Music/Import.tmp";
-    };
-    beetsConfigFile = lib.mkOption {
-      type = lib.types.path;
-    };
-    environmentFile = lib.mkOption {
-      description = "File with slskd credentials";
-      type = lib.types.path;
-      example = lib.literalExpression ''
-        pkgs.writeText "slskd-env" '''
-          SLSKD_PASSWORD=slskd
-          SLSKD_USERNAME=slskd
-          SLSKD_JWT=secret
-        '''
-      '';
-    };
-  };
   config = lib.mkIf cfg.enable {
     systemd.tmpfiles.rules = map (x: "d ${x} 0775 ${hl.user} ${hl.group} - -") [
       cfg.musicDir
@@ -143,9 +145,7 @@ in
         serviceConfig = {
           User = config.services.slskd.user;
           Group = config.services.slskd.group;
-          ExecStart = "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=5min 127.0.0.1:${
-            toString cfg.port
-          }";
+          ExecStart = "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=5min 127.0.0.1:${toString cfg.port}";
           PrivateNetwork = "yes";
         };
       };

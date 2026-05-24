@@ -10,38 +10,40 @@ let
   cfg = hl.services.${service};
 in
 {
-  options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 4533;
-    url = "music.goose.party";
-    configDir = "/var/lib/${service}";
-    homepage = {
-      name = "Navidrome";
-      description = "Self-hosted music streaming service";
-      icon = "navidrome.svg";
-      category = "Media";
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      port = 4533;
+      url = "music.goose.party";
+      configDir = "/var/lib/${service}";
+      homepage = {
+        name = "Navidrome";
+        description = "Self-hosted music streaming service";
+        icon = "navidrome.svg";
+        category = "Media";
+      };
+    }
+    // {
+      musicDir = lib.mkOption {
+        type = lib.types.str;
+        default = "${hl.mounts.fast}/Media/Music/Library";
+      };
+      environmentFile = lib.mkOption {
+        type = lib.types.path;
+        example = lib.literalExpression ''
+          pkgs.writeText "navidrome-env" '''
+            ND_LASTFM_APIKEY=abcabc
+            ND_LASTFM_SECRET=abcabc
+          '''
+        '';
+      };
+      role = lib.mkOption {
+        type = lib.types.enum [
+          "client"
+          "server"
+        ];
+        default = "client";
+      };
     };
-  } // {
-    musicDir = lib.mkOption {
-      type = lib.types.str;
-      default = "${hl.mounts.fast}/Media/Music/Library";
-    };
-    environmentFile = lib.mkOption {
-      type = lib.types.path;
-      example = lib.literalExpression ''
-        pkgs.writeText "navidrome-env" '''
-          ND_LASTFM_APIKEY=abcabc
-          ND_LASTFM_SECRET=abcabc
-        '''
-      '';
-    };
-    role = lib.mkOption {
-      type = lib.types.enum [
-        "client"
-        "server"
-      ];
-      default = "client";
-    };
-  };
   config =
     let
       mkIfElse =

@@ -10,29 +10,31 @@ let
   cfg = hl.services.${service};
 in
 {
-  options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 8067;
-    url = "news.goose.party";
-    configDir = "/var/lib/${service}";
-    homepage = {
-      name = "Miniflux";
-      description = "Minimalist and opinionated feed reader";
-      icon = "miniflux-light.svg";
-      category = "Services";
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      port = 8067;
+      url = "news.goose.party";
+      configDir = "/var/lib/${service}";
+      homepage = {
+        name = "Miniflux";
+        description = "Minimalist and opinionated feed reader";
+        icon = "miniflux-light.svg";
+        category = "Services";
+      };
+    }
+    // {
+      adminCredentialsFile = lib.mkOption {
+        description = "File with admin credentials";
+        type = lib.types.path;
+      };
+      role = lib.mkOption {
+        type = lib.types.enum [
+          "client"
+          "server"
+        ];
+        default = "client";
+      };
     };
-  } // {
-    adminCredentialsFile = lib.mkOption {
-      description = "File with admin credentials";
-      type = lib.types.path;
-    };
-    role = lib.mkOption {
-      type = lib.types.enum [
-        "client"
-        "server"
-      ];
-      default = "client";
-    };
-  };
   config =
     let
       mkIfElse =

@@ -12,11 +12,11 @@ let
     channel = "";
   };
 
-  hostMeta = name:
-    hostDefaults // (
-      if builtins.pathExists (./. + "/${name}/meta.nix")
-      then import (./. + "/${name}/meta.nix")
-      else { }
+  hostMeta =
+    name:
+    hostDefaults
+    // (
+      if builtins.pathExists (./. + "/${name}/meta.nix") then import (./. + "/${name}/meta.nix") else { }
     );
 
   commonModules = [
@@ -47,7 +47,8 @@ let
   };
 in
 {
-  flake.nixosConfigurations = lib.genAttrs hostNames (name:
+  flake.nixosConfigurations = lib.genAttrs hostNames (
+    name:
     let
       meta = hostMeta name;
     in

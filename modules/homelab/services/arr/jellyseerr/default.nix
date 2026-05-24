@@ -11,18 +11,20 @@ let
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 5055;
-    url = "${service}.${homelab.baseDomain}";
-    homepage = {
-      name = "Jellyseerr";
-      description = "Media request and discovery manager";
-      icon = "jellyseerr.svg";
-      category = "Arr";
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      port = 5055;
+      url = "${service}.${homelab.baseDomain}";
+      homepage = {
+        name = "Jellyseerr";
+        description = "Media request and discovery manager";
+        icon = "jellyseerr.svg";
+        category = "Arr";
+      };
+    }
+    // {
+      package = lib.mkPackageOption pkgs "jellyseerr" { };
     };
-  } // {
-    package = lib.mkPackageOption pkgs "jellyseerr" { };
-  };
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;

@@ -20,36 +20,38 @@ let
   cfg = config.homelab.services.${service};
 in
 {
-  options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 8069;
-    url = "bin.goose.party";
-    configDir = "/var/lib/microbin";
-    homepage = {
-      name = "Microbin";
-      description = "A minimal pastebin";
-      icon = "microbin.png";
-      category = "Services";
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      port = 8069;
+      url = "bin.goose.party";
+      configDir = "/var/lib/microbin";
+      homepage = {
+        name = "Microbin";
+        description = "A minimal pastebin";
+        icon = "microbin.png";
+        category = "Services";
+      };
+    }
+    // {
+      passwordFile = lib.mkOption {
+        default = "";
+        type = lib.types.str;
+        example = lib.literalExpression ''
+          pkgs.writeText "microbin-secret.txt" '''
+            MICROBIN_ADMIN_USERNAME
+            MICROBIN_ADMIN_PASSWORD
+            MICROBIN_UPLOADER_PASSWORD
+          '''
+        '';
+      };
+      role = lib.mkOption {
+        type = lib.types.enum [
+          "client"
+          "server"
+        ];
+        default = "client";
+      };
     };
-  } // {
-    passwordFile = lib.mkOption {
-      default = "";
-      type = lib.types.str;
-      example = lib.literalExpression ''
-        pkgs.writeText "microbin-secret.txt" '''
-          MICROBIN_ADMIN_USERNAME
-          MICROBIN_ADMIN_PASSWORD
-          MICROBIN_UPLOADER_PASSWORD
-        '''
-      '';
-    };
-    role = lib.mkOption {
-      type = lib.types.enum [
-        "client"
-        "server"
-      ];
-      default = "client";
-    };
-  };
   config =
     let
       mkIfElse =

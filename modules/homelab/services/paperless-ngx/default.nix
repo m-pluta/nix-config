@@ -6,35 +6,37 @@ let
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 28981;
-    url = "paperless.${homelab.baseDomain}";
-    configDir = "/var/lib/${service}";
-    monitoredServices = [
-      "paperless-consumer"
-      "paperless-scheduler"
-      "paperless-task-queue"
-      "paperless-web"
-    ];
-    homepage = {
-      name = "Paperless-ngx";
-      description = "Document management system";
-      icon = "paperless.svg";
-      category = "Services";
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      port = 28981;
+      url = "paperless.${homelab.baseDomain}";
+      configDir = "/var/lib/${service}";
+      monitoredServices = [
+        "paperless-consumer"
+        "paperless-scheduler"
+        "paperless-task-queue"
+        "paperless-web"
+      ];
+      homepage = {
+        name = "Paperless-ngx";
+        description = "Document management system";
+        icon = "paperless.svg";
+        category = "Services";
+      };
+    }
+    // {
+      mediaDir = lib.mkOption {
+        type = lib.types.str;
+        default = "${homelab.mounts.fast}/Documents/Paperless/Documents";
+      };
+      consumptionDir = lib.mkOption {
+        type = lib.types.str;
+        default = "${homelab.mounts.fast}/Documents/Paperless/Import";
+      };
+      passwordFile = lib.mkOption {
+        type = lib.types.path;
+      };
     };
-  } // {
-    mediaDir = lib.mkOption {
-      type = lib.types.str;
-      default = "${homelab.mounts.fast}/Documents/Paperless/Documents";
-    };
-    consumptionDir = lib.mkOption {
-      type = lib.types.str;
-      default = "${homelab.mounts.fast}/Documents/Paperless/Import";
-    };
-    passwordFile = lib.mkOption {
-      type = lib.types.path;
-    };
-  };
   config = lib.mkIf cfg.enable {
     services = {
       ${service} = {

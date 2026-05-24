@@ -190,7 +190,6 @@ in
 
   system.autoUpgrade.enable = true;
 
-
   services.mover = {
     enable = true;
     cacheArray = hl.mounts.fast;
