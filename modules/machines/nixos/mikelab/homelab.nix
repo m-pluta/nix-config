@@ -11,10 +11,22 @@
     baseDomain = "mpluta.dev";
     cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
     timeZone = "Europe/London";
+    monitoring.exporters = {
+      smartctl.enable = true;
+      zfs.enable = true;
+    };
     services = {
       enable = true;
       forgejo.enable = true;
       homepage.enable = true;
+      grafana.enable = true;
+      victoriametrics = {
+        enable = true;
+        targets.mikelab = {
+          address = "localhost";
+          exporters = [ "node" "systemd" "smartctl" "zfs" ];
+        };
+      };
     };
   };
 

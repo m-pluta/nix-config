@@ -140,9 +140,11 @@ in
     ./plausible
     ./microbin
     ./miniflux
+    ./monitoring/exporters
+    ./monitoring/exporters/shelly_plug_exporter
     ./monitoring/grafana
     ./monitoring/prometheus
-    ./monitoring/prometheus/exporters/shelly_plug_exporter
+    ./monitoring/victoriametrics
     ./navidrome
     ./nextcloud
     ./smarthome/homeassistant

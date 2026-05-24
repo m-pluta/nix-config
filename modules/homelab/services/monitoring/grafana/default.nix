@@ -15,7 +15,7 @@ in
     };
     url = lib.mkOption {
       type = lib.types.str;
-      default = "monitor.${homelab.baseDomain}";
+      default = "grafana.${homelab.baseDomain}";
     };
     homepage.name = lib.mkOption {
       type = lib.types.str;
