@@ -29,6 +29,10 @@ in
       type = lib.types.str;
       default = "prowlarr.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 9696;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Arr";
@@ -41,7 +45,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:9696
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

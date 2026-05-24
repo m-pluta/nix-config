@@ -26,6 +26,10 @@ in
       type = lib.types.str;
       default = "chat.${hl.baseDomain}";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8008;
+    };
     registrationSecretFile = lib.mkOption {
       type = lib.types.str;
       example = lib.literalExpression ''
@@ -106,7 +110,7 @@ in
             useACMEHost = hl.baseDomain;
             extraConfig = ''
               @matrix path /_matrix/* /_matrix /_synapse/client/* /_synapse/client
-              reverse_proxy @matrix http://[::1]:8008
+              reverse_proxy @matrix http://[::1]:${toString cfg.port}
 
               @jwt_service path /livekit/jwt/sfu/get /livekit/jwt/healthz
               handle @jwt_service {
@@ -157,7 +161,7 @@ in
         };
         listeners = [
           {
-            port = 8008;
+            port = cfg.port;
             bind_addresses = [ "::1" ];
             type = "http";
             tls = false;

@@ -49,6 +49,10 @@ in
       type = lib.types.str;
       default = "paperless.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 28981;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Services";
@@ -59,6 +63,7 @@ in
     services = {
       ${service} = {
         enable = true;
+        port = cfg.port;
         passwordFile = cfg.passwordFile;
         user = homelab.user;
         mediaDir = cfg.mediaDir;
@@ -80,7 +85,7 @@ in
       caddy.virtualHosts."${cfg.url}" = {
         useACMEHost = homelab.baseDomain;
         extraConfig = ''
-          reverse_proxy http://127.0.0.1:${toString config.services.${service}.port}
+          reverse_proxy http://127.0.0.1:${toString cfg.port}
         '';
       };
     };

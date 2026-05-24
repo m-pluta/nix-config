@@ -54,6 +54,10 @@ in
       type = lib.types.str;
       default = "microbin.png";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8069;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Services";
@@ -75,7 +79,6 @@ in
           (lib.mkIf (!p) no)
         ];
       addr = "127.0.0.1";
-      port = 8069;
     in
     mkIfElse (cfg.role == "client")
       (lib.mkIf cfg.enable {
@@ -104,7 +107,7 @@ in
               MICROBIN_MAX_FILE_SIZE_UNENCRYPTED_MB = 2048;
               MICROBIN_PUBLIC_PATH = "https://${cfg.url}/";
               MICROBIN_BIND = addr;
-              MICROBIN_PORT = toString port;
+              MICROBIN_PORT = toString cfg.port;
               MICROBIN_HIDE_LOGO = true;
               MICROBIN_HIGHLIGHTSYNTAX = true;
               MICROBIN_HIDE_HEADER = true;
@@ -119,8 +122,8 @@ in
               name = service;
               type = "tcp";
               localIP = addr;
-              localPort = port;
-              remotePort = port;
+              localPort = cfg.port;
+              remotePort = cfg.port;
             }
           ];
         };
@@ -139,11 +142,11 @@ in
                   redir * https://login.goose.party/oauth2/start?rd={scheme}://{host}{uri}
                 }
               }
-              reverse_proxy http://${addr}:${toString port}
+              reverse_proxy http://${addr}:${toString cfg.port}
             }
             @noauth path /p/* /static/* file/* /static/highlight/*
             handle @noauth {
-              reverse_proxy http://${addr}:${toString port}
+              reverse_proxy http://${addr}:${toString cfg.port}
             }
           '';
         };

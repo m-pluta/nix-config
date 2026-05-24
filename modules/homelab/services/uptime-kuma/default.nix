@@ -29,6 +29,10 @@ in
       type = lib.types.str;
       default = "uptime-kuma.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 3001;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Services";
@@ -41,7 +45,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:3001
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

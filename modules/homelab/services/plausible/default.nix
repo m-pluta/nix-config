@@ -37,6 +37,10 @@ in
       type = lib.types.str;
       default = "plausible.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8000;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Observability";
@@ -46,6 +50,7 @@ in
     services.plausible = {
       enable = true;
       server = {
+        port = cfg.port;
         baseUrl = "https://${cfg.url}";
         secretKeybaseFile = cfg.secretKeybaseFile;
       };
@@ -53,7 +58,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;
       extraConfig = ''
-        reverse_proxy http://${config.services.plausible.server.listenAddress}:${toString config.services.plausible.server.port}
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

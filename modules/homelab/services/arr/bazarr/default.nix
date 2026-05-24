@@ -29,6 +29,10 @@ in
       type = lib.types.str;
       default = "bazarr.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 6767;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Arr";
@@ -39,11 +43,12 @@ in
       enable = true;
       user = homelab.user;
       group = homelab.group;
+      listenPort = cfg.port;
     };
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString config.services.${service}.listenPort}
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

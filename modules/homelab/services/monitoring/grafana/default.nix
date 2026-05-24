@@ -29,6 +29,10 @@ in
       type = lib.types.str;
       default = "grafana.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 3000;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Observability";
@@ -43,7 +47,7 @@ in
       settings = {
         server = {
           http_addr = "127.0.0.1";
-          http_port = 3000;
+          http_port = cfg.port;
           domain = cfg.url;
         };
       };
@@ -51,7 +55,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://${config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

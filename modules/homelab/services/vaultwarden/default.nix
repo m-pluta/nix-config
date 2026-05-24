@@ -28,6 +28,10 @@ in
       type = lib.types.str;
       default = "bitwarden.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8222;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Services";
@@ -49,7 +53,7 @@ in
           DOMAIN = "https://${cfg.url}";
           SIGNUPS_ALLOWED = false;
           ROCKET_ADDRESS = "127.0.0.1";
-          ROCKET_PORT = 8222;
+          ROCKET_PORT = cfg.port;
           EXTENDED_LOGGING = true;
           LOG_LEVEL = "warn";
         };
@@ -57,9 +61,7 @@ in
       caddy.virtualHosts."${cfg.url}" = {
         useACMEHost = "goose.party";
         extraConfig = ''
-          reverse_proxy http://${config.services.${service}.config.ROCKET_ADDRESS}:${
-            toString config.services.${service}.config.ROCKET_PORT
-          }
+          reverse_proxy http://127.0.0.1:${toString cfg.port}
         '';
       };
     };

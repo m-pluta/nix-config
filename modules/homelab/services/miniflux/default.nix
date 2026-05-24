@@ -33,6 +33,10 @@ in
       type = lib.types.str;
       default = "miniflux-light.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8067;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Services";
@@ -58,7 +62,6 @@ in
           (lib.mkIf (!p) no)
         ];
       addr = "127.0.0.1";
-      port = 8067;
     in
     mkIfElse (cfg.role == "client")
       (lib.mkIf cfg.enable {
@@ -68,7 +71,7 @@ in
           config = {
             BASE_URL = "https://${cfg.url}";
             CREATE_ADMIN = true;
-            LISTEN_ADDR = "${addr}:${toString port}";
+            LISTEN_ADDR = "${addr}:${toString cfg.port}";
             OAUTH2_PROVIDER = "oidc";
             OAUTH2_CLIENT_ID = "miniflux";
             OAUTH2_REDIRECT_URL = "https://${cfg.url}/oauth2/oidc/callback";
@@ -82,8 +85,8 @@ in
             name = service;
             type = "tcp";
             localIP = addr;
-            localPort = port;
-            remotePort = port;
+            localPort = cfg.port;
+            remotePort = cfg.port;
           }
         ];
       })
@@ -91,7 +94,7 @@ in
         services.caddy.virtualHosts."${cfg.url}" = {
           useACMEHost = "goose.party";
           extraConfig = ''
-            reverse_proxy http://${addr}:${toString port}
+            reverse_proxy http://${addr}:${toString cfg.port}
           '';
         };
       };

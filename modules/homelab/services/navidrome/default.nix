@@ -46,6 +46,10 @@ in
       type = lib.types.str;
       default = "navidrome.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 4533;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Media";
@@ -80,6 +84,7 @@ in
           user = hl.user;
           group = hl.group;
           settings = {
+            Port = cfg.port;
             MusicFolder = "${cfg.musicDir}";
             DefaultDownsamplingFormat = "aac";
           };
@@ -89,8 +94,8 @@ in
             name = service;
             type = "tcp";
             localIP = config.services.${service}.settings.Address;
-            localPort = config.services.${service}.settings.Port;
-            remotePort = config.services.${service}.settings.Port;
+            localPort = cfg.port;
+            remotePort = cfg.port;
           }
         ];
       })
@@ -99,9 +104,7 @@ in
         services.caddy.virtualHosts."${cfg.url}" = {
           useACMEHost = "goose.party";
           extraConfig = ''
-            reverse_proxy http://${config.services.${service}.settings.Address}:${
-              toString config.services.${service}.settings.Port
-            }
+            reverse_proxy http://127.0.0.1:${toString cfg.port}
           '';
         };
       };

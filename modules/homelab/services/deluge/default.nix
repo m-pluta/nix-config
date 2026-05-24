@@ -40,6 +40,10 @@ in
       type = lib.types.str;
       default = "deluge.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8112;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Downloads";
@@ -58,7 +62,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:8112
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
 

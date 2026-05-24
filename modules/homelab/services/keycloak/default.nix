@@ -29,6 +29,10 @@ in
       type = lib.types.str;
       default = "keycloak.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8821;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Services";
@@ -110,7 +114,7 @@ in
             spi-theme-static-max-age = "-1";
             spi-theme-cache-themes = false;
             spi-theme-cache-templates = false;
-            http-port = 8821;
+            http-port = cfg.port;
             hostname = cfg.url;
             hostname-strict = false;
             hostname-strict-https = false;
@@ -123,8 +127,8 @@ in
             name = service;
             type = "tcp";
             localIP = "127.0.0.1";
-            localPort = 8821;
-            remotePort = 8821;
+            localPort = cfg.port;
+            remotePort = cfg.port;
           }
           {
             name = "oauth2-proxy";
@@ -141,7 +145,7 @@ in
         services.caddy.virtualHosts."${cfg.url}" = {
           useACMEHost = "goose.party";
           extraConfig = ''
-            reverse_proxy http://127.0.0.1:8821
+            reverse_proxy http://127.0.0.1:${toString cfg.port}
             handle /oauth2/* {
               reverse_proxy http://127.0.0.1:4192 {
                 header_up X-Real-IP {remote_host}

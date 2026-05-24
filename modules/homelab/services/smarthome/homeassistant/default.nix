@@ -28,6 +28,10 @@ in
       type = lib.types.str;
       default = "home-assistant.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8123;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Smart Home";
@@ -38,7 +42,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:8123
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
     virtualisation = {
@@ -55,7 +59,7 @@ in
               "${cfg.configDir}:/config"
             ];
             ports = [
-              "127.0.0.1:8123:8123"
+              "127.0.0.1:${toString cfg.port}:8123"
               "127.0.0.1:8124:80"
             ];
             environment = {

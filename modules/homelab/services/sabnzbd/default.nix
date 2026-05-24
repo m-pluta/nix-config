@@ -29,6 +29,10 @@ in
       type = lib.types.str;
       default = "sabnzbd.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8080;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Downloads";
@@ -43,7 +47,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:8080
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

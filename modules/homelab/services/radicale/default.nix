@@ -22,6 +22,10 @@ in
       type = lib.types.str;
       default = "radicale.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 5232;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Services";
@@ -42,7 +46,7 @@ in
       settings = {
         server = {
           hosts = [
-            "127.0.0.1:5232"
+            "127.0.0.1:${toString cfg.port}"
           ];
         };
         storage = {
@@ -57,7 +61,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://${builtins.head config.services.radicale.settings.server.hosts}
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

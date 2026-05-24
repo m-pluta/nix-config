@@ -62,6 +62,10 @@ in
       type = lib.types.str;
       default = "slskd.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 5030;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Downloads";
@@ -118,7 +122,7 @@ in
       "slskd-web-proxy" = {
         enable = true;
         description = "Socket for Proxy to slskd WebUI";
-        listenStreams = [ (toString config.services.${service}.settings.web.port) ];
+        listenStreams = [ (toString cfg.port) ];
         wantedBy = [ "sockets.target" ];
       };
     };
@@ -160,7 +164,7 @@ in
           User = config.services.slskd.user;
           Group = config.services.slskd.group;
           ExecStart = "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=5min 127.0.0.1:${
-            toString config.services.${service}.settings.web.port
+            toString cfg.port
           }";
           PrivateNetwork = "yes";
         };
@@ -170,7 +174,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString config.services.${service}.settings.web.port}
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

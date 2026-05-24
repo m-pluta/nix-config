@@ -44,6 +44,10 @@ in
       type = lib.types.str;
       default = "nextcloud.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8009;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Services";
@@ -86,7 +90,7 @@ in
         services.nginx.virtualHosts."nix-nextcloud".listen = [
           {
             addr = "127.0.0.1";
-            port = 8009;
+            port = cfg.port;
           }
         ];
         fileSystems."${config.services.nextcloud.home}/data" = {
@@ -133,8 +137,8 @@ in
             name = service;
             type = "tcp";
             localIP = "127.0.0.1";
-            localPort = 8009;
-            remotePort = 8009;
+            localPort = cfg.port;
+            remotePort = cfg.port;
           }
         ];
       })
@@ -143,7 +147,7 @@ in
         services.caddy.virtualHosts."${cfg.url}" = {
           useACMEHost = "goose.party";
           extraConfig = ''
-            reverse_proxy http://127.0.0.1:8009
+            reverse_proxy http://127.0.0.1:${toString cfg.port}
           '';
         };
       };

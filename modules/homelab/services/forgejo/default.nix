@@ -31,6 +31,10 @@ in
       type = lib.types.str;
       default = "forgejo.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 3000;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Services";
@@ -47,7 +51,7 @@ in
         server = {
           DOMAIN = cfg.url;
           ROOT_URL = "https://${cfg.url}/";
-          HTTP_PORT = lib.mkDefault 3000;
+          HTTP_PORT = cfg.port;
           LANDING_PAGE = lib.mkDefault "/explore/repos";
           SSH_PORT = lib.head config.services.openssh.ports;
         };
@@ -70,7 +74,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString config.services.forgejo.settings.server.HTTP_PORT}
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
         request_body {
           max_size 10GB
         }

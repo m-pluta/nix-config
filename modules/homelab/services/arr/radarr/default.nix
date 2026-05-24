@@ -29,6 +29,10 @@ in
       type = lib.types.str;
       default = "radarr.svg";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 7878;
+    };
     homepage.category = lib.mkOption {
       type = lib.types.str;
       default = "Arr";
@@ -43,7 +47,7 @@ in
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:7878
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };
