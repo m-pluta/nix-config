@@ -24,6 +24,7 @@
         packages = [
           pkgs.just
           pkgs.nh
+          pkgs.mosh
           pkgs.nixos-rebuild-ng
         ];
       };
