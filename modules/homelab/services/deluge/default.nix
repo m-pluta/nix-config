@@ -28,6 +28,7 @@ in
     ];
   };
   config = lib.mkIf cfg.enable {
+    homelab.wireguard-netns.enable = true;
     services.deluge = {
       enable = true;
       user = hl.user;
@@ -42,9 +43,8 @@ in
       '';
     };
 
-    # Route torrent traffic through VPN when wireguard-netns is enabled.
-    # Without VPN, deluge runs on the normal network.
-    systemd = lib.mkIf hl.wireguard-netns.enable {
+    # Route torrent traffic through VPN namespace
+    systemd = {
       services.deluged.bindsTo = [ "netns@${ns}.service" ];
       services.deluged.requires = [
         "network-online.target"
