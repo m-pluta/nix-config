@@ -30,6 +30,7 @@
       bazarr.enable = true;
       prowlarr.enable = true;
       jellyseerr.enable = true;
+      wireguard-netns.enable = true;
       grafana.enable = true;
       victoriametrics = {
         enable = true;

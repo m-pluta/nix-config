@@ -14,27 +14,25 @@ in
   options.homelab.services.deluge = serviceLib.mkServiceOptions {
     port = 8112;
     url = "deluge.${hl.baseDomain}";
-    configDir = "/var/lib/deluge";
-    monitoredServices = [
-      "delugeweb"
-      "deluged-proxy"
-      "deluged"
-    ];
     homepage = {
       name = "Deluge";
       description = "Torrent client";
       icon = "deluge.svg";
       category = "Downloads";
     };
+    configDir = "/var/lib/deluge";
+    monitoredServices = [
+      "delugeweb"
+      "deluged-proxy"
+      "deluged"
+    ];
   };
   config = lib.mkIf cfg.enable {
     services.deluge = {
       enable = true;
       user = hl.user;
       group = hl.group;
-      web = {
-        enable = true;
-      };
+      web.enable = true;
     };
 
     services.caddy.virtualHosts."${cfg.url}" = {
@@ -44,17 +42,22 @@ in
       '';
     };
 
+    # Route torrent traffic through VPN when wireguard-netns is enabled.
+    # Without VPN, deluge runs on the normal network.
     systemd = lib.mkIf hl.services.wireguard-netns.enable {
       services.deluged.bindsTo = [ "netns@${ns}.service" ];
       services.deluged.requires = [
         "network-online.target"
         "${ns}.service"
       ];
+      # Run deluged inside the VPN namespace — can only reach internet through WireGuard
       services.deluged.serviceConfig.NetworkNamespacePath = [ "/var/run/netns/${ns}" ];
+      # deluge-web (host network) talks to deluged (VPN namespace) on port 58846
+      # (deluge daemon protocol). This socket + proxy bridge the two networks.
       sockets."deluged-proxy" = {
         enable = true;
         description = "Socket for Proxy to Deluge WebUI";
-        listenStreams = [ "58846" ];
+        listenStreams = [ "58846" ]; # deluge daemon protocol port
         wantedBy = [ "sockets.target" ];
       };
       services."deluged-proxy" = {
@@ -69,13 +72,15 @@ in
           "deluged-proxy.socket"
         ];
         unitConfig = {
-          JoinsNamespaceOf = "deluged.service";
+          JoinsNamespaceOf = "deluged.service"; # enter the same VPN namespace as deluged
         };
         serviceConfig = {
           User = config.services.deluge.user;
           Group = config.services.deluge.group;
+          # Forward host socket connections to deluged inside the namespace.
+          # Proxy exits after 5min idle, socket reactivates it on demand.
           ExecStart = "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=5min 127.0.0.1:58846";
-          PrivateNetwork = "yes";
+          PrivateNetwork = "yes"; # isolate from host network, JoinsNamespaceOf puts it in VPN namespace
         };
       };
     };
