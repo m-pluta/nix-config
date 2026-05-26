@@ -11,6 +11,7 @@
     cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
     timeZone = "Europe/London";
     tailscale.enable = true;
+    wireguard-netns.enable = true;
     monitoring.exporters = {
       smartctl.enable = true;
       zfs.enable = true;
@@ -30,7 +31,6 @@
       bazarr.enable = true;
       prowlarr.enable = true;
       jellyseerr.enable = true;
-      wireguard-netns.enable = true;
       grafana.enable = true;
       victoriametrics = {
         enable = true;

@@ -154,6 +154,5 @@ in
     ./slskd
     ./uptime-kuma
     ./vaultwarden
-    ./wireguard-netns
   ];
 }

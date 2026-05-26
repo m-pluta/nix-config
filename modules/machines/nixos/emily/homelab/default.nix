@@ -126,12 +126,12 @@ in
       };
       audiobookshelf.enable = true;
       deluge.enable = true;
-      wireguard-netns = {
-        enable = true;
-        configFile = config.age.secrets.wireguardCredentials.path;
-        privateIP = "${wgBase}.2";
-        dnsIP = wg.cidr.v4;
-      };
+    };
+    wireguard-netns = {
+      enable = true;
+      configFile = config.age.secrets.wireguardCredentials.path;
+      privateIP = "${wgBase}.2";
+      dnsIP = wg.cidr.v4;
     };
   };
 }

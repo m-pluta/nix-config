@@ -9,7 +9,7 @@ let
   serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.${service};
-  ns = hl.services.wireguard-netns.namespace;
+  ns = hl.wireguard-netns.namespace;
 in
 {
   imports = [ ./beets.nix ];
@@ -100,7 +100,7 @@ in
         };
       };
     };
-    systemd.sockets = lib.mkIf hl.services.wireguard-netns.enable {
+    systemd.sockets = lib.mkIf hl.wireguard-netns.enable {
       "slskd-web-proxy" = {
         enable = true;
         description = "Socket for Proxy to slskd WebUI";
@@ -114,11 +114,11 @@ in
           cfg.musicDir
         ];
         serviceConfig.ReadOnlyPaths = lib.mkForce [ ];
-        serviceConfig.NetworkNamespacePath = lib.attrsets.optionalAttrs hl.services.wireguard-netns.enable [
+        serviceConfig.NetworkNamespacePath = lib.attrsets.optionalAttrs hl.wireguard-netns.enable [
           "/var/run/netns/${ns}"
         ];
       }
-      // lib.attrsets.optionalAttrs hl.services.wireguard-netns.enable {
+      // lib.attrsets.optionalAttrs hl.wireguard-netns.enable {
         bindsTo = [ "netns@${ns}.service" ];
         environment = {
           DOTNET_USE_POLLING_FILE_WATCHER = "true";
@@ -128,7 +128,7 @@ in
           "${ns}.service"
         ];
       };
-      "slskd-web-proxy" = lib.attrsets.optionalAttrs hl.services.wireguard-netns.enable {
+      "slskd-web-proxy" = lib.attrsets.optionalAttrs hl.wireguard-netns.enable {
         enable = true;
         description = "Proxy to slskd WebUI in Network Namespace";
         requires = [

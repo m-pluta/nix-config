@@ -7,10 +7,10 @@
 }:
 let
   homelab = config.homelab;
-  cfg = homelab.services.wireguard-netns;
+  cfg = homelab.wireguard-netns;
 in
 {
-  options.homelab.services.wireguard-netns = {
+  options.homelab.wireguard-netns = {
     enable = lib.mkEnableOption {
       description = "Enable Wireguard client network namespace";
     };

@@ -77,6 +77,7 @@ in
     ./motd
     ./fail2ban-cloudflare
     ./tailscale
+    ./wireguard-netns
   ];
   config = lib.mkIf cfg.enable {
     users = {

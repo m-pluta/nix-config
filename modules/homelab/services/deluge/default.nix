@@ -8,7 +8,7 @@ let
   serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.deluge;
-  ns = hl.services.wireguard-netns.namespace;
+  ns = hl.wireguard-netns.namespace;
 in
 {
   options.homelab.services.deluge = serviceLib.mkServiceOptions {
@@ -44,7 +44,7 @@ in
 
     # Route torrent traffic through VPN when wireguard-netns is enabled.
     # Without VPN, deluge runs on the normal network.
-    systemd = lib.mkIf hl.services.wireguard-netns.enable {
+    systemd = lib.mkIf hl.wireguard-netns.enable {
       services.deluged.bindsTo = [ "netns@${ns}.service" ];
       services.deluged.requires = [
         "network-online.target"
