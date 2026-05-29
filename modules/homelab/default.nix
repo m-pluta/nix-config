@@ -76,6 +76,8 @@ in
     ./networks
     ./motd
     ./fail2ban-cloudflare
+    ./cloudflared
+    ./dnsmasq
     ./tailscale
     ./wireguard-netns
   ];

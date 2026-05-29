@@ -10,7 +10,21 @@
     baseDomain = "mpluta.dev";
     cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
     timeZone = "Europe/London";
-    tailscale.enable = true;
+    tailscale = {
+      enable = true;
+      address = "100.120.225.75";
+    };
+    dnsmasq.enable = true;
+    cloudflared = {
+      enable = true;
+      tunnelId = "7a16d95b-031d-483f-befa-d8fdc081fe5c";
+      credentialsFile = config.age.secrets.cloudflared-tunnel.path;
+      expose."mpluta.dev" = [
+        ""
+        "www"
+        "git"
+      ];
+    };
     monitoring.exporters = {
       smartctl.enable = true;
       zfs.enable = true;

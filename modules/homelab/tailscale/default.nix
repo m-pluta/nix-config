@@ -10,9 +10,10 @@ in
 {
   options.homelab.tailscale = {
     enable = lib.mkEnableOption "Tailscale VPN";
-    authKeyFile = lib.mkOption {
-      type = lib.types.path;
-      default = config.age.secrets.tailscale-auth-key.path;
+    address = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Tailscale IP address of this host";
     };
   };
 
@@ -28,7 +29,7 @@ in
       enable = true;
       openFirewall = true;
       useRoutingFeatures = lib.mkDefault "client";
-      authKeyFile = cfg.authKeyFile;
+      authKeyFile = config.age.secrets.tailscale-auth-key.path;
     };
   };
 }
