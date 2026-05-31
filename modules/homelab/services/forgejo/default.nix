@@ -26,7 +26,7 @@ in
     services.forgejo = {
       package = pkgs.forgejo;
       enable = true;
-      database.type = lib.mkDefault "postgres";
+      database.type = lib.mkDefault "sqlite3";
       lfs.enable = true;
       settings = {
         server = {

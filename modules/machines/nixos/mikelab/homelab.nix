@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   inputs,
   ...
 }:
@@ -61,8 +60,5 @@
   };
 
   age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare-dns-api.age";
-  security.acme.defaults.email = lib.mkForce "mikey@mpluta.dev";
-
-  services.forgejo.database.type = "sqlite3";
 
 }

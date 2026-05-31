@@ -18,11 +18,6 @@ in
       type = lib.types.path;
       description = "Path to the tunnel credentials JSON file (agenix secret)";
     };
-    caddyTarget = lib.mkOption {
-      type = lib.types.str;
-      default = "https://127.0.0.1:443";
-      description = "Origin server URL that cloudflared forwards traffic to";
-    };
     expose = lib.mkOption {
       type = lib.types.attrsOf (lib.types.listOf lib.types.str);
       default = { };
@@ -60,7 +55,7 @@ in
             map (
               e:
               lib.nameValuePair e.host {
-                service = cfg.caddyTarget;
+                service = "https://127.0.0.1:443";
                 originRequest = {
                   noTLSVerify = true;
                   originServerName = e.domain;

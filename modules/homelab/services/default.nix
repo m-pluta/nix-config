@@ -67,7 +67,7 @@ in
     };
     security.acme = {
       acceptTerms = true;
-      defaults.email = "michalpl2003@gmail.com";
+      defaults.email = "mikey@mpluta.dev";
       certs.${config.homelab.baseDomain} = {
         reloadServices = [ "caddy.service" ];
         domain = "${config.homelab.baseDomain}";
