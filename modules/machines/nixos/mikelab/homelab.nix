@@ -43,6 +43,11 @@
       bazarr.enable = true;
       prowlarr.enable = true;
       jellyseerr.enable = true;
+      uptime-kuma = {
+        enable = true;
+        port = 3002;
+      };
+      home-assistant.enable = true;
       grafana.enable = true;
       victoriametrics = {
         enable = true;

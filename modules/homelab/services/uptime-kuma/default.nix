@@ -9,7 +9,7 @@ in
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 3001;
     url = "uptime.${homelab.baseDomain}";
-    configDir = "/var/lib/uptime-kuma";
+    configDir = "/var/lib/${service}";
     homepage = {
       name = "Uptime Kuma";
       description = "Service monitoring tool";
@@ -20,6 +20,7 @@ in
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
+      settings.PORT = toString cfg.port;
     };
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;

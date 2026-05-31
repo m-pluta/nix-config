@@ -173,6 +173,16 @@
             mountpoint = "/var/lib/deluge";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services/uptime-kuma" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/private/uptime-kuma";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "services/hass" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/hass";
+            options."com.sun:auto-snapshot" = "true";
+          };
           "media" = {
             type = "zfs_fs";
             mountpoint = "/tank/media";

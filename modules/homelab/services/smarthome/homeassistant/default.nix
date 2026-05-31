@@ -1,14 +1,15 @@
 { config, lib, ... }:
 let
+  service = "home-assistant";
   serviceLib = import ../../lib.nix { inherit lib; };
   homelab = config.homelab;
-  cfg = config.homelab.services.homeassistant;
+  cfg = config.homelab.services.${service};
 in
 {
-  options.homelab.services.homeassistant = serviceLib.mkServiceOptions {
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8123;
-    url = "home.${homelab.baseDomain}";
-    configDir = "/persist/opt/services/homeassistant";
+    url = "hass.${homelab.baseDomain}";
+    configDir = "/var/lib/hass";
     homepage = {
       name = "Home Assistant";
       description = "Home automation platform";
@@ -17,38 +18,34 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    systemd.tmpfiles.rules = [ "d ${cfg.configDir} 0775 ${homelab.user} ${homelab.group} - -" ];
+    services.home-assistant = {
+      enable = true;
+      configDir = cfg.configDir;
+      extraComponents = [
+        # "analytics"
+        # "google_translate"
+        # "met"
+        # "radio_browser"
+        # "shopping_list"
+        "isal"
+      ];
+      config = {
+        default_config = { };
+        http = {
+          server_port = cfg.port;
+          use_x_forwarded_for = true;
+          trusted_proxies = [
+            "127.0.0.1"
+            "::1"
+          ];
+        };
+      };
+    };
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
-    };
-    virtualisation = {
-      podman.enable = true;
-      oci-containers = {
-        containers = {
-          homeassistant = {
-            image = "homeassistant/home-assistant:stable";
-            autoStart = true;
-            extraOptions = [
-              "--pull=newer"
-            ];
-            volumes = [
-              "${cfg.configDir}:/config"
-            ];
-            ports = [
-              "127.0.0.1:${toString cfg.port}:8123"
-              "127.0.0.1:8124:80"
-            ];
-            environment = {
-              TZ = homelab.timeZone;
-              PUID = toString config.users.users.${homelab.user}.uid;
-              PGID = toString config.users.groups.${homelab.group}.gid;
-            };
-          };
-        };
-      };
     };
   };
 }
