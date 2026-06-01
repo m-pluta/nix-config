@@ -1,7 +1,7 @@
 { config, lib, ... }:
 let
   service = "home-assistant";
-  serviceLib = import ../../lib.nix { inherit lib; };
+  serviceLib = import ../lib.nix { inherit lib; };
   homelab = config.homelab;
   cfg = config.homelab.services.${service};
 in
