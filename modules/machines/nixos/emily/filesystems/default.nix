@@ -94,11 +94,6 @@ in
       wall = {
         enable = true;
       };
-      mail = {
-        enable = true;
-        sender = config.email.fromAddress;
-        recipient = config.email.toAddress;
-      };
     };
   };
 

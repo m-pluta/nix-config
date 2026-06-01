@@ -127,9 +127,4 @@ in
     gcc
     intel-gpu-tools
   ];
-
-  tg-notify = {
-    enable = true;
-    credentialsFile = config.age.secrets.tgNotifyCredentials.path;
-  };
 }

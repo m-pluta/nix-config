@@ -223,12 +223,6 @@ in
     intel-gpu-tools
     powertop
   ];
-
-  tg-notify = {
-    enable = true;
-    credentialsFile = config.age.secrets.tgNotifyCredentials.path;
-  };
-
   services.adiosBot = {
     enable = true;
     botTokenFile = config.age.secrets.adiosBotToken.path;

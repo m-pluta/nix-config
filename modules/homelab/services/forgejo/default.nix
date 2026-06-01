@@ -44,12 +44,6 @@ in
           ENABLE_NOTIFY_MAIL = true;
           REGISTER_EMAIL_CONFIRM = true;
         };
-        mailer = {
-          ENABLED = lib.mkDefault false;
-          FROM = config.email.fromAddress;
-          PROTOCOL = "sendmail";
-          SENDMAIL_PATH = "/run/wrappers/bin/sendmail";
-        };
       };
     };
     services.caddy.virtualHosts."${cfg.url}" = {

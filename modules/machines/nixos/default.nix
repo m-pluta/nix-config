@@ -21,9 +21,7 @@ let
 
   commonModules = [
     ../../homelab
-    ../../misc/email
     ../../misc/wifi
-    ../../misc/tg-notify
     ../../misc/mover
     self.inputs.agenix.nixosModules.default
     self.inputs.disko.nixosModules.disko
