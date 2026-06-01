@@ -146,7 +146,7 @@ in
     ./monitoring/victoriametrics
     ./navidrome
     ./nextcloud
-    ./homeassistant
+    ./home-assistant
     ./paperless-ngx
     ./radicale
     ./sabnzbd
