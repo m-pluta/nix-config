@@ -142,15 +142,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1773422739,
-        "narHash": "sha256-nfl7tj3TN8MZI5JpidUjlqax+2ly2BHay3tpM/cc9ik=",
-        "owner": "numtide",
+        "lastModified": 1780355093,
+        "narHash": "sha256-9h3zMdQD535A1UbEYbD6zsMpShbCtyezQ8KTChu5UnY=",
+        "owner": "m-pluta",
         "repo": "disko-zfs",
-        "rev": "adaef72fba88b4f313fcb3f7cf02e24b2a09b648",
+        "rev": "2ef39b2e0f4859a288f719cd7aac19a3d8b0b1b6",
         "type": "github"
       },
       "original": {
-        "owner": "numtide",
+        "owner": "m-pluta",
         "repo": "disko-zfs",
         "type": "github"
       }

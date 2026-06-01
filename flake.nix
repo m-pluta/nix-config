@@ -49,7 +49,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko-zfs = {
-      url = "github:numtide/disko-zfs";
+      url = "github:m-pluta/disko-zfs";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.disko.follows = "disko";
       inputs.flake-parts.follows = "flake-parts";
