@@ -98,13 +98,6 @@ in
             };
           }
           {
-            Media = {
-              header = true;
-              style = "row";
-              columns = 4;
-            };
-          }
-          {
             Arr = {
               header = true;
               style = "column";
@@ -112,6 +105,12 @@ in
           }
           {
             Downloads = {
+              header = true;
+              style = "column";
+            };
+          }
+          {
+            Media = {
               header = true;
               style = "column";
             };
@@ -141,7 +140,6 @@ in
             "Downloads"
             "Services"
             "Observability"
-            "Smart Home"
           ];
           hl = config.homelab.services;
           homepageServices =

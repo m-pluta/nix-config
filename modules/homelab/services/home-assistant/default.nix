@@ -14,7 +14,7 @@ in
       name = "Home Assistant";
       description = "Home automation platform";
       icon = "home-assistant.svg";
-      category = "Smart Home";
+      category = "Services";
     };
   };
   config = lib.mkIf cfg.enable {
