@@ -57,6 +57,7 @@
         enable = true;
         musicDir = "/tank/music";
       };
+      microbin.enable = true;
       grafana.enable = true;
       victoriametrics = {
         enable = true;
