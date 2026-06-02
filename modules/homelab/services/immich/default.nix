@@ -4,12 +4,13 @@
   ...
 }:
 let
+  service = "immich";
   serviceLib = import ../lib.nix { inherit lib; };
-  cfg = config.homelab.services.immich;
+  cfg = config.homelab.services.${service};
   homelab = config.homelab;
 in
 {
-  options.homelab.services.immich =
+  options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 2283;
       url = "photos.${homelab.baseDomain}";
@@ -26,18 +27,14 @@ in
     }
     // {
       user = lib.mkOption {
-        default = config.homelab.user;
+        default = homelab.user;
         type = lib.types.str;
-        description = ''
-          User to run the Immich container as
-        '';
+        description = "User to run Immich as";
       };
       group = lib.mkOption {
-        default = config.homelab.group;
+        default = homelab.group;
         type = lib.types.str;
-        description = ''
-          Group to run the Immich container as
-        '';
+        description = "Group to run Immich as";
       };
       mediaDir = lib.mkOption {
         type = lib.types.path;
@@ -45,14 +42,15 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
-    systemd.tmpfiles.rules = [ "d ${cfg.mediaDir} 0775 immich ${homelab.group} - -" ];
+    systemd.tmpfiles.rules = [ "d ${cfg.mediaDir} 0775 immich ${cfg.group} - -" ];
     users.users.immich.extraGroups = [
       "video"
       "render"
     ];
     services.immich = {
-      group = homelab.group;
+      group = cfg.group;
       enable = true;
+      host = "127.0.0.1";
       port = cfg.port;
       mediaLocation = "${cfg.mediaDir}";
     };

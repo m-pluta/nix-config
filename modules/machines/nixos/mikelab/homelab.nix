@@ -48,6 +48,10 @@
         port = 3002;
       };
       home-assistant.enable = true;
+      immich = {
+        enable = true;
+        mediaDir = "/tank/photos";
+      };
       grafana.enable = true;
       victoriametrics = {
         enable = true;

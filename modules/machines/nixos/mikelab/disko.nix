@@ -183,6 +183,19 @@
             mountpoint = "/var/lib/hass";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services/immich" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/immich";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "photos" = {
+            type = "zfs_fs";
+            mountpoint = "/tank/photos";
+            options = {
+              "com.sun:auto-snapshot" = "true";
+              recordsize = "1M";
+            };
+          };
           "media" = {
             type = "zfs_fs";
             mountpoint = "/tank/media";
