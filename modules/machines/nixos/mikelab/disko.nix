@@ -188,6 +188,11 @@
             mountpoint = "/var/lib/immich";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services/vaultwarden" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/vaultwarden";
+            options."com.sun:auto-snapshot" = "true";
+          };
           "photos" = {
             type = "zfs_fs";
             mountpoint = "/tank/photos";

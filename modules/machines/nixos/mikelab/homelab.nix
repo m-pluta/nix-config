@@ -52,6 +52,7 @@
         enable = true;
         mediaDir = "/tank/photos";
       };
+      vaultwarden.enable = true;
       grafana.enable = true;
       victoriametrics = {
         enable = true;
