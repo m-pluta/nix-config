@@ -13,7 +13,7 @@ in
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 4533;
-      url = "music.goose.party";
+      url = "music.${hl.baseDomain}";
       configDir = "/var/lib/${service}";
       homepage = {
         name = "Navidrome";
@@ -28,7 +28,8 @@ in
         default = "${hl.mounts.fast}/Media/Music/Library";
       };
       environmentFile = lib.mkOption {
-        type = lib.types.path;
+        type = lib.types.nullOr lib.types.path;
+        default = null;
         example = lib.literalExpression ''
           pkgs.writeText "navidrome-env" '''
             ND_LASTFM_APIKEY=abcabc
@@ -36,58 +37,29 @@ in
           '''
         '';
       };
-      role = lib.mkOption {
-        type = lib.types.enum [
-          "client"
-          "server"
-        ];
-        default = "client";
+    };
+  config = lib.mkIf cfg.enable {
+    systemd.tmpfiles.rules = [
+      "d ${cfg.musicDir} 0775 ${hl.user} ${hl.group} - -"
+    ];
+    systemd.services.navidrome.serviceConfig.EnvironmentFile = lib.mkIf (
+      cfg.environmentFile != null
+    ) cfg.environmentFile;
+    services.${service} = {
+      enable = true;
+      user = hl.user;
+      group = hl.group;
+      settings = {
+        Port = cfg.port;
+        MusicFolder = "${cfg.musicDir}";
+        DefaultDownsamplingFormat = "aac";
       };
     };
-  config =
-    let
-      mkIfElse =
-        p: yes: no:
-        lib.mkMerge [
-          (lib.mkIf p yes)
-          (lib.mkIf (!p) no)
-        ];
-    in
-    mkIfElse (cfg.role == "client")
-      (lib.mkIf cfg.enable {
-        systemd.tmpfiles.rules = [
-          "d ${cfg.musicDir} 0775 ${hl.user} ${hl.group} - -"
-        ];
-        systemd.services.navidrome.serviceConfig.EnvironmentFile = lib.mkIf (
-          cfg.environmentFile != null
-        ) cfg.environmentFile;
-        services.${service} = {
-          enable = true;
-          user = hl.user;
-          group = hl.group;
-          settings = {
-            Port = cfg.port;
-            MusicFolder = "${cfg.musicDir}";
-            DefaultDownsamplingFormat = "aac";
-          };
-        };
-        services.frp.settings.proxies = [
-          {
-            name = service;
-            type = "tcp";
-            localIP = config.services.${service}.settings.Address;
-            localPort = cfg.port;
-            remotePort = cfg.port;
-          }
-        ];
-      })
-      # server
-      {
-        services.caddy.virtualHosts."${cfg.url}" = {
-          useACMEHost = "goose.party";
-          extraConfig = ''
-            reverse_proxy http://127.0.0.1:${toString cfg.port}
-          '';
-        };
-      };
+    services.caddy.virtualHosts."${cfg.url}" = {
+      useACMEHost = hl.baseDomain;
+      extraConfig = ''
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
+      '';
+    };
+  };
 }

@@ -53,6 +53,10 @@
         mediaDir = "/tank/photos";
       };
       vaultwarden.enable = true;
+      navidrome = {
+        enable = true;
+        musicDir = "/tank/music";
+      };
       grafana.enable = true;
       victoriametrics = {
         enable = true;

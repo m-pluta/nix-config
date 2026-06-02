@@ -193,9 +193,22 @@
             mountpoint = "/var/lib/vaultwarden";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services/navidrome" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/navidrome";
+            options."com.sun:auto-snapshot" = "true";
+          };
           "photos" = {
             type = "zfs_fs";
             mountpoint = "/tank/photos";
+            options = {
+              "com.sun:auto-snapshot" = "true";
+              recordsize = "1M";
+            };
+          };
+          "music" = {
+            type = "zfs_fs";
+            mountpoint = "/tank/music";
             options = {
               "com.sun:auto-snapshot" = "true";
               recordsize = "1M";
