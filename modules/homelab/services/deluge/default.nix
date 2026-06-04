@@ -5,13 +5,14 @@
   ...
 }:
 let
+  service = "deluge";
   serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
-  cfg = hl.services.deluge;
+  cfg = hl.services.${service};
   ns = hl.wireguard-netns.namespace;
 in
 {
-  options.homelab.services.deluge = serviceLib.mkServiceOptions {
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8112;
     url = "deluge.${hl.baseDomain}";
     homepage = {
@@ -33,7 +34,7 @@ in
       enable = true;
       web.enable = true;
     };
-    users.users.deluge.extraGroups = [ hl.mediaGroup ];
+    users.users.${service}.extraGroups = [ hl.mediaGroup ];
 
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;
