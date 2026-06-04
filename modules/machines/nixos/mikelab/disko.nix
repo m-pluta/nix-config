@@ -105,11 +105,6 @@
           mountpoint = "none";
         };
         datasets = {
-          "data" = {
-            type = "zfs_fs";
-            mountpoint = "/tank";
-            options."com.sun:auto-snapshot" = "true";
-          };
           "services" = {
             type = "zfs_fs";
             options = {
@@ -211,25 +206,9 @@
               recordsize = "1M";
             };
           };
-          "music" = {
-            type = "zfs_fs";
-            mountpoint = "/tank/music";
-            options = {
-              "com.sun:auto-snapshot" = "true";
-              recordsize = "1M";
-            };
-          };
           "media" = {
             type = "zfs_fs";
             mountpoint = "/tank/media";
-            options = {
-              "com.sun:auto-snapshot" = "false";
-              recordsize = "1M";
-            };
-          };
-          "downloads" = {
-            type = "zfs_fs";
-            mountpoint = "/tank/downloads";
             options = {
               "com.sun:auto-snapshot" = "false";
               recordsize = "1M";
