@@ -23,7 +23,7 @@ in
       };
     }
     // {
-      musicDir = lib.mkOption {
+      mediaDir = lib.mkOption {
         type = lib.types.str;
         default = "${hl.mounts.fast}/Media/Music/Library";
       };
@@ -46,7 +46,7 @@ in
       enable = true;
       settings = {
         Port = cfg.port;
-        MusicFolder = "${cfg.musicDir}";
+        MusicFolder = "${cfg.mediaDir}";
         DefaultDownsamplingFormat = "aac";
       };
     };

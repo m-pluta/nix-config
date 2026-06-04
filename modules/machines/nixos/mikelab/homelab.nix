@@ -55,7 +55,7 @@
       vaultwarden.enable = true;
       navidrome = {
         enable = true;
-        musicDir = "/tank/music";
+        mediaDir = "/tank/media/library/music";
       };
       microbin.enable = true;
       grafana.enable = true;
