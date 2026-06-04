@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   service = "sabnzbd";
   serviceLib = import ../lib.nix { inherit lib; };
@@ -20,6 +25,12 @@ in
   config = lib.mkIf cfg.enable {
     services.${service}.enable = true;
     users.users.${service}.extraGroups = [ homelab.mediaGroup ];
+    # sabnzbd blocks reverse-proxied requests unless hostname is whitelisted
+    systemd.services.${service}.preStart = lib.mkAfter ''
+      if [ -f /var/lib/${service}/sabnzbd.ini ]; then
+        ${lib.getExe pkgs.gnused} -i 's/^host_whitelist.*/host_whitelist = ${cfg.url}/' /var/lib/${service}/sabnzbd.ini
+      fi
+    '';
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
