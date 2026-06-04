@@ -23,6 +23,7 @@ in
       listenPort = cfg.port;
     };
     users.users.${service}.extraGroups = [ homelab.mediaGroup ];
+    systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''

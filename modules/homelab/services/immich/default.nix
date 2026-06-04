@@ -43,6 +43,7 @@ in
       port = cfg.port;
       mediaLocation = "${cfg.mediaDir}";
     };
+    systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''

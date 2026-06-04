@@ -20,6 +20,7 @@ in
   config = lib.mkIf cfg.enable {
     services.${service}.enable = true;
     users.users.${service}.extraGroups = [ homelab.mediaGroup ];
+    systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''

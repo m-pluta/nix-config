@@ -35,6 +35,7 @@ in
       web.enable = true;
     };
     users.users.${service}.extraGroups = [ hl.mediaGroup ];
+    systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
 
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;

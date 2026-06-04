@@ -22,6 +22,7 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
+    systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     services.openssh.settings.AcceptEnv = "GIT_PROTOCOL";
     services.forgejo = {
       package = pkgs.forgejo;
