@@ -33,19 +33,10 @@ in
         Path to the merged tier mount
       '';
     };
-    user = lib.mkOption {
-      default = "share";
+    mediaGroup = lib.mkOption {
+      default = "media";
       type = lib.types.str;
-      description = ''
-        User to run the homelab services as
-      '';
-    };
-    group = lib.mkOption {
-      default = "share";
-      type = lib.types.str;
-      description = ''
-        Group to run the homelab services as
-      '';
+      description = "Shared group for media access across services";
     };
     timeZone = lib.mkOption {
       default = "Europe/Berlin";
@@ -82,15 +73,8 @@ in
     ./wireguard-netns
   ];
   config = lib.mkIf cfg.enable {
-    users = {
-      groups.${cfg.group} = {
-        gid = 993;
-      };
-      users.${cfg.user} = {
-        uid = 994;
-        isSystemUser = true;
-        group = cfg.group;
-      };
+    users.groups.${cfg.mediaGroup} = {
+      gid = 15000;
     };
   };
 }

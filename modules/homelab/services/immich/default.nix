@@ -26,29 +26,18 @@ in
       };
     }
     // {
-      user = lib.mkOption {
-        default = homelab.user;
-        type = lib.types.str;
-        description = "User to run Immich as";
-      };
-      group = lib.mkOption {
-        default = homelab.group;
-        type = lib.types.str;
-        description = "Group to run Immich as";
-      };
       mediaDir = lib.mkOption {
         type = lib.types.path;
         default = "${config.homelab.mounts.fast}/Photos/Immich";
       };
     };
   config = lib.mkIf cfg.enable {
-    systemd.tmpfiles.rules = [ "d ${cfg.mediaDir} 0775 immich ${cfg.group} - -" ];
     users.users.immich.extraGroups = [
+      homelab.mediaGroup
       "video"
       "render"
     ];
     services.immich = {
-      group = cfg.group;
       enable = true;
       host = "127.0.0.1";
       port = cfg.port;

@@ -42,11 +42,10 @@ in
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
-      user = hl.user;
-      group = hl.group;
       musicDir = cfg.musicDir;
       listenHost = "127.0.0.1";
     };
+    users.users.${service}.extraGroups = [ hl.mediaGroup ];
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;
       extraConfig = ''

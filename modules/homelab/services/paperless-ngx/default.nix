@@ -38,12 +38,12 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
+    users.users.${service}.extraGroups = [ homelab.mediaGroup ];
     services = {
       ${service} = {
         enable = true;
         port = cfg.port;
         passwordFile = cfg.passwordFile;
-        user = homelab.user;
         mediaDir = cfg.mediaDir;
         consumptionDir = cfg.consumptionDir;
         consumptionDirIsPublic = true;

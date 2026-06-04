@@ -84,12 +84,15 @@ in
     in
     lib.mkIf (cfg.enable && enabledServices != { }) {
       systemd.tmpfiles.rules = lib.lists.optionals cfg.local.enable [
-        "d ${cfg.local.targetDir} 0770 ${hl.user} ${hl.group} - -"
+        "d ${cfg.local.targetDir} 0770 restic ${hl.mediaGroup} - -"
       ];
-      users.users.restic.createHome = lib.mkForce false;
+      users.users.restic = {
+        createHome = lib.mkForce false;
+        extraGroups = [ hl.mediaGroup ];
+      };
       systemd.services.restic-rest-server.serviceConfig = lib.attrsets.optionalAttrs cfg.local.enable {
-        User = lib.mkForce hl.user;
-        Group = lib.mkForce hl.group;
+        User = lib.mkForce "restic";
+        Group = lib.mkForce hl.mediaGroup;
       };
       services.postgresqlBackup = {
         enable = config.services.postgresql.enable;

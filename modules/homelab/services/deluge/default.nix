@@ -31,10 +31,9 @@ in
     homelab.wireguard-netns.enable = true;
     services.deluge = {
       enable = true;
-      user = hl.user;
-      group = hl.group;
       web.enable = true;
     };
+    users.users.deluge.extraGroups = [ hl.mediaGroup ];
 
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;

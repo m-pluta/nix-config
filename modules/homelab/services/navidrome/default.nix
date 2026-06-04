@@ -39,22 +39,18 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
-    systemd.tmpfiles.rules = [
-      "d ${cfg.musicDir} 0775 ${hl.user} ${hl.group} - -"
-    ];
     systemd.services.navidrome.serviceConfig.EnvironmentFile = lib.mkIf (
       cfg.environmentFile != null
     ) cfg.environmentFile;
     services.${service} = {
       enable = true;
-      user = hl.user;
-      group = hl.group;
       settings = {
         Port = cfg.port;
         MusicFolder = "${cfg.musicDir}";
         DefaultDownsamplingFormat = "aac";
       };
     };
+    users.users.${service}.extraGroups = [ hl.mediaGroup ];
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;
       extraConfig = ''

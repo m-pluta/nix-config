@@ -20,10 +20,9 @@ in
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
-      user = homelab.user;
-      group = homelab.group;
       listenPort = cfg.port;
     };
+    users.users.${service}.extraGroups = [ homelab.mediaGroup ];
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''

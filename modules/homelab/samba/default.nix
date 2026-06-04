@@ -20,6 +20,11 @@ in
     enable = lib.mkEnableOption {
       description = "Samba shares for the homelab";
     };
+    user = lib.mkOption {
+      type = lib.types.str;
+      default = "samba";
+      description = "User for SMB authentication";
+    };
     example = lib.mkOption {
       default = lib.attrsets.mapAttrs (
         _name: value: _name:
@@ -62,7 +67,7 @@ in
             "guest ok" = "no";
             "create mask" = "0644";
             "directory mask" = "0755";
-            "valid users" = hl.user;
+            "valid users" = cfg.user;
             "fruit:aapl" = "yes";
             "vfs objects" = "catia fruit streams_xattr";
           }
@@ -85,13 +90,19 @@ in
 
     environment.systemPackages = [ config.services.samba.package ];
 
-    systemd.tmpfiles.rules = map (x: "d ${x.path} 0775 ${hl.user} ${hl.group} - -") (
+    users.users.${cfg.user} = {
+      isSystemUser = true;
+      group = hl.mediaGroup;
+      extraGroups = [ hl.mediaGroup ];
+    };
+
+    systemd.tmpfiles.rules = map (x: "d ${x.path} 2775 root ${hl.mediaGroup} - -") (
       lib.attrValues cfg.shares
     );
 
     system.activationScripts.samba_user_create = ''
       smb_password=$(cat "${config.age.secrets.sambaPassword.path}")
-      echo -e "$smb_password\n$smb_password\n" | ${lib.getExe' pkgs.samba "smbpasswd"} -a -s ${hl.user}
+      echo -e "$smb_password\n$smb_password\n" | ${lib.getExe' pkgs.samba "smbpasswd"} -a -s ${cfg.user}
     '';
 
     networking.firewall = {

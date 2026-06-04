@@ -41,11 +41,8 @@ in
         );
       })
     ];
-    services.${service} = {
-      enable = true;
-      user = homelab.user;
-      group = homelab.group;
-    };
+    services.${service}.enable = true;
+    users.users.${service}.extraGroups = [ homelab.mediaGroup ];
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''

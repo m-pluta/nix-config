@@ -54,17 +54,9 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
-    systemd.tmpfiles.rules = map (x: "d ${x} 0775 ${hl.user} ${hl.group} - -") [
-      cfg.musicDir
-      "${cfg.musicDir}/.beets"
-      cfg.downloadDir
-      cfg.downloadDir
-      cfg.incompleteDownloadDir
-    ];
+    users.users.${service}.extraGroups = [ hl.mediaGroup ];
     services.${service} = {
       enable = true;
-      user = hl.user;
-      group = hl.group;
       environmentFile = cfg.environmentFile;
       domain = null;
       settings = {
