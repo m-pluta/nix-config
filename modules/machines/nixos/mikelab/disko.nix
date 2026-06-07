@@ -198,6 +198,11 @@
             mountpoint = "/var/lib/private/microbin";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services/paperless" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/paperless";
+            options."com.sun:auto-snapshot" = "true";
+          };
           "photos" = {
             type = "zfs_fs";
             mountpoint = "/tank/photos";

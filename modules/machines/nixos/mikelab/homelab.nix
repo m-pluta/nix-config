@@ -54,6 +54,7 @@
         mediaDir = "/tank/photos";
       };
       vaultwarden.enable = true;
+      paperless.enable = true;
       navidrome = {
         enable = true;
         mediaDir = "/tank/media/library/music";

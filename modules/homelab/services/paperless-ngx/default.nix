@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, inputs, pkgs, ... }:
 let
   service = "paperless";
   serviceLib = import ../lib.nix { inherit lib; };
@@ -23,49 +23,39 @@ in
         icon = "paperless.svg";
         category = "Services";
       };
-    }
-    // {
-      mediaDir = lib.mkOption {
-        type = lib.types.str;
-        default = "${homelab.mounts.fast}/Documents/Paperless/Documents";
-      };
-      consumptionDir = lib.mkOption {
-        type = lib.types.str;
-        default = "${homelab.mounts.fast}/Documents/Paperless/Import";
-      };
-      passwordFile = lib.mkOption {
-        type = lib.types.path;
-      };
     };
   config = lib.mkIf cfg.enable {
-    users.users.${service}.extraGroups = [ "media" ];
-    services = {
-      ${service} = {
-        enable = true;
-        port = cfg.port;
-        passwordFile = cfg.passwordFile;
-        mediaDir = cfg.mediaDir;
-        consumptionDir = cfg.consumptionDir;
-        consumptionDirIsPublic = true;
-        settings = {
-          PAPERLESS_URL = "https://${cfg.url}";
-          PAPERLESS_CONSUMER_IGNORE_PATTERN = [
-            ".DS_STORE/*"
-            "desktop.ini"
+    age.secrets.paperless-password.file = "${inputs.secrets}/services/paperless/password.age";
+    # TODO: remove once upstream nixpkgs fixes paperless-ngx consumer test failures
+    nixpkgs.overlays = [
+      (_final: prev: {
+        paperless-ngx = prev.paperless-ngx.overrideAttrs (old: {
+          disabledTestPaths = (old.disabledTestPaths or [ ]) ++ [
+            "src/documents/tests/test_management_consumer.py"
           ];
-          PAPERLESS_OCR_LANGUAGE = "deu+eng";
-          PAPERLESS_OCR_USER_ARGS = {
-            optimize = 1;
-            pdfa_image_compression = "lossless";
-          };
+        });
+      })
+    ];
+    services.${service} = {
+      enable = true;
+      port = cfg.port;
+      passwordFile = config.age.secrets.paperless-password.path;
+      consumptionDirIsPublic = true;
+      settings = {
+        PAPERLESS_URL = "https://${cfg.url}";
+        PAPERLESS_OCR_LANGUAGE = "eng";
+        PAPERLESS_OCR_USER_ARGS = {
+          optimize = 1;
+          pdfa_image_compression = "lossless";
         };
       };
-      caddy.virtualHosts."${cfg.url}" = {
-        useACMEHost = homelab.baseDomain;
-        extraConfig = ''
-          reverse_proxy http://127.0.0.1:${toString cfg.port}
-        '';
-      };
+    };
+    systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
+    services.caddy.virtualHosts."${cfg.url}" = {
+      useACMEHost = homelab.baseDomain;
+      extraConfig = ''
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
+      '';
     };
   };
 }
