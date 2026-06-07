@@ -50,7 +50,7 @@ in
         DefaultDownsamplingFormat = "aac";
       };
     };
-    users.users.${service}.extraGroups = [ hl.mediaGroup ];
+    users.users.${service}.extraGroups = [ "media" ];
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;

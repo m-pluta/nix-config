@@ -64,7 +64,7 @@ in
       # client
       (lib.mkIf cfg.enable {
         systemd.tmpfiles.rules = lib.lists.forEach [ "" ] (
-          x: "d ${cfg.dataDir}/${x} 0775 nextcloud ${hl.mediaGroup} - -"
+          x: "d ${cfg.dataDir}/${x} 0775 nextcloud media - -"
         );
         services.nginx.virtualHosts."nix-nextcloud".listen = [
           {

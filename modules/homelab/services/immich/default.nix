@@ -33,7 +33,7 @@ in
     };
   config = lib.mkIf cfg.enable {
     users.users.immich.extraGroups = [
-      homelab.mediaGroup
+      "media"
       "video"
       "render"
     ];

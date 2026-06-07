@@ -45,7 +45,7 @@ in
       musicDir = cfg.musicDir;
       listenHost = "127.0.0.1";
     };
-    users.users.${service}.extraGroups = [ hl.mediaGroup ];
+    users.users.${service}.extraGroups = [ "media" ];
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = hl.baseDomain;
       extraConfig = ''

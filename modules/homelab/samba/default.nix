@@ -92,13 +92,11 @@ in
 
     users.users.${cfg.user} = {
       isSystemUser = true;
-      group = hl.mediaGroup;
-      extraGroups = [ hl.mediaGroup ];
+      group = "media";
+      extraGroups = [ "media" ];
     };
 
-    systemd.tmpfiles.rules = map (x: "d ${x.path} 2775 root ${hl.mediaGroup} - -") (
-      lib.attrValues cfg.shares
-    );
+    systemd.tmpfiles.rules = map (x: "d ${x.path} 2775 root media - -") (lib.attrValues cfg.shares);
 
     system.activationScripts.samba_user_create = ''
       smb_password=$(cat "${config.age.secrets.sambaPassword.path}")

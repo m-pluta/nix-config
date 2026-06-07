@@ -54,7 +54,7 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
-    users.users.${service}.extraGroups = [ hl.mediaGroup ];
+    users.users.${service}.extraGroups = [ "media" ];
     services.${service} = {
       enable = true;
       environmentFile = cfg.environmentFile;

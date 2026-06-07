@@ -33,10 +33,13 @@ in
         Path to the merged tier mount
       '';
     };
-    mediaGroup = lib.mkOption {
-      default = "media";
-      type = lib.types.str;
-      description = "Shared group for media access across services";
+    groups = lib.mkOption {
+      type = lib.types.attrsOf lib.types.int;
+      default = { };
+      description = "Shared groups for cross-service access. Keys are group names, values are GIDs.";
+      example = {
+        media = 15000;
+      };
     };
     timeZone = lib.mkOption {
       default = "Europe/Berlin";
@@ -73,8 +76,6 @@ in
     ./wireguard-netns
   ];
   config = lib.mkIf cfg.enable {
-    users.groups.${cfg.mediaGroup} = {
-      gid = 15000;
-    };
+    users.groups = lib.mapAttrs (_name: gid: { inherit gid; }) cfg.groups;
   };
 }
