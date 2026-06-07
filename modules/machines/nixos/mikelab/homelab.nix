@@ -75,6 +75,32 @@
     };
   };
 
+  systemd.tmpfiles.rules =
+    let
+      mediaDir = "d /tank/media";
+      perms = "2775 root media - -";
+    in
+    [
+      "${mediaDir} ${perms}"
+      "${mediaDir}/torrents ${perms}"
+      "${mediaDir}/torrents/movies ${perms}"
+      "${mediaDir}/torrents/tv ${perms}"
+      "${mediaDir}/torrents/music ${perms}"
+      "${mediaDir}/torrents/books ${perms}"
+      "${mediaDir}/usenet ${perms}"
+      "${mediaDir}/usenet/incomplete ${perms}"
+      "${mediaDir}/usenet/complete ${perms}"
+      "${mediaDir}/usenet/complete/movies ${perms}"
+      "${mediaDir}/usenet/complete/tv ${perms}"
+      "${mediaDir}/usenet/complete/music ${perms}"
+      "${mediaDir}/usenet/complete/books ${perms}"
+      "${mediaDir}/library ${perms}"
+      "${mediaDir}/library/movies ${perms}"
+      "${mediaDir}/library/tv ${perms}"
+      "${mediaDir}/library/music ${perms}"
+      "${mediaDir}/library/books ${perms}"
+    ];
+
   age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare-dns-api.age";
 
 }
