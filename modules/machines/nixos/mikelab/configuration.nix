@@ -12,7 +12,7 @@
   networking.hostName = "mikelab";
   networking.hostId = "deadbeef";
 
-  wifi.ssids = [ "ItHurtsWhenIP" ];
+  wifi.ssids = [ "VM8776666" "loopback" "ItHurtsWhenIP" ];
 
   system.stateVersion = "25.11";
 

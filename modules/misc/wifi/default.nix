@@ -8,7 +8,9 @@ let
   cfg = config.wifi;
 
   knownNetworks = {
-    "ItHurtsWhenIP" = "ext:PSK_HOME";
+    "ItHurtsWhenIP" = "ext:PSK_DURHAM";
+    "loopback" = "ext:PSK_HOTSPOT";
+    "VM8776666" = "ext:PSK_MUM";
   };
 
   enabled = cfg.ssids != [ ];
