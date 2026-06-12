@@ -15,3 +15,9 @@ boot host:
 
 switch host:
   nixos-rebuild-ng switch --flake .#{{host}} --target-host {{host}} --sudo
+
+reboot host:
+  ssh {{host}} sudo reboot
+
+shutdown host:
+  ssh {{host}} sudo shutdown now
