@@ -23,7 +23,7 @@ in
       checkReversePath = "loose";
     };
 
-    age.secrets.tailscale-auth-key.file = "${inputs.secrets}/network/tailscale-auth-key.age";
+    age.secrets.tailscale-auth-key.file = "${inputs.secrets}/network/tailscale/auth-key.age";
 
     services.tailscale = {
       enable = true;

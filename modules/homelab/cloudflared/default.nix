@@ -33,7 +33,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    age.secrets.cloudflared-tunnel.file = "${inputs.secrets}/network/cloudflared-tunnel.age";
+    age.secrets.cloudflared-tunnel.file = "${inputs.secrets}/network/cloudflare/tunnel.age";
 
     services.cloudflared = {
       enable = true;

@@ -104,6 +104,6 @@
       "${mediaDir}/library/books ${perms}"
     ];
 
-  age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare-dns-api.age";
+  age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare/dns-api.age";
 
 }
