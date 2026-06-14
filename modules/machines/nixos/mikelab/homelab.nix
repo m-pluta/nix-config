@@ -60,6 +60,7 @@
         enable = true;
         mediaDir = "/tank/media/library/music";
       };
+      miniflux.enable = true;
       microbin.enable = true;
       grafana.enable = true;
       victoriametrics = {
