@@ -55,6 +55,7 @@
       };
       vaultwarden.enable = true;
       paperless.enable = true;
+      nextcloud.enable = true;
       navidrome = {
         enable = true;
         mediaDir = "/tank/media/library/music";

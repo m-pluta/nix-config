@@ -203,6 +203,11 @@
             mountpoint = "/var/lib/paperless";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services/nextcloud" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/nextcloud";
+            options."com.sun:auto-snapshot" = "true";
+          };
           "photos" = {
             type = "zfs_fs";
             mountpoint = "/tank/photos";
