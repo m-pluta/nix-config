@@ -3,7 +3,6 @@
   age.secrets = {
     wireguardCredentials.file = "${inputs.secrets}/wireguardCredentials.age";
     borgBackupKey.file = "${inputs.secrets}/borgBackupKey.age";
-    radicaleHtpasswd.file = "${inputs.secrets}/radicaleHtpasswd.age";
     cloudflareFirewallApiKey.file = "${inputs.secrets}/cloudflareFirewallApiKey.age";
     keycloakDbPasswordFile.file = "${inputs.secrets}/keycloakDbPasswordFile.age";
     keycloakCloudflared.file = "${inputs.secrets}/keycloakCloudflared.age";

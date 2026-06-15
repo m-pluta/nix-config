@@ -148,7 +148,7 @@ in
     ./nextcloud
     ./home-assistant
     ./paperless-ngx
-    ./radicale
+
     ./sabnzbd
     ./slskd
     ./uptime-kuma

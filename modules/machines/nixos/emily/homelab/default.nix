@@ -79,10 +79,6 @@ in
         dbPasswordFile = config.age.secrets.keycloakDbPasswordFile.path;
         oauth2ProxyEnvFile = config.age.secrets.oauth2ProxyEnvFile.path;
       };
-      radicale = {
-        enable = true;
-        passwordFile = config.age.secrets.radicaleHtpasswd.path;
-      };
       immich = {
         enable = true;
         mediaDir = "${hl.mounts.fast}/Media/Photos";
