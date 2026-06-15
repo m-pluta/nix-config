@@ -144,15 +144,15 @@
       "locked": {
         "lastModified": 1780355093,
         "narHash": "sha256-9h3zMdQD535A1UbEYbD6zsMpShbCtyezQ8KTChu5UnY=",
-        "owner": "m-pluta",
-        "repo": "disko-zfs",
+        "ref": "refs/heads/main",
         "rev": "2ef39b2e0f4859a288f719cd7aac19a3d8b0b1b6",
-        "type": "github"
+        "revCount": 51,
+        "type": "git",
+        "url": "ssh://forgejo@git.mpluta.dev/mikey/disko-zfs.git"
       },
       "original": {
-        "owner": "m-pluta",
-        "repo": "disko-zfs",
-        "type": "github"
+        "type": "git",
+        "url": "ssh://forgejo@git.mpluta.dev/mikey/disko-zfs.git"
       }
     },
     "flake-parts": {
@@ -681,11 +681,11 @@
         "rev": "7d2c2126fe4d23787f68ee0ffa3e71175a5876ff",
         "revCount": 13,
         "type": "git",
-        "url": "ssh://git@github.com/m-pluta/nix-secrets.git"
+        "url": "ssh://forgejo@git.mpluta.dev/mikey/nix-secrets.git"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/m-pluta/nix-secrets.git"
+        "url": "ssh://forgejo@git.mpluta.dev/mikey/nix-secrets.git"
       }
     },
     "systems": {

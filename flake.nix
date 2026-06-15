@@ -49,7 +49,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko-zfs = {
-      url = "github:m-pluta/disko-zfs";
+      url = "git+ssh://forgejo@git.mpluta.dev/mikey/disko-zfs.git";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.disko.follows = "disko";
       inputs.flake-parts.follows = "flake-parts";
@@ -67,7 +67,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     secrets = {
-      url = "git+ssh://git@github.com/m-pluta/nix-secrets.git";
+      url = "git+ssh://forgejo@git.mpluta.dev/mikey/nix-secrets.git";
       flake = false;
     };
     jovian = {
