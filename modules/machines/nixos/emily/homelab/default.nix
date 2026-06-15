@@ -62,10 +62,6 @@ in
     };
     services = {
       enable = true;
-      slskd = {
-        enable = true;
-        environmentFile = config.age.secrets.slskdEnvironmentFile.path;
-      };
       backup = {
         enable = true;
         passwordFile = config.age.secrets.resticPassword.path;

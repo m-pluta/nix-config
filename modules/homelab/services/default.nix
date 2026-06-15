@@ -150,7 +150,7 @@ in
     ./paperless-ngx
 
     ./sabnzbd
-    ./slskd
+
     ./uptime-kuma
     ./vaultwarden
   ];
