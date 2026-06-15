@@ -62,6 +62,7 @@
       };
       miniflux.enable = true;
       microbin.enable = true;
+      audiobookshelf.enable = true;
       grafana.enable = true;
       victoriametrics = {
         enable = true;
