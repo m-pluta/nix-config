@@ -79,7 +79,6 @@
     ./forgejo-runner
     ./homepage
     ./immich
-    ./invoiceplane
     ./jellyfin
     ./plausible
     ./microbin
