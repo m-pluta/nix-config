@@ -13,8 +13,6 @@ let
     "VM8776666" = "ext:PSK_MUM";
   };
 
-  enabled = cfg.ssids != [ ];
-
   indexedNetworks = lib.imap0 (i: ssid: {
     name = ssid;
     value = {
@@ -25,6 +23,7 @@ let
 in
 {
   options.wifi = {
+    enable = lib.mkEnableOption "WiFi configuration";
     ssids = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -38,7 +37,7 @@ in
     };
   };
 
-  config = lib.mkIf enabled {
+  config = lib.mkIf cfg.enable {
     age.secrets.wifi.file = cfg.secretsFile;
 
     networking.wireless = {
