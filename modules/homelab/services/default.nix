@@ -67,20 +67,20 @@
   };
 
   imports = [
-    ./arr/prowlarr
     ./arr/bazarr
     ./arr/jellyseerr
-    ./arr/sonarr
-    ./arr/radarr
     #./arr/lidarr
+    ./arr/prowlarr
+    ./arr/radarr
+    ./arr/sonarr
     ./audiobookshelf
     ./deluge
     ./forgejo
     ./forgejo-runner
+    ./home-assistant
     ./homepage
     ./immich
     ./jellyfin
-    ./plausible
     ./microbin
     ./miniflux
     ./monitoring/exporters
@@ -89,11 +89,9 @@
     ./monitoring/victoriametrics
     ./navidrome
     ./nextcloud
-    ./home-assistant
     ./paperless-ngx
-
+    ./plausible
     ./sabnzbd
-
     ./uptime-kuma
     ./vaultwarden
   ];
