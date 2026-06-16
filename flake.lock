@@ -36,11 +36,11 @@
         "rev": "11e921446423582836fb5b290e053fc7c6643efe",
         "revCount": 11,
         "type": "git",
-        "url": "https://git.notthebe.ee/notthebee/AutoASPM"
+        "url": "ssh://forgejo@git.mpluta.dev/mikey/AutoASPM.git"
       },
       "original": {
         "type": "git",
-        "url": "https://git.notthebe.ee/notthebee/AutoASPM"
+        "url": "ssh://forgejo@git.mpluta.dev/mikey/AutoASPM.git"
       }
     },
     "darwin": {

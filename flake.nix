@@ -21,7 +21,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     autoaspm = {
-      url = "git+https://git.notthebe.ee/notthebee/AutoASPM";
+      url = "git+ssh://forgejo@git.mpluta.dev/mikey/AutoASPM.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     agenix = {
