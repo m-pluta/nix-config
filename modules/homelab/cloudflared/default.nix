@@ -26,7 +26,7 @@ in
         "mpluta.dev" = [
           ""
           "www"
-          "jellyfin"
+          "git"
         ];
       };
     };

@@ -51,13 +51,11 @@
       {
         systems = [
           "x86_64-linux"
-          "aarch64-linux"
         ];
         imports = [
           ./modules/machines/nixos
           ./modules/devshell.nix
         ];
-        _module.args.rootPath = ./.;
       }
     );
 

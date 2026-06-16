@@ -7,3 +7,6 @@
 - [ ] Centralise tmpfiles `Z` rules for ZFS-backed services
 - [ ] Remove paperless test skip overlay once upstream fixes it
 - [ ] Enable "Above 4G Decoding" in BIOS for GPU
+- [ ] Clean up VM config (hardcoded disk UUIDs, consider disko)
+- [ ] Enable and configure forgejo-runner
+- [ ] Set up shelly plug exporter
