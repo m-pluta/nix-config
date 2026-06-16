@@ -22,13 +22,10 @@ let
   commonModules = [
     ../../homelab
     ../../misc/wifi
-    ../../misc/mover
     self.inputs.agenix.nixosModules.default
     self.inputs.disko.nixosModules.disko
     self.inputs.disko-zfs.nixosModules.default
-    self.inputs.adios-bot.nixosModules.default
     self.inputs.autoaspm.nixosModules.default
-    self.inputs.fmatrix.nixosModules.default
     self.inputs.invoiceplane.nixosModules.default
     (./. + "/_common/default.nix")
     ../../users/root

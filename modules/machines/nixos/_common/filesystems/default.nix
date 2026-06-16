@@ -4,7 +4,6 @@ let
   zfsEnabled = zfsFilesystems != { };
 in
 {
-  # imports = [ ./snapraid.nix ];
   disko.zfs.enable = true;
 
   services = lib.mkIf zfsEnabled {

@@ -3,9 +3,6 @@
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixos-25.11";
     };
-    nixpkgs-d351 = {
-      url = "github:nixos/nixpkgs/d351d0653aeb7877273920cd3e823994e7579b0b";
-    };
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
@@ -36,10 +33,6 @@
       url = "git+https://git.notthebe.ee/notthebee/AutoASPM";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    fmatrix = {
-      url = "github:zerw0/fmatrix/dd859e33117f78e4042204022d57bd671111d852";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -53,14 +46,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.disko.follows = "disko";
       inputs.flake-parts.follows = "flake-parts";
-    };
-    nix-darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
-      inputs.nixpkgs.follows = "nixpkgs-d351";
-    };
-    adios-bot = {
-      url = "git+https://git.notthebe.ee/notthebee/adiosbot";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
@@ -88,11 +73,9 @@
         systems = [
           "x86_64-linux"
           "aarch64-linux"
-          "aarch64-darwin"
         ];
         imports = [
           ./modules/machines/nixos
-          ./modules/machines/darwin
           ./modules/devshell.nix
         ];
         _module.args.rootPath = ./.;

@@ -7,4 +7,3 @@
 - [ ] Centralise tmpfiles `Z` rules for ZFS-backed services
 - [ ] Remove paperless test skip overlay once upstream fixes it
 - [ ] Enable "Above 4G Decoding" in BIOS for GPU
-- [ ] Remove emily and aria machine configs

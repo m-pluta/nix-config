@@ -25,7 +25,6 @@ in
     // {
       mediaDir = lib.mkOption {
         type = lib.types.str;
-        default = "${hl.mounts.fast}/Media/Music/Library";
       };
       environmentFile = lib.mkOption {
         type = lib.types.nullOr lib.types.path;

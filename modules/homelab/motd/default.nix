@@ -7,7 +7,7 @@
 let
   enabledNixosServices = lib.attrsets.mapAttrsToList (name: _value: name) (
     lib.attrsets.filterAttrs (
-      name: value: value != "enable" && name != "backup" && value ? enable && value.enable
+      _name: value: value != "enable" && value ? enable && value.enable
     ) config.homelab.services
   );
   monitoredServices = lib.lists.flatten (
@@ -20,11 +20,7 @@ let
     )
   );
 
-  networkInterface =
-    if lib.attrsets.hasAttrByPath [ config.networking.hostName ] config.homelab.networks.external then
-      config.homelab.networks.external.${config.networking.hostName}.interface
-    else
-      "";
+  networkInterface = "";
   motd = pkgs.writeShellScriptBin "motd" ''
     #! /usr/bin/env bash
     source /etc/os-release

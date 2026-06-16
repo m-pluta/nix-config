@@ -1,25 +1,5 @@
 {
   "nodes": {
-    "adios-bot": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1758977554,
-        "narHash": "sha256-nvRMRGF2hRFl+/NzbmRITks6po32Q1CFjZorkcT+zTE=",
-        "ref": "refs/heads/main",
-        "rev": "aeacc0bcbcd2c185674e6d4cafc72861d2044122",
-        "revCount": 23,
-        "type": "git",
-        "url": "https://git.notthebe.ee/notthebee/adiosbot"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.notthebe.ee/notthebee/adiosbot"
-      }
-    },
     "agenix": {
       "inputs": {
         "darwin": "darwin",
@@ -250,27 +230,6 @@
         "type": "github"
       }
     },
-    "fmatrix": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1771856651,
-        "narHash": "sha256-2gKV2hfO2ms3NNPTWxrHBXvYo5Y+rMm08+5s+xsbrf0=",
-        "owner": "zerw0",
-        "repo": "fmatrix",
-        "rev": "dd859e33117f78e4042204022d57bd671111d852",
-        "type": "github"
-      },
-      "original": {
-        "owner": "zerw0",
-        "repo": "fmatrix",
-        "rev": "dd859e33117f78e4042204022d57bd671111d852",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -423,27 +382,6 @@
         "type": "github"
       }
     },
-    "nix-darwin": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs-d351"
-        ]
-      },
-      "locked": {
-        "lastModified": 1772129556,
-        "narHash": "sha256-Utk0zd8STPsUJPyjabhzPc5BpPodLTXrwkpXBHYnpeg=",
-        "owner": "LnL7",
-        "repo": "nix-darwin",
-        "rev": "ebec37af18215214173c98cf6356d0aca24a2585",
-        "type": "github"
-      },
-      "original": {
-        "owner": "LnL7",
-        "ref": "nix-darwin-25.11",
-        "repo": "nix-darwin",
-        "type": "github"
-      }
-    },
     "nix-github-actions": {
       "inputs": {
         "nixpkgs": [
@@ -499,22 +437,6 @@
         "owner": "NixOS",
         "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-d351": {
-      "locked": {
-        "lastModified": 1767799921,
-        "narHash": "sha256-r4GVX+FToWVE2My8VVZH4V0pTIpnu2ZE8/Z4uxGEMBE=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "d351d0653aeb7877273920cd3e823994e7579b0b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "d351d0653aeb7877273920cd3e823994e7579b0b",
         "type": "github"
       }
     },
@@ -649,23 +571,19 @@
     },
     "root": {
       "inputs": {
-        "adios-bot": "adios-bot",
         "agenix": "agenix",
         "alga": "alga",
         "autoaspm": "autoaspm",
         "disko": "disko",
         "disko-zfs": "disko-zfs",
         "flake-parts": "flake-parts",
-        "fmatrix": "fmatrix",
         "home-manager": "home-manager_2",
         "home-manager-unstable": "home-manager-unstable",
         "invoiceplane": "invoiceplane",
         "jj-starship": "jj-starship",
         "jovian": "jovian",
-        "nix-darwin": "nix-darwin",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs_2",
-        "nixpkgs-d351": "nixpkgs-d351",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixvim": "nixvim",
         "secrets": "secrets",
