@@ -16,7 +16,10 @@
       enable = true;
       address = "100.120.225.75";
     };
-    dnsmasq.enable = true;
+    dnsmasq = {
+      enable = true;
+      domains = [ "mpluta.dev" ];
+    };
     cloudflared = {
       enable = true;
       tunnelId = "7a16d95b-031d-483f-befa-d8fdc081fe5c";

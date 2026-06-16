@@ -12,7 +12,7 @@ in
     enable = lib.mkEnableOption "Split DNS for homelab services via dnsmasq";
     domains = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [ hl.baseDomain ];
+      default = [ ];
       description = "Domains to resolve via split DNS";
     };
   };
