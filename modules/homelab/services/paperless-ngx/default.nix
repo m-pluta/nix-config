@@ -1,4 +1,9 @@
-{ config, lib, inputs, pkgs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 let
   service = "paperless";
   serviceLib = import ../lib.nix { inherit lib; };
@@ -6,24 +11,23 @@ let
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} =
-    serviceLib.mkServiceOptions {
-      port = 28981;
-      url = "paperless.${homelab.baseDomain}";
-      configDir = "/var/lib/${service}";
-      monitoredServices = [
-        "paperless-consumer"
-        "paperless-scheduler"
-        "paperless-task-queue"
-        "paperless-web"
-      ];
-      homepage = {
-        name = "Paperless-ngx";
-        description = "Document management system";
-        icon = "paperless.svg";
-        category = "Services";
-      };
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 28981;
+    url = "paperless.${homelab.baseDomain}";
+    configDir = "/var/lib/${service}";
+    monitoredServices = [
+      "paperless-consumer"
+      "paperless-scheduler"
+      "paperless-task-queue"
+      "paperless-web"
+    ];
+    homepage = {
+      name = "Paperless-ngx";
+      description = "Document management system";
+      icon = "paperless.svg";
+      category = "Services";
     };
+  };
   config = lib.mkIf cfg.enable {
     age.secrets.paperless-password.file = "${inputs.secrets}/services/paperless/password.age";
     # TODO: remove once upstream nixpkgs fixes paperless-ngx consumer test failures

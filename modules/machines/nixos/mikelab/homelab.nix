@@ -25,6 +25,13 @@
         "git"
       ];
     };
+    samba = {
+      enable = true;
+      shares.Media = {
+        path = "/tank/media/library";
+        readOnly = true;
+      };
+    };
     monitoring.exporters = {
       smartctl.enable = true;
       zfs.enable = true;

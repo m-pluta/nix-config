@@ -31,7 +31,6 @@ in
     };
     samba = {
       enable = true;
-      passwordFile = config.age.secrets.sambaPassword.path;
       shares = {
         Backups = {
           path = "${hl.mounts.merged}/Backups";
@@ -50,7 +49,9 @@ in
         };
         TimeMachine = {
           path = "${hl.mounts.fast}/TimeMachine";
-          "fruit:time machine" = "yes";
+          extraSettings = {
+            "fruit:time machine" = "yes";
+          };
         };
         YoutubeArchive = {
           path = "${hl.mounts.merged}/YoutubeArchive";

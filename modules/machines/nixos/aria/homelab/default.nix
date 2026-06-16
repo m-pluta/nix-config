@@ -28,7 +28,6 @@ in
     };
     samba = {
       enable = true;
-      passwordFile = config.age.secrets.sambaPassword.path;
       shares = {
         Backups = {
           path = "${hl.mounts.slow}/Backups";
