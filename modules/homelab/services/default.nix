@@ -69,7 +69,7 @@
   imports = [
     ./arr/bazarr
     ./arr/jellyseerr
-    #./arr/lidarr
+    ./arr/lidarr
     ./arr/prowlarr
     ./arr/radarr
     ./arr/sonarr

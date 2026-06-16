@@ -72,6 +72,7 @@
       miniflux.enable = true;
       microbin.enable = true;
       audiobookshelf.enable = true;
+      lidarr.enable = true;
       grafana.enable = true;
       victoriametrics = {
         enable = true;
