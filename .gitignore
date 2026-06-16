@@ -1,6 +1,3 @@
-/secrets
 .direnv
-.env
 result
-.terraform
 .claude

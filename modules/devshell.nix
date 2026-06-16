@@ -13,7 +13,6 @@
         settings.global.excludes = [
           "*.lock"
           ".gitignore"
-          "secrets/*"
         ];
         programs.nixfmt.enable = true;
         programs.nixfmt.package = pkgs.nixfmt-rfc-style;
