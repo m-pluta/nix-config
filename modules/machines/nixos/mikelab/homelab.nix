@@ -4,6 +4,8 @@
   ...
 }:
 {
+  "mpluta.dev".enable = true;
+
   homelab = {
     enable = true;
     baseDomain = "mpluta.dev";

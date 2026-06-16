@@ -7,7 +7,6 @@
     ./hardware-configuration.nix
     ./disko.nix
     ./homelab.nix
-    ../../../misc/mpluta.dev
   ];
   networking.hostName = "mikelab";
   networking.hostId = "deadbeef";

@@ -1,17 +1,23 @@
 {
+  config,
+  lib,
   ...
 }:
 let
   domain = "mpluta.dev";
-  webRoot = ./site;
+  cfg = config.${domain};
 in
 {
-  services.caddy.virtualHosts."${domain}" = {
-    useACMEHost = domain;
-    serverAliases = [ "www.${domain}" ];
-    extraConfig = ''
-      root * ${webRoot}
-      file_server
-    '';
+  options.${domain}.enable = lib.mkEnableOption "${domain} static site";
+
+  config = lib.mkIf cfg.enable {
+    services.caddy.virtualHosts.${domain} = {
+      useACMEHost = domain;
+      serverAliases = [ "www.${domain}" ];
+      extraConfig = ''
+        root * ${./site}
+        file_server
+      '';
+    };
   };
 }
