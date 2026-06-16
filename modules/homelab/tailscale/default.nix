@@ -5,10 +5,11 @@
   ...
 }:
 let
-  cfg = config.homelab.tailscale;
+  service = "tailscale";
+  cfg = config.homelab.${service};
 in
 {
-  options.homelab.tailscale = {
+  options.homelab.${service} = {
     enable = lib.mkEnableOption "Tailscale VPN";
     address = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
