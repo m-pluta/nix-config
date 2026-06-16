@@ -1,5 +1,4 @@
 {
-  pkgs,
   config,
   lib,
   ...
@@ -11,25 +10,20 @@ let
   homelab = config.homelab;
 in
 {
-  options.homelab.services.${service} =
-    serviceLib.mkServiceOptions {
-      port = 5055;
-      url = "${service}.${homelab.baseDomain}";
-      homepage = {
-        name = "Jellyseerr";
-        description = "Media request and discovery manager";
-        icon = "jellyseerr.svg";
-        category = "Arr";
-      };
-    }
-    // {
-      package = lib.mkPackageOption pkgs "jellyseerr" { };
+  options.homelab.services.${service} = serviceLib.mkServiceOptions {
+    port = 5055;
+    url = "${service}.${homelab.baseDomain}";
+    homepage = {
+      name = "Jellyseerr";
+      description = "Media request and discovery manager";
+      icon = "jellyseerr.svg";
+      category = "Arr";
     };
+  };
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
       port = cfg.port;
-      package = cfg.package;
     };
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
