@@ -52,7 +52,7 @@ in
         labels = [
           "alpine:docker://alpine:latest"
           "debian-latest:docker://debian:bookworm"
-          "nix:docker://nixos/nix:latest"
+          "nix:docker://git.mpluta.dev/mikey/nix-ci-builder:latest"
           "native:host"
         ];
       };
