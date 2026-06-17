@@ -1,0 +1,29 @@
+name: Update flake.lock
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+env:
+  FORGEJO_HOST: git.mpluta.dev
+
+jobs:
+  update-flake-lock:
+    runs-on: nix
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up SSH
+        uses: https://git.mpluta.dev/mikey/actions/set-up-ssh@main
+        with:
+          git-host: ${{ env.FORGEJO_HOST }}
+          ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
+          git-hostkey: ${{ secrets.GIT_HOSTKEY }}
+      - run: git config --global --add safe.directory "${PWD}"
+      - run: nix flake update
+      - name: Commit and push
+        run: |
+          git config user.name forgejo-actions
+          git config user.email forgejo@git.mpluta.dev
+          git add flake.lock
+          git diff-index --quiet HEAD || git commit -m "chore: Update flake.lock"
+          git push
