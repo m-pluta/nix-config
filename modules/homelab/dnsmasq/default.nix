@@ -31,11 +31,21 @@ in
       settings = {
         address = map (domain: "/${domain}/${hl.tailscale.address}") cfg.domains;
         listen-address = hl.tailscale.address;
+        # Tolerate the Tailscale address appearing after startup instead of failing hard with exit 2
+        bind-dynamic = true;
         port = 53;
         no-resolv = true;
         no-hosts = true;
       };
     };
+
+    # tailscale0 brings up 100.120.225.75 asynchronously; without ordering,
+    # dnsmasq starts first, can't bind, and exhausts its restart budget
+    systemd.services.dnsmasq = {
+      after = [ "tailscaled.service" ];
+      wants = [ "tailscaled.service" ];
+    };
+
     networking.firewall.interfaces.tailscale0.allowedUDPPorts = [ 53 ];
   };
 }
