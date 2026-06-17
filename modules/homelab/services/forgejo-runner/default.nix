@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  inputs,
   ...
 }:
 let
@@ -16,11 +17,6 @@ in
     runnerName = lib.mkOption {
       type = lib.types.str;
       default = config.networking.hostName;
-      example = "runner-1";
-    };
-    forgejoUrl = lib.mkOption {
-      type = lib.types.str;
-      example = "git.foo.bar";
     };
     monitoredServices = lib.mkOption {
       type = lib.types.listOf lib.types.str;
@@ -28,43 +24,36 @@ in
         "gitea-runner-default"
       ];
     };
-    tokenFile = lib.mkOption {
-      type = lib.types.str;
-      example = lib.literalExpression ''
-        pkgs.writeText "token.txt" '''
-          TOKEN=foobar
-        '''
-      '';
-    };
   };
   config = lib.mkIf cfg.enable {
+    age.secrets.forgejo-runner-registration-token.file = "${inputs.secrets}/services/forgejo/runner-registration-token.age";
+
     virtualisation.podman.enable = true;
     services.gitea-actions-runner = {
       package = pkgs.forgejo-runner;
       instances.default = {
         enable = true;
-        url = "https://${cfg.forgejoUrl}";
-        name = config.networking.hostName;
-        tokenFile = cfg.tokenFile;
+        url = "https://${config.homelab.services.forgejo.url}";
+        name = cfg.runnerName;
+        tokenFile = config.age.secrets.forgejo-runner-registration-token.path;
         hostPackages = with pkgs; [
-          nodejs
-          buildah
-          fuse-overlayfs
           bash
           coreutils
           curl
           gawk
           gitMinimal
           gnused
+          nix
           wget
         ];
         settings = {
           runner.capacity = 2;
         };
         labels = [
-          "nix:docker://git.notthebe.ee/notthebee/nix-ci-builder:latest"
-          "debian-latest:docker://node:current-trixie"
-          "buildah:docker://quay.io/containers/buildah:latest"
+          "alpine:docker://alpine:latest"
+          "debian-latest:docker://debian:bookworm"
+          "nix:docker://nixos/nix:latest"
+          "native:host"
         ];
       };
     };

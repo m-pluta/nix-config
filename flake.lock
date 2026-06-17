@@ -243,11 +243,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1781656505,
-        "narHash": "sha256-KTZJJ+1gRxI5O9nhH8Yvp3WR0bSdrI2FlD4zo+WuzBE=",
+        "lastModified": 1781660165,
+        "narHash": "sha256-ZZF4FoIhpFluYcsAe/t5R/90lJcRXtW6WsC57YlFetg=",
         "ref": "refs/heads/main",
-        "rev": "3038d341abe59c7f9d96a8004349da566b026bec",
-        "revCount": 15,
+        "rev": "19f1eb7f20557373d633d70d0b9a72d01b262dc6",
+        "revCount": 16,
         "type": "git",
         "url": "ssh://forgejo@git.mpluta.dev/mikey/nix-secrets.git"
       },
