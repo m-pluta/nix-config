@@ -34,7 +34,10 @@ in
         # Tolerate the Tailscale address appearing after startup instead of failing hard with exit 2
         bind-dynamic = true;
         port = 53;
-        no-resolv = true;
+        server = [
+          "1.1.1.1"
+          "8.8.8.8"
+        ];
         no-hosts = true;
       };
     };

@@ -57,6 +57,9 @@
         dns_enabled = true;
       };
     };
+    virtualisation.containers.containersConf.settings = {
+      containers.dns_servers = [ config.homelab.tailscale.address ];
+    };
     virtualisation.oci-containers = {
       backend = "podman";
     };
