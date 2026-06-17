@@ -74,6 +74,7 @@
       };
       miniflux.enable = true;
       microbin.enable = true;
+      attic.enable = true;
       audiobookshelf.enable = true;
       lidarr.enable = true;
       grafana.enable = true;

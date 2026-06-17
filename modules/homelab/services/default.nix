@@ -73,6 +73,7 @@
     ./arr/prowlarr
     ./arr/radarr
     ./arr/sonarr
+    ./attic
     ./audiobookshelf
     ./deluge
     ./forgejo

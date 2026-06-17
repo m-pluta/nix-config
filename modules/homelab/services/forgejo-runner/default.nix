@@ -7,7 +7,6 @@
 let
   service = "forgejo-runner";
   cfg = config.homelab.services.${service};
-  hl = config.homelab;
 in
 {
   options.homelab.services.${service} = {
@@ -37,40 +36,9 @@ in
         '''
       '';
     };
-    atticTokenFile = lib.mkOption {
-      type = lib.types.str;
-      example = lib.literalExpression ''
-        pkgs.writeText "token.txt" '''
-          ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=foobar
-        '''
-      '';
-    };
-    atticUrl = lib.mkOption {
-      type = lib.types.str;
-      default = "cache.${hl.baseDomain}";
-    };
   };
   config = lib.mkIf cfg.enable {
     virtualisation.podman.enable = true;
-    services.atticd = {
-      enable = true;
-      environmentFile = cfg.atticTokenFile;
-      settings = {
-        listen = "127.0.0.1:8080";
-        allowed-hosts = [ cfg.atticUrl ];
-        api-endpoint = "https://${cfg.atticUrl}/";
-        jwt = { };
-      };
-    };
-    services.caddy.virtualHosts."${cfg.atticUrl}" = {
-      useACMEHost = hl.baseDomain;
-      extraConfig = ''
-        reverse_proxy http://${toString config.services.atticd.settings.listen}
-        request_body {
-          max_size 50GB
-        }
-      '';
-    };
     services.gitea-actions-runner = {
       package = pkgs.forgejo-runner;
       instances.default = {

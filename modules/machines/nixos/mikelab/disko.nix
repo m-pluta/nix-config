@@ -203,6 +203,14 @@
             mountpoint = "/var/lib/paperless";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services/attic" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/private/atticd";
+            options = {
+              "com.sun:auto-snapshot" = "true";
+              quota = "50G";
+            };
+          };
           "services/nextcloud" = {
             type = "zfs_fs";
             mountpoint = "/var/lib/nextcloud";
