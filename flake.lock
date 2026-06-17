@@ -36,11 +36,11 @@
         "rev": "11e921446423582836fb5b290e053fc7c6643efe",
         "revCount": 11,
         "type": "git",
-        "url": "ssh://forgejo@git.mpluta.dev/mikey/AutoASPM.git"
+        "url": "https://git.mpluta.dev/mikey/AutoASPM.git"
       },
       "original": {
         "type": "git",
-        "url": "ssh://forgejo@git.mpluta.dev/mikey/AutoASPM.git"
+        "url": "https://git.mpluta.dev/mikey/AutoASPM.git"
       }
     },
     "darwin": {
@@ -104,11 +104,11 @@
         "rev": "2ef39b2e0f4859a288f719cd7aac19a3d8b0b1b6",
         "revCount": 51,
         "type": "git",
-        "url": "ssh://forgejo@git.mpluta.dev/mikey/disko-zfs.git"
+        "url": "https://git.mpluta.dev/mikey/disko-zfs.git"
       },
       "original": {
         "type": "git",
-        "url": "ssh://forgejo@git.mpluta.dev/mikey/disko-zfs.git"
+        "url": "https://git.mpluta.dev/mikey/disko-zfs.git"
       }
     },
     "flake-parts": {

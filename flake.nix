@@ -17,7 +17,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     autoaspm = {
-      url = "git+ssh://forgejo@git.mpluta.dev/mikey/AutoASPM.git";
+      url = "git+https://git.mpluta.dev/mikey/AutoASPM.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     agenix = {
@@ -29,7 +29,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko-zfs = {
-      url = "git+ssh://forgejo@git.mpluta.dev/mikey/disko-zfs.git";
+      url = "git+https://git.mpluta.dev/mikey/disko-zfs.git";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.disko.follows = "disko";
       inputs.flake-parts.follows = "flake-parts";
