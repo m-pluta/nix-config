@@ -47,7 +47,7 @@ in
           wget
         ];
         settings = {
-          runner.capacity = 2;
+          runner.capacity = 4;
           container.options = "--device /dev/fuse";
         };
         labels = [
