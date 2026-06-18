@@ -48,9 +48,11 @@ in
         ];
         settings = {
           runner.capacity = 2;
+          container.options = "--device /dev/fuse";
         };
         labels = [
           "alpine:docker://alpine:latest"
+          "buildah:docker://quay.io/containers/buildah:latest"
           "debian-latest:docker://debian:bookworm"
           "nix:docker://git.mpluta.dev/mikey/nix-ci-builder:latest"
           "native:host"
