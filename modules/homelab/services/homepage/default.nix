@@ -58,8 +58,9 @@ in
       listenPort = cfg.port;
       environmentFile = builtins.toFile "homepage.env" "HOMEPAGE_ALLOWED_HOSTS=${cfg.url}";
       customCSS = ''
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
         body, html {
-          font-family: SF Pro Display, Helvetica, Arial, sans-serif !important;
+          font-family: Inter, Helvetica, Arial, sans-serif !important;
         }
         .font-medium {
           font-weight: 700 !important;
