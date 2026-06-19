@@ -46,7 +46,12 @@
             redir https://{host}{uri}
           '';
         };
-
+        "*.${config.homelab.baseDomain}" = {
+          useACMEHost = config.homelab.baseDomain;
+          extraConfig = ''
+            respond 404
+          '';
+        };
       };
     };
     virtualisation.podman = {
