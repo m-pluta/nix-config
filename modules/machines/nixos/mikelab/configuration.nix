@@ -32,6 +32,11 @@
     monthly = 12;
   };
 
+  services.iperf3 = {
+    enable = true;
+    openFirewall = true;
+  };
+
   # AMD GPU
   hardware.graphics.enable = true;
   hardware.amdgpu.initrd.enable = true;
