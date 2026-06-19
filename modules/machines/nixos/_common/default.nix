@@ -62,8 +62,8 @@
     defaultEditor = lib.mkDefault true;
   };
 
-  services.autoaspm.enable = lib.mkDefault true;
-  powerManagement.powertop.enable = lib.mkDefault true;
+  # services.autoaspm.enable = lib.mkDefault true;
+  # powerManagement.powertop.enable = lib.mkDefault true;
 
   homelab.motd.enable = lib.mkDefault true;
 
