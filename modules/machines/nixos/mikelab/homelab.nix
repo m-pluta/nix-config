@@ -36,6 +36,9 @@
         path = "/tank/media/library";
         readOnly = true;
       };
+      shares.Import = {
+        path = "/tank/import";
+      };
     };
     monitoring.exporters = {
       smartctl.enable = true;
