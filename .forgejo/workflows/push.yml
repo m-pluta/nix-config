@@ -30,8 +30,9 @@ jobs:
           git-host: ${{ env.FORGEJO_HOST }}
           ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
           git-hostkey: ${{ secrets.GIT_HOSTKEY }}
+      - run: git config --global --add safe.directory "${PWD}"
       - run: mkdir newreadme
-      - run: (grep -B 99999 "BEGIN SERVICE LIST" README.md && nix eval --offline --raw --file bin/generateServicesTable.nix && grep -A 99999 "END SERVICE LIST" README.md) > newreadme/README.md
+      - run: nix develop --accept-flake-config --command just readme newreadme/README.md
       - uses: actions/upload-artifact@v3
         with:
           name: new-readme
