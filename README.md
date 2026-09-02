@@ -12,6 +12,7 @@ Heavily inspired by [notthebee/nix-config](https://github.com/notthebee/nix-conf
 
 <!-- BEGIN SERVICE LIST -->
 ### mikelab
+Primary server hosting storage and the self-hosted services
 |Icon|Name|Description|Category|
 |---|---|---|---|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nixos.svg' width=32 height=32>|Attic|Nix binary cache|Services|
@@ -38,5 +39,8 @@ Heavily inspired by [notthebee/nix-config](https://github.com/notthebee/nix-conf
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/bitwarden.svg' width=32 height=32>|Vaultwarden|Password manager|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/victoriametrics.svg' width=32 height=32>|VictoriaMetrics|Time series database and monitoring|Observability|
 
+
+### mikeway
+Router and network gateway
 
 <!-- END SERVICE LIST -->
