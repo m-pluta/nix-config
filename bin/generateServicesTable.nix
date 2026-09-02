@@ -2,7 +2,6 @@ with builtins.getFlake (toString ../.);
 let
   lib = import <nixpkgs/lib>;
   hl = hostname: nixosConfigurations.${hostname}.config.homelab;
-  hlServices = hostname: nixosConfigurations.${hostname}.config.homelab.services.enable;
   enabledHomepageServices =
     let
       services = hostname: builtins.filter (x: x != "enable") (builtins.attrNames (hl hostname).services);
@@ -27,22 +26,29 @@ let
       in
       "|${iconlink serviceConfig.icon}|${serviceConfig.name}|${serviceConfig.description}|${serviceConfig.category}|"
     ) (enabledHomepageServices hostname);
-  allHostsServiceData =
+  hostSection =
+    hostname:
     let
-      homelabHostnames = builtins.filter (x: x != null) (
-        builtins.map (hostname: if hlServices hostname then hostname else null) (
-          builtins.attrNames nixosConfigurations
-        )
-      );
+      rows = homepageServicesData hostname;
     in
-    builtins.map (
-      hostname:
-      lib.strings.concatLines [
+    lib.strings.concatLines (
+      [
         "### ${hostname}"
-        "|Icon|Name|Description|Category|"
-        "|---|---|---|---|"
-        (lib.strings.concatLines (homepageServicesData hostname))
+        (hl hostname).description
       ]
-    ) homelabHostnames;
+      ++ (
+        if rows == [ ] then
+          [ ]
+        else
+          [
+            "|Icon|Name|Description|Category|"
+            "|---|---|---|---|"
+            (lib.strings.concatLines rows)
+          ]
+      )
+    );
+  homelabHosts = builtins.filter (hostname: (hl hostname).enable) (
+    builtins.attrNames nixosConfigurations
+  );
 in
-lib.strings.concatLines allHostsServiceData
+lib.strings.concatLines (builtins.map hostSection homelabHosts)

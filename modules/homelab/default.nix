@@ -5,6 +5,12 @@ in
 {
   options.homelab = {
     enable = lib.mkEnableOption "The homelab services and configuration variables";
+    description = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = "Short description of this host's role in the homelab, shown in the README.";
+      example = "Primary server hosting the self-hosted services";
+    };
     groups = lib.mkOption {
       type = lib.types.attrsOf lib.types.int;
       default = { };
