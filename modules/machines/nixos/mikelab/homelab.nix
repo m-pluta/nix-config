@@ -8,6 +8,7 @@
 
   homelab = {
     enable = true;
+    description = "Primary server hosting storage and the self-hosted services";
     baseDomain = "mpluta.dev";
     cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
     timeZone = "Europe/London";
