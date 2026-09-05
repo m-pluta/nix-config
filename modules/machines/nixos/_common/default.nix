@@ -17,7 +17,7 @@
     loader.systemd-boot.enable = lib.mkDefault true;
     loader.systemd-boot.configurationLimit = lib.mkDefault 10;
     loader.efi.canTouchEfiVariables = lib.mkDefault true;
-    loader.timeout = lib.mkDefault 0;
+    loader.timeout = lib.mkDefault 5;
     tmp.cleanOnBoot = lib.mkDefault true;
   };
 
