@@ -13,12 +13,14 @@
   homelab = {
     enable = true;
     description = "Router and network gateway";
+    tailscale = {
+      enable = true;
+      address = "100.67.111.121";
+    };
   };
 
   # No ZFS on this box (ext4 root); _common/filesystems forces it on.
   disko.zfs.enable = lib.mkForce false;
-
-  services.tailscale.enable = true;
 
   system.stateVersion = "25.11";
 }
