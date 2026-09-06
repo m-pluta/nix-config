@@ -94,6 +94,10 @@
             "zfs"
           ];
         };
+        targets.mikeway.exporters = [
+          "node"
+          "systemd"
+        ];
       };
     };
   };
