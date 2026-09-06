@@ -85,15 +85,12 @@
       grafana.enable = true;
       victoriametrics = {
         enable = true;
-        targets.mikelab = {
-          address = "localhost";
-          exporters = [
-            "node"
-            "systemd"
-            "smartctl"
-            "zfs"
-          ];
-        };
+        targets.mikelab.exporters = [
+          "node"
+          "systemd"
+          "smartctl"
+          "zfs"
+        ];
         targets.mikeway.exporters = [
           "node"
           "systemd"

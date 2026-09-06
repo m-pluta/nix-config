@@ -65,12 +65,19 @@ in
           in
           map (exporter: {
             job_name = exporter;
-            static_configs = lib.mapAttrsToList (hostName: target: {
-              targets = [
-                "${target.address}:${toString config.services.prometheus.exporters.${exporter}.port}"
-              ];
-              labels.instance = hostName;
-            }) (lib.filterAttrs (_: t: builtins.elem exporter t.exporters) cfg.targets);
+            static_configs = lib.mapAttrsToList (
+              hostName: target:
+              let
+                # Scrape the host VM runs on over loopback, others by name.
+                address = if hostName == config.networking.hostName then "localhost" else target.address;
+              in
+              {
+                targets = [
+                  "${address}:${toString config.services.prometheus.exporters.${exporter}.port}"
+                ];
+                labels.instance = hostName;
+              }
+            ) (lib.filterAttrs (_: t: builtins.elem exporter t.exporters) cfg.targets);
           }) allExporters;
       };
     };
