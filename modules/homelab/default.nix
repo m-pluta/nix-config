@@ -47,7 +47,8 @@ in
     ./motd
     ./fail2ban-cloudflare
     ./cloudflared
-    ./dnsmasq
+    ./ingress
+    ./split-dns
     ./tailscale
     ./wireguard-netns
   ];
