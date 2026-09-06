@@ -16,6 +16,7 @@ let
   lanSubnet = "192.168.100";
 
   tvWiredMac = "68:07:0a:75:61:a7";
+  # deadnix: skip
   tvWifiMac = "84:3e:1d:62:53:0b";
   cloneWanMac = tvWiredMac; # set to tvWiredMac (or tvWifiMac) to clone onto the WAN port
 in
