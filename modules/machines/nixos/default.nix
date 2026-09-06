@@ -40,10 +40,8 @@ let
       inherit (self) inputs;
     };
   };
-in
-{
-  flake.nixosConfigurations = lib.genAttrs hostNames (
-    name:
+  mkSystem =
+    name: extraModules:
     let
       meta = hostMeta name;
     in
@@ -55,11 +53,44 @@ in
           nixosModules = self.nixosModules;
         };
       };
-      modules = commonModules ++ [
-        self.inputs."home-manager${meta.channel}".nixosModules.home-manager
-        (./. + "/${name}/configuration.nix")
-        homeManagerCfg
-      ];
-    }
+      modules =
+        commonModules
+        ++ [
+          self.inputs."home-manager${meta.channel}".nixosModules.home-manager
+          (./. + "/${name}/configuration.nix")
+          homeManagerCfg
+        ]
+        ++ extraModules;
+    };
+
+  # First pass, without route injection, purely to read each host's published
+  # ingress routes and LAN address. The front door reads other hosts; no host
+  # reads the front door, so there is no evaluation cycle.
+  base = lib.genAttrs hostNames (name: mkSystem name [ ]);
+
+  frontDoor = base.${builtins.head hostNames}.config.homelab.ingress.frontDoor;
+
+  remoteRoutesFor =
+    fd:
+    lib.foldl' (
+      acc: name:
+      if name == fd then
+        acc
+      else
+        acc
+        // lib.mapAttrs (_url: r: {
+          lanIP = base.${name}.config.homelab.net.lan;
+          inherit (r) port extraConfig serverAliases;
+        }) base.${name}.config.homelab.ingress.routes
+    ) { } hostNames;
+in
+{
+  flake.nixosConfigurations = lib.genAttrs hostNames (
+    name:
+    mkSystem name (
+      lib.optional (name == frontDoor) {
+        homelab.ingress.remoteRoutes = remoteRoutesFor frontDoor;
+      }
+    )
   );
 }
