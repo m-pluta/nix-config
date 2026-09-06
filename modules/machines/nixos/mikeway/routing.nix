@@ -67,13 +67,18 @@ in
       };
 
       # Bridge carries the gateway address + DHCP server (auto-sized /24 pool).
+      # DNS = the router itself, so clients use its split-horizon resolver.
       "30-${lanBridge}" = {
         matchConfig.Name = lanBridge;
         address = [ "${lanSubnet}.1/24" ];
         networkConfig.DHCPServer = true;
-        dhcpServerConfig.DNS = [
-          "1.1.1.1"
-          "8.8.8.8"
+        dhcpServerConfig.DNS = [ "${lanSubnet}.1" ];
+        dhcpServerStaticLeases = [
+          {
+            # mikelab (enp6s0)
+            MACAddress = "18:c0:4d:82:21:a4";
+            Address = "${lanSubnet}.10";
+          }
         ];
       };
 
