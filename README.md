@@ -41,6 +41,6 @@ Primary server hosting storage and the self-hosted services
 
 
 ### mikeway
-Router and network gateway
+Router, network gateway, and homelab front door
 
 <!-- END SERVICE LIST -->
