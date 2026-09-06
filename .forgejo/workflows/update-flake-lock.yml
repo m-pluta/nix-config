@@ -51,7 +51,7 @@ jobs:
           TOKEN: ${{ secrets.FORGEJO_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
-          body="$(nix run nixpkgs#jq -- -Rs . < /tmp/flake-update.log)"
+          body="$(printf '```\n%s\n```\n' "$(cat /tmp/flake-update.log)" | nix run nixpkgs#jq -- -Rs .)"
           payload="$(nix run nixpkgs#jq -- -n \
             --arg head "$PR_BRANCH" \
             --arg base "$BASE_BRANCH" \
