@@ -47,10 +47,9 @@ in
         };
       };
     };
-    services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = hl.baseDomain;
+    homelab.ingress.routes."${cfg.url}" = {
+      port = cfg.port;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
         request_body {
           max_size 10GB
         }

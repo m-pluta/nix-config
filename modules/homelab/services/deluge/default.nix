@@ -37,12 +37,7 @@ in
     users.users.${service}.extraGroups = [ "media" ];
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
 
-    services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = hl.baseDomain;
-      extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
-      '';
-    };
+    homelab.ingress.routes."${cfg.url}".port = cfg.port;
 
     # Route torrent traffic through VPN namespace
     systemd = {
