@@ -1,7 +1,14 @@
-name: push
+name: checks
 on:
   workflow_dispatch:
+  pull_request:
   push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   FORGEJO_HOST: git.mpluta.dev
@@ -18,9 +25,9 @@ jobs:
           ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
           git-hostkey: ${{ secrets.GIT_HOSTKEY }}
       - run: git config --global --add safe.directory "${PWD}"
-      - run: nix flake check --accept-flake-config
+      - run: nix flake check --accept-flake-config --all-systems
 
-  generate-readme:
+  readme:
     runs-on: nix
     steps:
       - uses: actions/checkout@v4
@@ -31,29 +38,12 @@ jobs:
           ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
           git-hostkey: ${{ secrets.GIT_HOSTKEY }}
       - run: git config --global --add safe.directory "${PWD}"
-      - run: mkdir newreadme
-      - run: nix develop --accept-flake-config --command just readme newreadme/README.md
-      - uses: actions/upload-artifact@v3
-        with:
-          name: new-readme
-          path: newreadme
-
-  push-readme:
-    runs-on: nix
-    needs:
-      - lint
-      - generate-readme
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
-        with:
-          name: new-readme
-          path: newreadme
-      - run: mv newreadme/README.md README.md
-      - name: Commit and push README
+      # For pull_request this builds the merge commit, so the check reflects the
+      # merged tree rather than a stale PR branch.
+      - run: nix develop --accept-flake-config --command just readme /tmp/README.generated
+      - name: Verify README.md is up to date
         run: |
-          git config user.name forgejo-actions
-          git config user.email forgejo@git.mpluta.dev
-          git add README.md
-          git diff-index --quiet HEAD || git commit -m "chore: Generate README.md"
-          git push
+          if ! diff -u README.md /tmp/README.generated; then
+            echo "::error::README.md is out of date. Run 'just readme'."
+            exit 1
+          fi

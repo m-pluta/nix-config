@@ -1,0 +1,107 @@
+name: eval diff
+on:
+  pull_request:
+    paths:
+      - "**.nix"
+      - "flake.lock"
+      - ".forgejo/workflows/eval-diff.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORGEJO_HOST: git.mpluta.dev
+  HOSTS: "mikeway mikelab vm"
+  MARKER: "<!-- eval-diff -->"
+
+jobs:
+  eval-diff:
+    runs-on: nix
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up SSH
+        uses: https://git.mpluta.dev/mikey/actions/set-up-ssh@main
+        with:
+          git-host: ${{ env.FORGEJO_HOST }}
+          ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
+          git-hostkey: ${{ secrets.GIT_HOSTKEY }}
+      - run: git config --global --add safe.directory "${PWD}"
+
+      - name: Set up Attic cache
+        if: ${{ secrets.ATTIC_TOKEN != '' }}
+        uses: https://git.mpluta.dev/mikey/actions/setup-attic-cache@main
+        with:
+          attic-token: ${{ secrets.ATTIC_TOKEN }}
+          attic-url: ${{ secrets.ATTIC_URL }}
+
+      - name: Build closures and compute diff
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          build() { # build <flake-dir> <host>
+            nix build --no-link --print-out-paths --accept-flake-config \
+              "$1#nixosConfigurations.$2.config.system.build.toplevel"
+          }
+
+          git worktree add /tmp/base "$BASE_SHA"
+          git config --global --add safe.directory /tmp/base
+
+          {
+            echo "$MARKER"
+            echo "## Closure diff per host"
+            echo
+            echo "Base: \`${BASE_SHA:0:8}\`"
+            echo
+            for h in $HOSTS; do
+              base="$(build /tmp/base "$h")"
+              pr="$(build . "$h")"
+              if [ "$base" = "$pr" ]; then
+                echo "<details><summary><code>$h</code></summary>"
+              else
+                echo "<details open><summary><code>$h</code></summary>"
+              fi
+              echo
+              echo '```'
+              if [ "$base" = "$pr" ]; then
+                echo "No changes."
+              else
+                nix store diff-closures "$base" "$pr"
+              fi
+              echo '```'
+              echo
+              echo "</details>"
+            done
+          } > /tmp/eval-diff.md
+
+      - name: Cache built paths to Attic
+        if: ${{ secrets.ATTIC_TOKEN != '' }}
+        uses: https://git.mpluta.dev/mikey/actions/cache-to-attic@main
+
+      - name: Post sticky comment
+        env:
+          TOKEN: ${{ secrets.FORGEJO_TOKEN || secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
+          body="$(nix run nixpkgs#jq -- -Rs . < /tmp/eval-diff.md)"
+          payload="$(nix run nixpkgs#jq -- -n --argjson body "$body" '{body:$body}')"
+
+          id="$(curl -sSf -H "Authorization: token $TOKEN" \
+            "$api/issues/$PR/comments?limit=50" \
+            | nix run nixpkgs#jq -- -r --arg m "$MARKER" \
+                'map(select(.body | startswith($m))) | .[0].id // empty')"
+
+          if [ -z "$id" ]; then
+            curl -sSf -X POST -H "Authorization: token $TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "$payload" "$api/issues/$PR/comments" >/dev/null
+            echo "Posted new sticky comment."
+          else
+            curl -sSf -X PATCH -H "Authorization: token $TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "$payload" "$api/issues/comments/$id" >/dev/null
+            echo "Updated sticky comment #$id."
+          fi

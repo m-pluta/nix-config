@@ -4,8 +4,14 @@ on:
   schedule:
     - cron: "0 0 * * 0"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   FORGEJO_HOST: git.mpluta.dev
+  PR_BRANCH: automation/update-flake-lock
+  BASE_BRANCH: main
 
 jobs:
   update-flake-lock:
@@ -19,11 +25,54 @@ jobs:
           ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
           git-hostkey: ${{ secrets.GIT_HOSTKEY }}
       - run: git config --global --add safe.directory "${PWD}"
-      - run: nix flake update
-      - name: Commit and push
+
+      - name: Update flake.lock
+        run: nix flake update --accept-flake-config 2>&1 | tee /tmp/flake-update.log
+
+      - name: Commit and push to PR branch
+        id: commit
         run: |
+          if git diff --quiet -- flake.lock; then
+            echo "No flake.lock changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           git config user.name forgejo-actions
           git config user.email forgejo@git.mpluta.dev
+          git checkout -B "$PR_BRANCH"
           git add flake.lock
-          git diff-index --quiet HEAD || git commit -m "chore: Update flake.lock"
-          git push
+          git commit -m "chore: update flake.lock"
+          git push -f origin "$PR_BRANCH"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Open or update pull request
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          TOKEN: ${{ secrets.FORGEJO_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
+          body="$(nix run nixpkgs#jq -- -Rs . < /tmp/flake-update.log)"
+          payload="$(nix run nixpkgs#jq -n \
+            --arg head "$PR_BRANCH" \
+            --arg base "$BASE_BRANCH" \
+            --arg title "chore: update flake.lock" \
+            --argjson body "$body" \
+            '{head:$head, base:$base, title:$title, body:$body}')"
+
+          num="$(curl -sSf -H "Authorization: token $TOKEN" \
+            "$api/pulls?state=open&limit=50" \
+            | nix run nixpkgs#jq -- -r --arg b "$PR_BRANCH" \
+                '.[] | select(.head.ref==$b) | .number' | head -n1)"
+
+          if [ -z "$num" ]; then
+            curl -sSf -X POST -H "Authorization: token $TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "$payload" "$api/pulls" >/dev/null
+            echo "Opened new pull request."
+          else
+            curl -sSf -X PATCH -H "Authorization: token $TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "$(echo "$payload" | nix run nixpkgs#jq -- '{title,body}')" \
+              "$api/pulls/$num" >/dev/null
+            echo "Refreshed existing pull request #$num."
+          fi
