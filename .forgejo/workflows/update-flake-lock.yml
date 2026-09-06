@@ -52,7 +52,7 @@ jobs:
         run: |
           api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
           body="$(nix run nixpkgs#jq -- -Rs . < /tmp/flake-update.log)"
-          payload="$(nix run nixpkgs#jq -n \
+          payload="$(nix run nixpkgs#jq -- -n \
             --arg head "$PR_BRANCH" \
             --arg base "$BASE_BRANCH" \
             --arg title "chore: update flake.lock" \
