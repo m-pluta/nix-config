@@ -99,4 +99,23 @@ in
   };
 
   networking.firewall.interfaces.${lanBridge}.allowedUDPPorts = [ 67 ];
+
+  # Force LAN clients' plain DNS (even a hardcoded 8.8.8.8) through the local
+  # resolver, so split-horizon applies to devices that ignore the DHCP-supplied
+  # DNS server (Chromecasts, some TVs). DoH on 443 can't be caught this way.
+  networking.firewall = {
+    # Delete-then-add so reloads (every nixos-rebuild switch) stay idempotent
+    # instead of stacking duplicate rules.
+    extraCommands = ''
+      for proto in udp tcp; do
+        iptables -t nat -D PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanSubnet}.1 -j DNAT --to-destination ${lanSubnet}.1:53 2>/dev/null || true
+        iptables -t nat -A PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanSubnet}.1 -j DNAT --to-destination ${lanSubnet}.1:53
+      done
+    '';
+    extraStopCommands = ''
+      for proto in udp tcp; do
+        iptables -t nat -D PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanSubnet}.1 -j DNAT --to-destination ${lanSubnet}.1:53 2>/dev/null || true
+      done
+    '';
+  };
 }
