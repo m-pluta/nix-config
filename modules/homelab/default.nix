@@ -46,7 +46,8 @@ in
     ./samba
     ./motd
     ./cloudflared
-    ./dnsmasq
+    ./ingress
+    ./split-dns
     ./tailscale
     ./wireguard-netns
   ];
