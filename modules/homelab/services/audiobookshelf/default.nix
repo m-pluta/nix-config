@@ -23,12 +23,7 @@ in
       port = cfg.port;
     };
     users.users.${service}.extraGroups = [ "media" ];
-    services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
-      extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
-      '';
-    };
+    homelab.ingress.routes."${cfg.url}".port = cfg.port;
   };
 
 }

@@ -11,8 +11,7 @@ in
   options.${domain}.enable = lib.mkEnableOption "${domain} static site";
 
   config = lib.mkIf cfg.enable {
-    services.caddy.virtualHosts.${domain} = {
-      useACMEHost = domain;
+    homelab.ingress.routes.${domain} = {
       serverAliases = [ "www.${domain}" ];
       extraConfig = ''
         root * ${./site}
