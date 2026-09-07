@@ -27,9 +27,9 @@
         {
           name = "lan";
           interface = "br-lan";
-          listen = config.homelab.net.lan;
+          listen = config.homelab.networks.mikeway.lan;
           subnet = "192.168.100.0/24";
-          answer = config.homelab.net.lan;
+          answer = config.homelab.networks.mikeway.lan;
         }
         {
           name = "tailnet";
