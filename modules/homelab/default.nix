@@ -47,6 +47,7 @@ in
     ./motd
     ./cloudflared
     ./ingress
+    ./networks
     ./split-dns
     ./tailscale
     ./wireguard-netns

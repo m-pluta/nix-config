@@ -17,11 +17,7 @@
     description = "Router, network gateway, and homelab front door";
     baseDomain = "mpluta.dev";
     cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
-    net.lan = "192.168.100.1";
-    tailscale = {
-      enable = true;
-      address = "100.67.111.121";
-    };
+    tailscale.enable = true;
     # Split-horizon DNS: Unbound picks a view by the client's source subnet, so
     # mpluta.dev resolves to the LAN IP on the LAN and the tailnet IP over tailscale.
     splitDns = {
@@ -31,16 +27,16 @@
         {
           name = "lan";
           interface = "br-lan";
-          listen = "192.168.100.1";
+          listen = config.homelab.net.lan;
           subnet = "192.168.100.0/24";
-          answer = "192.168.100.1";
+          answer = config.homelab.net.lan;
         }
         {
           name = "tailnet";
           interface = "tailscale0";
-          listen = "100.67.111.121";
+          listen = config.homelab.tailscale.address;
           subnet = "100.64.0.0/10";
-          answer = "100.67.111.121";
+          answer = config.homelab.tailscale.address;
         }
       ];
     };
