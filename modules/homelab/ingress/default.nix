@@ -52,9 +52,12 @@ in
   options.homelab = {
     net.lan = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = null;
+      default = hl.networks.${config.networking.hostName}.lan or null;
       example = "192.168.100.10";
-      description = "This host's stable LAN IPv4 address (the reverse-proxy upstream from the front door).";
+      description = ''
+        This host's stable LAN IPv4 address (the reverse-proxy upstream from the front
+        door). Defaults from `homelab.networks.<hostName>.lan`.
+      '';
     };
 
     ingress = {

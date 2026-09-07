@@ -13,11 +13,7 @@
     cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
     timeZone = "Europe/London";
     groups.media = 15000;
-    net.lan = "192.168.100.10";
-    tailscale = {
-      enable = true;
-      address = "100.120.225.75";
-    };
+    tailscale.enable = true;
     samba = {
       enable = true;
       shares.Media = {
