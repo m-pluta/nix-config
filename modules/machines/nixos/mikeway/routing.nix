@@ -14,7 +14,7 @@ let
   wanIf = "eth0";
   lanPorts = lib.attrNames (removeAttrs ports [ wanIf ]);
   lanBridge = "br-lan";
-  lanGateway = config.homelab.net.lan;
+  lanGateway = config.homelab.networks.mikeway.lan;
   mikelabLan = config.homelab.networks.mikelab.lan;
 
   tvWiredMac = "68:07:0a:75:61:a7";

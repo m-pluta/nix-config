@@ -8,6 +8,7 @@ let
   cfg = hl.ingress;
 
   isFrontDoor = cfg.frontDoor != null && cfg.frontDoor == config.networking.hostName;
+  lan = hl.networks.${config.networking.hostName}.lan or null;
 
   proxyRoutes = lib.filterAttrs (_url: r: r.port != null);
   hasLocalBackends = (proxyRoutes cfg.routes) != { };
@@ -50,16 +51,6 @@ let
 in
 {
   options.homelab = {
-    net.lan = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = hl.networks.${config.networking.hostName}.lan or null;
-      example = "192.168.100.10";
-      description = ''
-        This host's stable LAN IPv4 address (the reverse-proxy upstream from the front
-        door). Defaults from `homelab.networks.<hostName>.lan`.
-      '';
-    };
-
     ingress = {
       frontDoor = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
@@ -160,8 +151,8 @@ in
     (lib.mkIf (!isFrontDoor && hasLocalBackends) {
       assertions = [
         {
-          assertion = hl.net.lan != null;
-          message = "homelab.net.lan must be set on a backend host so the front door can reach it";
+          assertion = lan != null;
+          message = "homelab.networks.${config.networking.hostName}.lan must be set so the front door can reach this backend";
         }
       ];
 
@@ -174,7 +165,7 @@ in
           url: r:
           lib.nameValuePair "http://${url}" {
             extraConfig = ''
-              bind ${hl.net.lan}
+              bind ${lan}
               reverse_proxy http://127.0.0.1:${toString r.port}
             '';
           }
