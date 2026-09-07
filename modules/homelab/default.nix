@@ -48,6 +48,7 @@ in
     ./fail2ban-cloudflare
     ./cloudflared
     ./ingress
+    ./networks
     ./split-dns
     ./tailscale
     ./wireguard-netns

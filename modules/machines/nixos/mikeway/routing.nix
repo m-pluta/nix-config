@@ -1,5 +1,6 @@
 {
   lib,
+  config,
   ...
 }:
 let
@@ -13,7 +14,8 @@ let
   wanIf = "eth0";
   lanPorts = lib.attrNames (removeAttrs ports [ wanIf ]);
   lanBridge = "br-lan";
-  lanSubnet = "192.168.100";
+  lanGateway = config.homelab.net.lan;
+  mikelabLan = config.homelab.networks.mikelab.lan;
 
   tvWiredMac = "68:07:0a:75:61:a7";
   # deadnix: skip
@@ -70,14 +72,14 @@ in
       # DNS = the router itself, so clients use its split-horizon resolver.
       "30-${lanBridge}" = {
         matchConfig.Name = lanBridge;
-        address = [ "${lanSubnet}.1/24" ];
+        address = [ "${lanGateway}/24" ];
         networkConfig.DHCPServer = true;
-        dhcpServerConfig.DNS = [ "${lanSubnet}.1" ];
+        dhcpServerConfig.DNS = [ lanGateway ];
         dhcpServerStaticLeases = [
           {
             # mikelab (enp6s0)
             MACAddress = "18:c0:4d:82:21:a4";
-            Address = "${lanSubnet}.10";
+            Address = mikelabLan;
           }
         ];
       };
@@ -108,13 +110,13 @@ in
     # instead of stacking duplicate rules.
     extraCommands = ''
       for proto in udp tcp; do
-        iptables -t nat -D PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanSubnet}.1 -j DNAT --to-destination ${lanSubnet}.1:53 2>/dev/null || true
-        iptables -t nat -A PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanSubnet}.1 -j DNAT --to-destination ${lanSubnet}.1:53
+        iptables -t nat -D PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanGateway} -j DNAT --to-destination ${lanGateway}:53 2>/dev/null || true
+        iptables -t nat -A PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanGateway} -j DNAT --to-destination ${lanGateway}:53
       done
     '';
     extraStopCommands = ''
       for proto in udp tcp; do
-        iptables -t nat -D PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanSubnet}.1 -j DNAT --to-destination ${lanSubnet}.1:53 2>/dev/null || true
+        iptables -t nat -D PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanGateway} -j DNAT --to-destination ${lanGateway}:53 2>/dev/null || true
       done
     '';
   };

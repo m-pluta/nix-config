@@ -6,6 +6,7 @@
 {
   imports = [
     ./filesystems
+    ./networks.nix
     ./nix
   ];
 
