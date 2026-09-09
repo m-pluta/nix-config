@@ -23,6 +23,7 @@
         group = "mikey";
         openssh.authorizedKeys.keys = [
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINe+skoB2pgfMgyvHY0XRc/ki+8X7eTxzWzPH/DDrTaj mikey@mikebook"
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCcBOLxpnZq29yWhzfk5rrrWLPOhd2PnhoUukBNcUUX mikey@mikephone"
         ];
       };
     };
