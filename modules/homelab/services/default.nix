@@ -12,6 +12,13 @@
   };
 
   config = lib.mkIf config.homelab.services.enable {
+    assertions = [
+      {
+        assertion = config.homelab.splitDns.resolverAddress != null;
+        message = "homelab services require homelab.splitDns.resolverAddress for container DNS";
+      }
+    ];
+
     virtualisation.podman = {
       dockerCompat = true;
       autoPrune.enable = true;
@@ -21,7 +28,7 @@
       };
     };
     virtualisation.containers.containersConf.settings = {
-      containers.dns_servers = [ config.homelab.tailscale.address ];
+      containers.dns_servers = [ config.homelab.splitDns.resolverAddress ];
     };
     virtualisation.oci-containers = {
       backend = "podman";

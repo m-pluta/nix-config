@@ -19,6 +19,12 @@
             example = "192.168.100.10";
             description = "Stable LAN IPv4 address.";
           };
+          lanInterface = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = "enp6s0";
+            description = "Interface carrying the stable LAN address.";
+          };
           tailscale = lib.mkOption {
             type = lib.types.nullOr lib.types.str;
             default = null;
