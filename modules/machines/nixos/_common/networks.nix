@@ -1,12 +1,19 @@
+{ config, ... }:
 {
-  homelab.networks = {
-    mikeway = {
-      lan = "192.168.100.1";
-      tailscale = "100.67.111.121";
+  homelab = {
+    networks = {
+      mikeway = {
+        lan = "192.168.100.1";
+        lanInterface = "br-lan";
+        tailscale = "100.67.111.121";
+      };
+      mikelab = {
+        lan = "192.168.100.10";
+        lanInterface = "enp6s0";
+        tailscale = "100.120.225.75";
+      };
     };
-    mikelab = {
-      lan = "192.168.100.10";
-      tailscale = "100.120.225.75";
-    };
+
+    splitDns.resolverAddress = config.homelab.networks.mikeway.lan;
   };
 }

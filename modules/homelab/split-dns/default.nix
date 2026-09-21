@@ -16,6 +16,15 @@ in
       description = "Domains answered locally (wildcard-redirected per view) instead of resolved normally.";
     };
 
+    resolverAddress = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = ''
+        Address other homelab hosts and containers should use for DNS. This is
+        independent of `enable` so clients can consume it without running Unbound.
+      '';
+    };
+
     upstreams = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [

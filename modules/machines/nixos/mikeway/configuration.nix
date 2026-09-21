@@ -14,7 +14,7 @@
 
   homelab = {
     enable = true;
-    description = "Router, network gateway, and homelab front door";
+    description = "Router, network gateway, and homelab ingress host";
     baseDomain = "mpluta.dev";
     cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
     tailscale.enable = true;
@@ -54,7 +54,7 @@
 
   age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare/dns-api.age";
 
-  # Front-door Caddy: reachable from the LAN (tailnet is already a trusted interface,
+  # Ingress Caddy: reachable from the LAN (tailnet is already a trusted interface,
   # public access arrives via the tunnel on loopback) but never served on the WAN.
   networking.firewall.interfaces.br-lan.allowedTCPPorts = [
     80

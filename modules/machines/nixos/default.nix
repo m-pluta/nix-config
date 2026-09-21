@@ -64,17 +64,17 @@ let
     };
 
   # First pass, without route injection, purely to read each host's published
-  # ingress routes and LAN address. The front door reads other hosts; no host
-  # reads the front door, so there is no evaluation cycle.
+  # ingress routes and LAN address. The ingress host reads other hosts; no host
+  # reads the ingress host, so there is no evaluation cycle.
   base = lib.genAttrs hostNames (name: mkSystem name [ ]);
 
-  frontDoor = base.${builtins.head hostNames}.config.homelab.ingress.frontDoor;
+  ingressHost = base.${builtins.head hostNames}.config.homelab.ingress.ingressHost;
 
-  remoteRoutesFor =
-    fd:
+  routesForIngressHost =
+    host:
     lib.foldl' (
       acc: name:
-      if name == fd then
+      if name == host then
         acc
       else
         acc
@@ -88,8 +88,8 @@ in
   flake.nixosConfigurations = lib.genAttrs hostNames (
     name:
     mkSystem name (
-      lib.optional (name == frontDoor) {
-        homelab.ingress.remoteRoutes = remoteRoutesFor frontDoor;
+      lib.optional (name == ingressHost) {
+        homelab.ingress.remoteRoutes = routesForIngressHost ingressHost;
       }
     )
   );
