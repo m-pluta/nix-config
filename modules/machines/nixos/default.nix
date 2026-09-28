@@ -85,12 +85,18 @@ let
     ) { } hostNames;
 in
 {
-  flake.nixosConfigurations = lib.genAttrs hostNames (
-    name:
-    mkSystem name (
-      lib.optional (name == ingressHost) {
-        homelab.ingress.remoteRoutes = routesForIngressHost ingressHost;
-      }
-    )
-  );
+  # Reuse `base` for every host except the ingress host, which alone needs a
+  # second evaluation to receive remoteRoutes — avoids re-evaluating the whole
+  # fleet just to inject data into the one host that changes. ingressHost may
+  # be null (ingress disabled fleet-wide), in which case base is already final.
+  flake.nixosConfigurations =
+    if ingressHost == null then
+      base
+    else
+      base
+      // {
+        ${ingressHost} = mkSystem ingressHost [
+          { homelab.ingress.remoteRoutes = routesForIngressHost ingressHost; }
+        ];
+      };
 }
