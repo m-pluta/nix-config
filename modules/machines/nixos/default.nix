@@ -70,19 +70,18 @@ let
 
   ingressHost = base.${builtins.head hostNames}.config.homelab.ingress.ingressHost;
 
-  routesForIngressHost =
-    host:
-    lib.foldl' (
-      acc: name:
-      if name == host then
-        acc
-      else
-        acc
-        // lib.mapAttrs (_url: r: {
-          lanIP = base.${name}.config.homelab.networks.${name}.lan.v4;
-          inherit (r) port extraConfig serverAliases;
-        }) base.${name}.config.homelab.ingress.routes
-    ) { } hostNames;
+  # Every other host's published routes, aggregated for the ingress host to proxy to.
+  remoteRoutes = lib.foldl' (
+    acc: name:
+    if name == ingressHost then
+      acc
+    else
+      acc
+      // lib.mapAttrs (_url: r: {
+        lanIP = base.${name}.config.homelab.networks.${name}.lan.v4;
+        inherit (r) port extraConfig serverAliases;
+      }) base.${name}.config.homelab.ingress.routes
+  ) { } hostNames;
 in
 {
   # Reuse `base` for every host except the ingress host, which alone needs a
@@ -96,7 +95,7 @@ in
       base
       // {
         ${ingressHost} = mkSystem ingressHost [
-          { homelab.ingress.remoteRoutes = routesForIngressHost ingressHost; }
+          { homelab.ingress.remoteRoutes = remoteRoutes; }
         ];
       };
 }
