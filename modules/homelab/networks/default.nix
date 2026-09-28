@@ -1,4 +1,20 @@
 { lib, ... }:
+let
+  networkType = lib.types.submodule {
+    options = {
+      v4 = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "IPv4 address.";
+      };
+      interface = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Interface carrying this address.";
+      };
+    };
+  };
+in
 {
   options.homelab.networks = lib.mkOption {
     default = { };
@@ -14,22 +30,14 @@
       lib.types.submodule {
         options = {
           lan = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            example = "192.168.100.10";
-            description = "Stable LAN IPv4 address.";
+            type = networkType;
+            default = { };
+            description = "Stable LAN address.";
           };
-          lanInterface = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            example = "enp6s0";
-            description = "Interface carrying the stable LAN address.";
-          };
-          tailscale = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            example = "100.120.225.75";
-            description = "Tailscale IPv4 address.";
+          mesh = lib.mkOption {
+            type = networkType;
+            default = { };
+            description = "Mesh VPN address (currently Tailscale).";
           };
         };
       }

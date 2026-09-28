@@ -8,10 +8,10 @@ let
   cfg = hl.ingress;
 
   isIngressHost = cfg.ingressHost != null && cfg.ingressHost == config.networking.hostName;
-  lan = hl.networks.${config.networking.hostName}.lan or null;
-  lanInterface = hl.networks.${config.networking.hostName}.lanInterface or null;
+  lan = hl.networks.${config.networking.hostName}.lan.v4 or null;
+  lanInterface = hl.networks.${config.networking.hostName}.lan.interface or null;
   ingressHostAddress =
-    if cfg.ingressHost == null then null else hl.networks.${cfg.ingressHost}.lan or null;
+    if cfg.ingressHost == null then null else hl.networks.${cfg.ingressHost}.lan.v4 or null;
   trustedIngressAddress = if ingressHostAddress == null then "127.0.0.1" else ingressHostAddress;
 
   proxyRoutes = lib.filterAttrs (_url: r: r.port != null);
@@ -175,15 +175,15 @@ in
       assertions = [
         {
           assertion = lan != null;
-          message = "homelab.networks.${config.networking.hostName}.lan must be set so the ingress host can reach this service proxy";
+          message = "homelab.networks.${config.networking.hostName}.lan.v4 must be set so the ingress host can reach this service proxy";
         }
         {
           assertion = ingressHostAddress != null;
-          message = "homelab.networks.${toString cfg.ingressHost}.lan must be set so service proxies can trust the ingress host";
+          message = "homelab.networks.${toString cfg.ingressHost}.lan.v4 must be set so service proxies can trust the ingress host";
         }
         {
           assertion = lanInterface != null;
-          message = "homelab.networks.${config.networking.hostName}.lanInterface must be set to expose the service proxy only on the LAN";
+          message = "homelab.networks.${config.networking.hostName}.lan.interface must be set to expose the service proxy only on the LAN";
         }
       ];
 

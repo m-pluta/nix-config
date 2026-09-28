@@ -79,7 +79,7 @@ let
       else
         acc
         // lib.mapAttrs (_url: r: {
-          lanIP = base.${name}.config.homelab.networks.${name}.lan;
+          lanIP = base.${name}.config.homelab.networks.${name}.lan.v4;
           inherit (r) port extraConfig serverAliases;
         }) base.${name}.config.homelab.ingress.routes
     ) { } hostNames;
