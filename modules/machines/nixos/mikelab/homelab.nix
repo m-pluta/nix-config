@@ -1,6 +1,4 @@
 {
-  config,
-  inputs,
   ...
 }:
 {
@@ -10,7 +8,6 @@
     enable = true;
     description = "Primary server hosting storage and the self-hosted services";
     baseDomain = "mpluta.dev";
-    cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
     timeZone = "Europe/London";
     groups.media = 15000;
     tailscale.enable = true;
@@ -107,7 +104,5 @@
       "${mediaDir}/library/music ${perms}"
       "${mediaDir}/library/books ${perms}"
     ];
-
-  age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare/dns-api.age";
 
 }
