@@ -3,17 +3,27 @@
   homelab = {
     networks = {
       mikeway = {
-        lan = "192.168.100.1";
-        lanInterface = "br-lan";
-        tailscale = "100.67.111.121";
+        lan = {
+          v4 = "192.168.100.1";
+          interface = "br-lan";
+        };
+        mesh = {
+          v4 = "100.67.111.121";
+          interface = "tailscale0";
+        };
       };
       mikelab = {
-        lan = "192.168.100.10";
-        lanInterface = "enp6s0";
-        tailscale = "100.120.225.75";
+        lan = {
+          v4 = "192.168.100.10";
+          interface = "enp6s0";
+        };
+        mesh = {
+          v4 = "100.120.225.75";
+          interface = "tailscale0";
+        };
       };
     };
 
-    splitDns.resolverAddress = config.homelab.networks.mikeway.lan;
+    splitDns.resolverAddress = config.homelab.networks.mikeway.lan.v4;
   };
 }

@@ -26,14 +26,14 @@
       views = [
         {
           name = "lan";
-          interface = "br-lan";
-          listen = config.homelab.networks.mikeway.lan;
+          interface = config.homelab.networks.mikeway.lan.interface;
+          listen = config.homelab.networks.mikeway.lan.v4;
           subnet = "192.168.100.0/24";
-          answer = config.homelab.networks.mikeway.lan;
+          answer = config.homelab.networks.mikeway.lan.v4;
         }
         {
           name = "tailnet";
-          interface = "tailscale0";
+          interface = config.homelab.networks.mikeway.mesh.interface;
           listen = config.homelab.tailscale.address;
           subnet = "100.64.0.0/10";
           answer = config.homelab.tailscale.address;
