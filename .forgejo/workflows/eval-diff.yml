@@ -12,7 +12,7 @@ concurrency:
 
 env:
   FORGEJO_HOST: git.mpluta.dev
-  HOSTS: "mikeway mikelab vm"
+  HOSTS: "mikeway mikelab"
   MARKER: "<!-- eval-diff -->"
 
 jobs:
