@@ -13,9 +13,10 @@ let
   };
   wanIf = "eth0";
   lanPorts = lib.attrNames (removeAttrs ports [ wanIf ]);
-  lanBridge = "br-lan";
-  lanGateway = config.homelab.networks.mikeway.lan.v4;
-  mikelabLan = config.homelab.networks.mikelab.lan.v4;
+  lan = config.homelab.networks.mikeway.lan;
+  lanBridge = lan.interface;
+  lanGateway = lan.v4;
+  mikelabLan = config.homelab.networks.mikelab.lan;
 
   tvWiredMac = "68:07:0a:75:61:a7";
   # deadnix: skip
@@ -72,14 +73,14 @@ in
       # DNS = the router itself, so clients use its split-horizon resolver.
       "30-${lanBridge}" = {
         matchConfig.Name = lanBridge;
-        address = [ "${lanGateway}/24" ];
+        address = [ "${lanGateway}/${toString lan.prefixLength}" ];
         networkConfig.DHCPServer = true;
         dhcpServerConfig.DNS = [ lanGateway ];
         dhcpServerStaticLeases = [
           {
             # mikelab (enp6s0)
             MACAddress = "18:c0:4d:82:21:a4";
-            Address = mikelabLan;
+            Address = mikelabLan.v4;
           }
         ];
       };

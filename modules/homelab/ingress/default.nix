@@ -175,15 +175,11 @@ in
       assertions = [
         {
           assertion = lan != null;
-          message = "homelab.networks.${config.networking.hostName}.lan.v4 must be set so the ingress host can reach this service proxy";
+          message = "homelab.networks.${config.networking.hostName}.lan must be set so the ingress host can reach this service proxy";
         }
         {
           assertion = ingressHostAddress != null;
-          message = "homelab.networks.${toString cfg.ingressHost}.lan.v4 must be set so service proxies can trust the ingress host";
-        }
-        {
-          assertion = lanInterface != null;
-          message = "homelab.networks.${config.networking.hostName}.lan.interface must be set to expose the service proxy only on the LAN";
+          message = "homelab.networks.${toString cfg.ingressHost}.lan must be set so service proxies can trust the ingress host";
         }
       ];
 

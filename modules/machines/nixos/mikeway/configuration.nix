@@ -28,14 +28,14 @@
           name = "lan";
           interface = config.homelab.networks.mikeway.lan.interface;
           listen = config.homelab.networks.mikeway.lan.v4;
-          subnet = "192.168.100.0/24";
+          subnet = config.homelab.networks.mikeway.lan.subnet;
           answer = config.homelab.networks.mikeway.lan.v4;
         }
         {
           name = "tailnet";
           interface = config.homelab.networks.mikeway.mesh.interface;
           listen = config.homelab.tailscale.address;
-          subnet = "100.64.0.0/10";
+          subnet = config.homelab.networks.mikeway.mesh.subnet;
           answer = config.homelab.tailscale.address;
         }
       ];
@@ -56,7 +56,7 @@
 
   # Ingress Caddy: reachable from the LAN (tailnet is already a trusted interface,
   # public access arrives via the tunnel on loopback) but never served on the WAN.
-  networking.firewall.interfaces.br-lan.allowedTCPPorts = [
+  networking.firewall.interfaces.${config.homelab.networks.mikeway.lan.interface}.allowedTCPPorts = [
     80
     443
   ];

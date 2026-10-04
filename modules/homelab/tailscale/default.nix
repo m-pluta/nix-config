@@ -15,7 +15,7 @@ in
     address = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = config.homelab.networks.${config.networking.hostName}.mesh.v4 or null;
-      description = "Tailscale IP address of this host. Defaults from `homelab.networks.<hostName>.mesh.v4`.";
+      description = "Tailscale IP address of this host";
     };
   };
 
