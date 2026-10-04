@@ -199,8 +199,11 @@ in
         virtualHosts = lib.mapAttrs' (
           url: r:
           lib.nameValuePair "http://${url}" {
+            # Only the ingress host may connect, so ingress-level policy can't be bypassed.
             extraConfig = ''
               bind ${lan}
+              @direct not remote_ip ${trustedIngressAddress}
+              respond @direct 403
               ${mkReverseProxy "http://127.0.0.1:${toString r.port}"}
             '';
           }
