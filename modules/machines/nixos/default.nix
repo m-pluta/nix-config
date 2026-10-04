@@ -82,6 +82,16 @@ let
         inherit (r) port extraConfig serverAliases;
       }) base.${name}.config.homelab.ingress.routes
   ) { } hostNames;
+
+  # URL -> hosts declaring it. Merging same-URL routes would silently collapse them
+  # into one vhost, so any URL with more than one owner is rejected.
+  routeOwners = lib.foldl' (
+    acc: name:
+    lib.foldl' (a: url: a // { ${url} = (a.${url} or [ ]) ++ [ name ]; }) acc (
+      lib.attrNames base.${name}.config.homelab.ingress.routes
+    )
+  ) { } hostNames;
+  duplicateRoutes = lib.filterAttrs (_url: owners: lib.length owners > 1) routeOwners;
 in
 {
   # Reuse `base` for every host except the ingress host, which alone needs a
@@ -95,7 +105,19 @@ in
       base
       // {
         ${ingressHost} = mkSystem ingressHost [
-          { homelab.ingress.remoteRoutes = remoteRoutes; }
+          {
+            homelab.ingress.remoteRoutes = remoteRoutes;
+            assertions = [
+              {
+                assertion = duplicateRoutes == { };
+                message =
+                  "homelab.ingress route URLs declared on more than one host: "
+                  + lib.concatStringsSep ", " (
+                    lib.mapAttrsToList (url: owners: "${url} (${lib.concatStringsSep ", " owners})") duplicateRoutes
+                  );
+              }
+            ];
+          }
         ];
       };
 }
