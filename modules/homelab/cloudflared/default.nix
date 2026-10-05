@@ -16,10 +16,6 @@ in
       type = lib.types.str;
       description = "Cloudflare Tunnel UUID";
     };
-    credentialsFile = lib.mkOption {
-      type = lib.types.path;
-      description = "Path to the tunnel credentials JSON file (agenix secret)";
-    };
     expose = lib.mkOption {
       type = lib.types.attrsOf (lib.types.listOf lib.types.str);
       default = { };
@@ -40,7 +36,7 @@ in
     services.cloudflared = {
       enable = true;
       tunnels.${cfg.tunnelId} = {
-        credentialsFile = cfg.credentialsFile;
+        credentialsFile = config.age.secrets.cloudflared-tunnel.path;
         ingress =
           let
             entries = lib.flatten (
