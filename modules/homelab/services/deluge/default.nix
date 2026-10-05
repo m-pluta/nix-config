@@ -14,14 +14,14 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8112;
-    url = "deluge.${hl.baseDomain}";
+    url = "${service}.${hl.baseDomain}";
     homepage = {
       name = "Deluge";
       description = "Torrent client";
       icon = "deluge.svg";
       category = "Downloads";
     };
-    configDir = "/var/lib/deluge";
+    configDir = "/var/lib/${service}";
     monitoredServices = [
       "delugeweb"
       "deluged-proxy"
@@ -30,7 +30,7 @@ in
   };
   config = lib.mkIf cfg.enable {
     homelab.wireguard-netns.enable = true;
-    services.deluge = {
+    services.${service} = {
       enable = true;
       web.enable = true;
     };

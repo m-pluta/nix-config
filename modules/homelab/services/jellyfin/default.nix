@@ -6,13 +6,13 @@
 let
   service = "jellyfin";
   serviceLib = import ../lib.nix { inherit lib; };
-  cfg = hl.services.${service};
   hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8096;
-    url = "jellyfin.${hl.baseDomain}";
+    url = "${service}.${hl.baseDomain}";
     configDir = "/var/lib/${service}";
     homepage = {
       name = "Jellyfin";

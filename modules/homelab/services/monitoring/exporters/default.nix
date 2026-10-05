@@ -27,7 +27,7 @@ in
     default = { };
   };
 
-  config = lib.mkIf config.homelab.enable {
+  config = lib.mkIf hl.enable {
     homelab.monitoring.exporters = {
       node.enable = lib.mkDefault true;
       systemd.enable = lib.mkDefault true;

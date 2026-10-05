@@ -6,8 +6,8 @@
 let
   service = "victoriametrics";
   serviceLib = import ../../lib.nix { inherit lib; };
-  cfg = hl.services.${service};
   hl = config.homelab;
+  cfg = hl.services.${service};
   vmUrl = "http://127.0.0.1:${toString cfg.port}";
 in
 {

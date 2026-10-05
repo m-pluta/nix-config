@@ -14,7 +14,7 @@ in
     serviceLib.mkServiceOptions {
       port = 8069;
       url = "bin.${hl.baseDomain}";
-      configDir = "/var/lib/microbin";
+      configDir = "/var/lib/${service}";
       homepage = {
         name = "Microbin";
         description = "A minimal pastebin";

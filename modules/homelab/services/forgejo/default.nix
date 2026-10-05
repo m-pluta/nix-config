@@ -7,8 +7,8 @@
 let
   service = "forgejo";
   serviceLib = import ../lib.nix { inherit lib; };
-  cfg = config.homelab.services.${service};
   hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
@@ -24,7 +24,7 @@ in
   config = lib.mkIf cfg.enable {
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     services.openssh.settings.AcceptEnv = "GIT_PROTOCOL";
-    services.forgejo = {
+    services.${service} = {
       package = pkgs.forgejo;
       enable = true;
       database.type = lib.mkDefault "sqlite3";

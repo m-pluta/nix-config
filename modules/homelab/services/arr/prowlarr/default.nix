@@ -2,8 +2,8 @@
 let
   service = "prowlarr";
   serviceLib = import ../../lib.nix { inherit lib; };
-  cfg = hl.services.${service};
   hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {

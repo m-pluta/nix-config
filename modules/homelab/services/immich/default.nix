@@ -6,8 +6,8 @@
 let
   service = "immich";
   serviceLib = import ../lib.nix { inherit lib; };
-  cfg = hl.services.${service};
   hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} =
@@ -31,12 +31,12 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
-    users.users.immich.extraGroups = [
+    users.users.${service}.extraGroups = [
       "media"
       "video"
       "render"
     ];
-    services.immich = {
+    services.${service} = {
       enable = true;
       host = "127.0.0.1";
       port = cfg.port;

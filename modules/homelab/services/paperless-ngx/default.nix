@@ -7,13 +7,13 @@
 let
   service = "paperless";
   serviceLib = import ../lib.nix { inherit lib; };
-  cfg = hl.services.${service};
   hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 28981;
-    url = "paperless.${hl.baseDomain}";
+    url = "${service}.${hl.baseDomain}";
     configDir = "/var/lib/${service}";
     monitoredServices = [
       "paperless-consumer"
@@ -29,7 +29,7 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    age.secrets.paperless-password.file = "${inputs.secrets}/services/paperless/password.age";
+    age.secrets."${service}-password".file = "${inputs.secrets}/services/${service}/password.age";
     # TODO: remove once upstream nixpkgs fixes paperless-ngx consumer test failures
     nixpkgs.overlays = [
       (_final: prev: {
@@ -43,7 +43,7 @@ in
     services.${service} = {
       enable = true;
       port = cfg.port;
-      passwordFile = config.age.secrets.paperless-password.path;
+      passwordFile = config.age.secrets."${service}-password".path;
       consumptionDirIsPublic = true;
       settings = {
         PAPERLESS_URL = "https://${cfg.url}";

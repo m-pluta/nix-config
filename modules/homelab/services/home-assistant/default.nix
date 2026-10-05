@@ -18,7 +18,7 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    services.home-assistant = {
+    services.${service} = {
       enable = true;
       configDir = cfg.configDir;
       extraComponents = [

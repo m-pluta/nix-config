@@ -6,8 +6,8 @@
 let
   service = "plausible";
   serviceLib = import ../lib.nix { inherit lib; };
-  cfg = config.homelab.services.${service};
   hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} =
@@ -32,7 +32,7 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
-    services.plausible = {
+    services.${service} = {
       enable = true;
       server = {
         port = cfg.port;

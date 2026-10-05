@@ -38,7 +38,7 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
-    systemd.services.navidrome.serviceConfig.EnvironmentFile = lib.mkIf (
+    systemd.services.${service}.serviceConfig.EnvironmentFile = lib.mkIf (
       cfg.environmentFile != null
     ) cfg.environmentFile;
     services.${service} = {

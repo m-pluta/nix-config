@@ -7,8 +7,8 @@
 let
   service = "attic";
   serviceLib = import ../lib.nix { inherit lib; };
-  cfg = config.homelab.services.${service};
   hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
@@ -24,11 +24,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    age.secrets.attic-token.file = "${inputs.secrets}/services/attic/token.age";
+    age.secrets."${service}-token".file = "${inputs.secrets}/services/${service}/token.age";
 
     services.atticd = {
       enable = true;
-      environmentFile = config.age.secrets.attic-token.path;
+      environmentFile = config.age.secrets."${service}-token".path;
       settings = {
         listen = "127.0.0.1:${toString cfg.port}";
         allowed-hosts = [ cfg.url ];

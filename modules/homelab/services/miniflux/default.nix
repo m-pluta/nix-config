@@ -23,10 +23,11 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    age.secrets.miniflux-admin-credentials.file = "${inputs.secrets}/services/miniflux/admin-credentials.age";
+    age.secrets."${service}-admin-credentials".file =
+      "${inputs.secrets}/services/${service}/admin-credentials.age";
     services.${service} = {
       enable = true;
-      adminCredentialsFile = config.age.secrets.miniflux-admin-credentials.path;
+      adminCredentialsFile = config.age.secrets."${service}-admin-credentials".path;
       config = {
         BASE_URL = "https://${cfg.url}";
         CREATE_ADMIN = true;

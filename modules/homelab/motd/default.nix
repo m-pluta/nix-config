@@ -5,10 +5,14 @@
   ...
 }:
 let
+  service = "motd";
+  hl = config.homelab;
+  cfg = hl.${service};
+
   # Collect enabled homelab services and their monitored systemd units
   enabledServices = lib.filterAttrs (
     _name: value: value != "enable" && value ? enable && value.enable
-  ) config.homelab.services;
+  ) hl.services;
 
   monitoredServices = lib.concatMap (
     name:
@@ -56,7 +60,7 @@ let
         ${netdev}
         print_info "IPv4 $NETDEV" "$(ip -4 addr show $NETDEV | grep -oP '(?<=inet\s)\d+(\.\d+){3}')"
       ''
-    ) config.homelab.motd.networkInterfaces}
+    ) cfg.networkInterfaces}
 
     # System info
     source /etc/os-release
@@ -106,7 +110,7 @@ let
   '';
 in
 {
-  options.homelab.motd = {
+  options.homelab.${service} = {
     enable = lib.mkEnableOption {
       description = "motd Greeting";
     };
@@ -116,7 +120,7 @@ in
       default = [ "" ];
     };
   };
-  config = lib.mkIf config.homelab.motd.enable {
+  config = lib.mkIf cfg.enable {
     environment.systemPackages = [ motd ];
     programs.bash.interactiveShellInit = ''
       ${motd}/bin/motd

@@ -8,8 +8,8 @@
 let
   service = "nextcloud";
   serviceLib = import ../lib.nix { inherit lib; };
-  cfg = config.homelab.services.${service};
   hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} =
@@ -34,9 +34,9 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
-    age.secrets.nextcloud-admin-password = {
-      file = "${inputs.secrets}/services/nextcloud/password.age";
-      owner = "nextcloud";
+    age.secrets."${service}-admin-password" = {
+      file = "${inputs.secrets}/services/${service}/password.age";
+      owner = service;
     };
     # Nextcloud requires nginx internally as its PHP-FPM frontend
     services.nginx.virtualHosts."nix-nextcloud".listen = [
@@ -45,7 +45,7 @@ in
         port = cfg.port;
       }
     ];
-    services.nextcloud = {
+    services.${service} = {
       enable = true;
       hostName = "nix-nextcloud";
       package = pkgs.nextcloud32;
@@ -62,7 +62,7 @@ in
       config = {
         dbtype = "pgsql";
         adminuser = cfg.admin.username;
-        adminpassFile = config.age.secrets.nextcloud-admin-password.path;
+        adminpassFile = config.age.secrets."${service}-admin-password".path;
       };
     };
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
