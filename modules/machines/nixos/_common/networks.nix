@@ -1,4 +1,3 @@
-{ config, ... }:
 {
   homelab = {
     networks = {
@@ -20,6 +19,6 @@
       };
     };
 
-    splitDns.resolverAddress = config.homelab.networks.mikeway.lan.v4;
+    splitDns.resolverHost = "mikeway";
   };
 }

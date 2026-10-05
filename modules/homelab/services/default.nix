@@ -17,8 +17,8 @@ in
   config = lib.mkIf hl.services.enable {
     assertions = [
       {
-        assertion = config.homelab.splitDns.resolverAddress != null;
-        message = "homelab services require homelab.splitDns.resolverAddress for container DNS";
+        assertion = config.homelab.splitDns.resolverHost != null;
+        message = "homelab services require homelab.splitDns.resolverHost for container DNS";
       }
     ];
 
@@ -31,7 +31,9 @@ in
       };
     };
     virtualisation.containers.containersConf.settings = {
-      containers.dns_servers = [ config.homelab.splitDns.resolverAddress ];
+      containers.dns_servers = [
+        config.homelab.networks.${config.homelab.splitDns.resolverHost}.lan.v4
+      ];
     };
     virtualisation.oci-containers = {
       backend = "podman";
