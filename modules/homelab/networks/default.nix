@@ -32,14 +32,7 @@ in
 {
   options.homelab.networks = lib.mkOption {
     default = { };
-    description = ''
-      Every homelab host's network identity, keyed by hostName. Hosts are built as
-      independent NixOS systems with no visibility into each other's config, so this
-      is the one place cross-host addresses (reverse-proxy targets, split-DNS
-      answers, static DHCP leases) get typed — set once in
-      modules/machines/nixos/_common/networks.nix, read everywhere via
-      `config.homelab.networks.<hostName>`.
-    '';
+    description = "Network addresses of every homelab host, keyed by hostName.";
     type = lib.types.attrsOf (
       lib.types.submodule {
         options = {
