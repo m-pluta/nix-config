@@ -7,13 +7,13 @@
 let
   service = "paperless";
   serviceLib = import ../lib.nix { inherit lib; };
-  cfg = config.homelab.services.${service};
-  homelab = config.homelab;
+  cfg = hl.services.${service};
+  hl = config.homelab;
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 28981;
-    url = "paperless.${homelab.baseDomain}";
+    url = "paperless.${hl.baseDomain}";
     configDir = "/var/lib/${service}";
     monitoredServices = [
       "paperless-consumer"
@@ -56,7 +56,7 @@ in
     };
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
+      useACMEHost = hl.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';

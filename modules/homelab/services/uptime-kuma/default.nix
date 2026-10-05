@@ -2,13 +2,13 @@
 let
   service = "uptime-kuma";
   serviceLib = import ../lib.nix { inherit lib; };
-  cfg = config.homelab.services.${service};
-  homelab = config.homelab;
+  cfg = hl.services.${service};
+  hl = config.homelab;
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 3001;
-    url = "uptime.${homelab.baseDomain}";
+    url = "uptime.${hl.baseDomain}";
     configDir = "/var/lib/${service}";
     homepage = {
       name = "Uptime Kuma";
@@ -23,7 +23,7 @@ in
       settings.PORT = toString cfg.port;
     };
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
+      useACMEHost = hl.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';

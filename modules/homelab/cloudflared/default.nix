@@ -5,7 +5,8 @@
   ...
 }:
 let
-  cfg = config.homelab.cloudflared;
+  hl = config.homelab;
+  cfg = hl.cloudflared;
 in
 {
   options.homelab.cloudflared = {

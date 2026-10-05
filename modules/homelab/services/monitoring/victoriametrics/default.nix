@@ -6,15 +6,15 @@
 let
   service = "victoriametrics";
   serviceLib = import ../../lib.nix { inherit lib; };
-  cfg = config.homelab.services.${service};
-  homelab = config.homelab;
+  cfg = hl.services.${service};
+  hl = config.homelab;
   vmUrl = "http://127.0.0.1:${toString cfg.port}";
 in
 {
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 8428;
-      url = "vm.${homelab.baseDomain}";
+      url = "vm.${hl.baseDomain}";
       homepage = {
         name = "VictoriaMetrics";
         description = "Time series database and monitoring";
@@ -96,7 +96,7 @@ in
     };
 
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
+      useACMEHost = hl.baseDomain;
       extraConfig = ''
         reverse_proxy ${vmUrl}
       '';

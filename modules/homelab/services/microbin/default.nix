@@ -6,14 +6,14 @@
 let
   service = "microbin";
   serviceLib = import ../lib.nix { inherit lib; };
-  homelab = config.homelab;
-  cfg = config.homelab.services.${service};
+  hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 8069;
-      url = "bin.${homelab.baseDomain}";
+      url = "bin.${hl.baseDomain}";
       configDir = "/var/lib/microbin";
       homepage = {
         name = "Microbin";
@@ -47,7 +47,7 @@ in
       passwordFile = cfg.passwordFile;
     };
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
+      useACMEHost = hl.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';

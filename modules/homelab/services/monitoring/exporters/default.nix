@@ -4,7 +4,8 @@
   ...
 }:
 let
-  cfg = config.homelab.monitoring;
+  hl = config.homelab;
+  cfg = hl.monitoring;
   enabledExporters = lib.filterAttrs (_: v: v.enable) cfg.exporters;
 in
 {

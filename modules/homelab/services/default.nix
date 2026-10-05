@@ -4,6 +4,9 @@
   pkgs,
   ...
 }:
+let
+  hl = config.homelab;
+in
 {
   options.homelab = {
     services = {
@@ -11,7 +14,7 @@
     };
   };
 
-  config = lib.mkIf config.homelab.services.enable {
+  config = lib.mkIf hl.services.enable {
     networking.firewall.allowedTCPPorts = [
       80
       443
@@ -19,15 +22,15 @@
     security.acme = {
       acceptTerms = true;
       defaults.email = "mikey@mpluta.dev";
-      certs.${config.homelab.baseDomain} = {
+      certs.${hl.baseDomain} = {
         reloadServices = [ "caddy.service" ];
-        domain = "${config.homelab.baseDomain}";
-        extraDomainNames = [ "*.${config.homelab.baseDomain}" ];
+        domain = "${hl.baseDomain}";
+        extraDomainNames = [ "*.${hl.baseDomain}" ];
         dnsProvider = "cloudflare";
         dnsResolver = "1.1.1.1:53";
         dnsPropagationCheck = true;
         group = config.services.caddy.group;
-        environmentFile = config.homelab.cloudflare.dnsCredentialsFile;
+        environmentFile = hl.cloudflare.dnsCredentialsFile;
       };
     };
     services.caddy = {
@@ -36,18 +39,18 @@
         auto_https off
       '';
       virtualHosts = {
-        "http://${config.homelab.baseDomain}" = {
+        "http://${hl.baseDomain}" = {
           extraConfig = ''
             redir https://{host}{uri}
           '';
         };
-        "http://*.${config.homelab.baseDomain}" = {
+        "http://*.${hl.baseDomain}" = {
           extraConfig = ''
             redir https://{host}{uri}
           '';
         };
-        "*.${config.homelab.baseDomain}" = {
-          useACMEHost = config.homelab.baseDomain;
+        "*.${hl.baseDomain}" = {
+          useACMEHost = hl.baseDomain;
           extraConfig = ''
             respond 404
           '';
@@ -63,7 +66,7 @@
       };
     };
     virtualisation.containers.containersConf.settings = {
-      containers.dns_servers = [ config.homelab.tailscale.address ];
+      containers.dns_servers = [ hl.tailscale.address ];
     };
     virtualisation.oci-containers = {
       backend = "podman";

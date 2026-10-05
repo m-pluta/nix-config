@@ -2,13 +2,13 @@
 let
   service = "vaultwarden";
   serviceLib = import ../lib.nix { inherit lib; };
-  homelab = config.homelab;
-  cfg = config.homelab.services.${service};
+  hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8222;
-    url = "pass.${homelab.baseDomain}";
+    url = "pass.${hl.baseDomain}";
     configDir = "/var/lib/bitwarden_rs";
     homepage = {
       name = "Vaultwarden";
@@ -31,7 +31,7 @@ in
         };
       };
       caddy.virtualHosts."${cfg.url}" = {
-        useACMEHost = homelab.baseDomain;
+        useACMEHost = hl.baseDomain;
         extraConfig = ''
           reverse_proxy http://127.0.0.1:${toString cfg.port}
         '';

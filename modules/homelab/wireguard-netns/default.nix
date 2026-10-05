@@ -6,8 +6,8 @@
   ...
 }:
 let
-  homelab = config.homelab;
-  cfg = homelab.wireguard-netns;
+  hl = config.homelab;
+  cfg = hl.wireguard-netns;
 in
 {
   options.homelab.wireguard-netns = {

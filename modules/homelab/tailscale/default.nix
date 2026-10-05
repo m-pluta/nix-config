@@ -6,7 +6,8 @@
 }:
 let
   service = "tailscale";
-  cfg = config.homelab.${service};
+  hl = config.homelab;
+  cfg = hl.${service};
 in
 {
   options.homelab.${service} = {

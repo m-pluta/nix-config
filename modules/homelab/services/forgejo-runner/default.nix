@@ -7,7 +7,8 @@
 }:
 let
   service = "forgejo-runner";
-  cfg = config.homelab.services.${service};
+  hl = config.homelab;
+  cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} = {
@@ -33,7 +34,7 @@ in
       package = pkgs.forgejo-runner;
       instances.default = {
         enable = true;
-        url = "https://${config.homelab.services.forgejo.url}";
+        url = "https://${hl.services.forgejo.url}";
         name = cfg.runnerName;
         tokenFile = config.age.secrets.forgejo-runner-registration-token.path;
         hostPackages = with pkgs; [

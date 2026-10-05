@@ -2,13 +2,13 @@
 let
   service = "lidarr";
   serviceLib = import ../../lib.nix { inherit lib; };
-  cfg = config.homelab.services.${service};
-  homelab = config.homelab;
+  cfg = hl.services.${service};
+  hl = config.homelab;
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8686;
-    url = "${service}.${homelab.baseDomain}";
+    url = "${service}.${hl.baseDomain}";
     configDir = "/var/lib/${service}";
     homepage = {
       name = "Lidarr";
@@ -21,7 +21,7 @@ in
     services.${service}.enable = true;
     users.users.${service}.extraGroups = [ "media" ];
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
+      useACMEHost = hl.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';

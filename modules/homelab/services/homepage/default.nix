@@ -5,8 +5,8 @@
 }:
 let
   service = "homepage-dashboard";
-  cfg = config.homelab.services.homepage;
-  homelab = config.homelab;
+  hl = config.homelab;
+  cfg = hl.services.homepage;
 in
 {
   options.homelab.services.homepage = {
@@ -19,7 +19,7 @@ in
     };
     url = lib.mkOption {
       type = lib.types.str;
-      default = "home.${homelab.baseDomain}";
+      default = "home.${hl.baseDomain}";
     };
     monitoredServices = lib.mkOption {
       type = lib.types.listOf lib.types.str;
@@ -142,22 +142,22 @@ in
             "Services"
             "Observability"
           ];
-          hl = config.homelab.services;
+          svc = hl.services;
           homepageServices =
             x:
             (lib.attrsets.filterAttrs (
               _name: value: value ? homepage && value.homepage.category == x
-            ) homelab.services);
+            ) hl.services);
         in
         lib.lists.forEach homepageCategories (cat: {
           "${cat}" =
             lib.lists.forEach (lib.attrsets.mapAttrsToList (name: _value: name) (homepageServices "${cat}"))
               (x: {
-                "${hl.${x}.homepage.name}" = {
-                  icon = hl.${x}.homepage.icon;
-                  description = hl.${x}.homepage.description;
-                  href = "https://${hl.${x}.url}";
-                  siteMonitor = "https://${hl.${x}.url}";
+                "${svc.${x}.homepage.name}" = {
+                  icon = svc.${x}.homepage.icon;
+                  description = svc.${x}.homepage.description;
+                  href = "https://${svc.${x}.url}";
+                  siteMonitor = "https://${svc.${x}.url}";
                 };
               });
         })
@@ -218,7 +218,7 @@ in
         ];
     };
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
+      useACMEHost = hl.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';

@@ -6,13 +6,13 @@
 let
   service = "jellyseerr";
   serviceLib = import ../../lib.nix { inherit lib; };
-  cfg = config.homelab.services.${service};
-  homelab = config.homelab;
+  cfg = hl.services.${service};
+  hl = config.homelab;
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 5055;
-    url = "${service}.${homelab.baseDomain}";
+    url = "${service}.${hl.baseDomain}";
     homepage = {
       name = "Jellyseerr";
       description = "Media request and discovery manager";
@@ -26,7 +26,7 @@ in
       port = cfg.port;
     };
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
+      useACMEHost = hl.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
