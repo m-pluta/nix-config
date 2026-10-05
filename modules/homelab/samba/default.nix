@@ -6,11 +6,12 @@
   ...
 }:
 let
+  service = "samba";
   hl = config.homelab;
-  cfg = hl.samba;
+  cfg = hl.${service};
 in
 {
-  options.homelab.samba = {
+  options.homelab.${service} = {
     enable = lib.mkEnableOption {
       description = "Samba shares for the homelab";
     };

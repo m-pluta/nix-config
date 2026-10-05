@@ -4,11 +4,12 @@
   ...
 }:
 let
+  service = "dnsmasq";
   hl = config.homelab;
-  cfg = hl.dnsmasq;
+  cfg = hl.${service};
 in
 {
-  options.homelab.dnsmasq = {
+  options.homelab.${service} = {
     enable = lib.mkEnableOption "Split DNS for homelab services via dnsmasq";
     domains = lib.mkOption {
       type = lib.types.listOf lib.types.str;

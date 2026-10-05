@@ -5,11 +5,12 @@
   ...
 }:
 let
+  service = "cloudflared";
   hl = config.homelab;
-  cfg = hl.cloudflared;
+  cfg = hl.${service};
 in
 {
-  options.homelab.cloudflared = {
+  options.homelab.${service} = {
     enable = lib.mkEnableOption "Cloudflare Tunnel ingress for homelab services";
     tunnelId = lib.mkOption {
       type = lib.types.str;
