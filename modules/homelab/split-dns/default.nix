@@ -44,8 +44,7 @@ in
         address. Source-based selection is why this works on a Tailscale /32, where dnsmasq's
         interface-based localise-queries cannot.
       '';
-      default = [ ];
-      type = lib.types.listOf (
+      type = lib.types.nonEmptyListOf (
         lib.types.submodule {
           options = {
             name = lib.mkOption {
@@ -76,13 +75,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = cfg.views != [ ];
-        message = "homelab.splitDns.views must not be empty when enabled";
-      }
-    ];
-
     services.unbound = {
       enable = true;
       # We manage /etc/resolv.conf and forwarding ourselves; don't let the module
