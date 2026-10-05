@@ -69,7 +69,7 @@ in
     ingress = {
       ingressHost = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
-        default = "mikeway";
+        default = null;
         description = ''
           hostName of the host running public ingress (TLS termination + tunnel).
           That host renders the ingress Caddy configuration; every other host with proxy

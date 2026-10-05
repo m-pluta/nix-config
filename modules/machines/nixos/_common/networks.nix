@@ -1,5 +1,11 @@
+let
+  gateway = "mikeway";
+in
 {
   homelab = {
+    ingress.ingressHost = gateway;
+    splitDns.resolverHost = gateway;
+
     networks = {
       mikeway = {
         lan = {
@@ -18,7 +24,5 @@
         mesh.v4 = "100.120.225.75";
       };
     };
-
-    splitDns.resolverHost = "mikeway";
   };
 }
