@@ -15,13 +15,6 @@ in
   };
 
   config = lib.mkIf hl.services.enable {
-    assertions = [
-      {
-        assertion = config.homelab.splitDns.resolverHost != null;
-        message = "homelab services require homelab.splitDns.resolverHost for container DNS";
-      }
-    ];
-
     virtualisation.podman = {
       dockerCompat = true;
       autoPrune.enable = true;

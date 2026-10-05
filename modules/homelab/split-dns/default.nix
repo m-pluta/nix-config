@@ -17,8 +17,7 @@ in
     };
 
     resolverHost = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = null;
+      type = lib.types.str;
       description = ''
         hostName of the host running Unbound. This is independent of `enable` so
         clients can consume it without running Unbound.

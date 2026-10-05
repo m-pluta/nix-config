@@ -8,11 +8,10 @@ let
   hl = config.homelab;
   cfg = hl.ingress;
 
-  isIngressHost = cfg.ingressHost != null && cfg.ingressHost == config.networking.hostName;
+  isIngressHost = cfg.ingressHost == config.networking.hostName;
   lan = hl.networks.${config.networking.hostName}.lan.v4 or null;
   lanInterface = hl.networks.${config.networking.hostName}.lan.interface or null;
-  ingressHostAddress =
-    if cfg.ingressHost == null then null else hl.networks.${cfg.ingressHost}.lan.v4 or null;
+  ingressHostAddress = hl.networks.${cfg.ingressHost}.lan.v4 or null;
   trustedIngressAddress = if ingressHostAddress == null then "127.0.0.1" else ingressHostAddress;
 
   proxyRoutes = lib.filterAttrs (_url: r: r.port != null);
@@ -68,8 +67,7 @@ in
   options.homelab = {
     ingress = {
       ingressHost = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
+        type = lib.types.str;
         description = ''
           hostName of the host running public ingress (TLS termination + tunnel).
           That host renders the ingress Caddy configuration; every other host with proxy

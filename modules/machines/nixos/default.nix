@@ -96,28 +96,22 @@ in
 {
   # Reuse `base` for every host except the ingress host, which alone needs a
   # second evaluation to receive remoteRoutes — avoids re-evaluating the whole
-  # fleet just to inject data into the one host that changes. ingressHost may
-  # be null (ingress disabled fleet-wide), in which case base is already final.
-  flake.nixosConfigurations =
-    if ingressHost == null then
-      base
-    else
-      base
-      // {
-        ${ingressHost} = mkSystem ingressHost [
+  # fleet just to inject data into the one host that changes.
+  flake.nixosConfigurations = base // {
+    ${ingressHost} = mkSystem ingressHost [
+      {
+        homelab.ingress.remoteRoutes = remoteRoutes;
+        assertions = [
           {
-            homelab.ingress.remoteRoutes = remoteRoutes;
-            assertions = [
-              {
-                assertion = duplicateRoutes == { };
-                message =
-                  "homelab.ingress route URLs declared on more than one host: "
-                  + lib.concatStringsSep ", " (
-                    lib.mapAttrsToList (url: owners: "${url} (${lib.concatStringsSep ", " owners})") duplicateRoutes
-                  );
-              }
-            ];
+            assertion = duplicateRoutes == { };
+            message =
+              "homelab.ingress route URLs declared on more than one host: "
+              + lib.concatStringsSep ", " (
+                lib.mapAttrsToList (url: owners: "${url} (${lib.concatStringsSep ", " owners})") duplicateRoutes
+              );
           }
         ];
-      };
+      }
+    ];
+  };
 }
