@@ -19,14 +19,6 @@ in
   };
   config = lib.mkIf cfg.enable {
     services = {
-      fail2ban-cloudflare = lib.mkIf config.services.fail2ban-cloudflare.enable {
-        jails = {
-          vaultwarden = {
-            serviceName = "vaultwarden";
-            failRegex = "^.*Username or password is incorrect. Try again. IP: <HOST>. Username: <F-USER>.*</F-USER>.$";
-          };
-        };
-      };
       ${service} = {
         enable = true;
         config = {

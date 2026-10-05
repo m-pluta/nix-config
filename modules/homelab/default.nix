@@ -45,7 +45,6 @@ in
     ./services
     ./samba
     ./motd
-    ./fail2ban-cloudflare
     ./cloudflared
     ./dnsmasq
     ./tailscale
