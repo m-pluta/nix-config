@@ -33,13 +33,6 @@ in
         Base domain name to be used to access the homelab services via Caddy reverse proxy
       '';
     };
-    cloudflare.dnsCredentialsFile = lib.mkOption {
-      type = lib.types.path;
-      example = ''
-        CF_DNS_API_TOKEN=verybigsecret
-        CF_API_EMAIL=foo@bar.com
-      '';
-    };
   };
   imports = [
     ./services

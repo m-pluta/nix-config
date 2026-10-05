@@ -1,6 +1,7 @@
 {
   lib,
   config,
+  inputs,
   ...
 }:
 let
@@ -119,6 +120,9 @@ in
         }
       ];
 
+      # Env file with CF_DNS_API_TOKEN and CF_API_EMAIL for the DNS-01 challenge.
+      age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare/dns-api.age";
+
       security.acme = {
         acceptTerms = true;
         defaults.email = "mikey@${hl.baseDomain}";
@@ -130,7 +134,7 @@ in
           dnsResolver = "1.1.1.1:53";
           dnsPropagationCheck = true;
           group = config.services.caddy.group;
-          environmentFile = hl.cloudflare.dnsCredentialsFile;
+          environmentFile = config.age.secrets.cloudflare-dns-api.path;
         };
       };
 

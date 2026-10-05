@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   ...
 }:
@@ -16,7 +15,6 @@
     enable = true;
     description = "Router, network gateway, and homelab ingress host";
     baseDomain = "mpluta.dev";
-    cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
     tailscale.enable = true;
     # Split-horizon DNS: Unbound picks a view by the client's source subnet, so
     # mpluta.dev resolves to the LAN IP on the LAN and the tailnet IP over tailscale.
@@ -51,8 +49,6 @@
       ];
     };
   };
-
-  age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare/dns-api.age";
 
   # Ingress Caddy: reachable from the LAN (tailnet is already a trusted interface,
   # public access arrives via the tunnel on loopback) but never served on the WAN.
