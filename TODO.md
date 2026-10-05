@@ -7,4 +7,3 @@
 - [ ] Remove paperless test skip overlay once upstream fixes it
 - [ ] Enable "Above 4G Decoding" in BIOS for GPU
 - [ ] Enable and configure forgejo-runner
-- [ ] Set up shelly plug exporter
