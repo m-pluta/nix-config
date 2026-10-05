@@ -49,13 +49,6 @@
     };
   };
 
-  # Ingress Caddy: reachable from the LAN (tailnet is already a trusted interface,
-  # public access arrives via the tunnel on loopback) but never served on the WAN.
-  networking.firewall.interfaces.${config.homelab.networks.mikeway.lan.interface}.allowedTCPPorts = [
-    80
-    443
-  ];
-
   # No ZFS on this box (ext4 root); _common/filesystems forces it on.
   disko.zfs.enable = lib.mkForce false;
 

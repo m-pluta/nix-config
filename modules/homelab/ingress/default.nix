@@ -116,6 +116,10 @@ in
           assertion = hl.baseDomain != "";
           message = "homelab.ingress ingressHost requires homelab.baseDomain to be set";
         }
+        {
+          assertion = lan != null;
+          message = "homelab.networks.${config.networking.hostName}.lan must be set so the ingress is served on the LAN";
+        }
       ];
 
       # Env file with CF_DNS_API_TOKEN and CF_API_EMAIL for the DNS-01 challenge.
@@ -136,8 +140,14 @@ in
         };
       };
 
-      # The ingress host opens 80/443 on its client-facing interface(s) itself:
-      # Caddy binds 0.0.0.0, so a router must not expose it on the WAN side.
+      # Caddy binds 0.0.0.0, so only the LAN is opened and a router never exposes it on
+      # the WAN. The tailnet is already a trusted interface, and public access arrives
+      # via the tunnel on loopback.
+      networking.firewall.interfaces.${lanInterface}.allowedTCPPorts = [
+        80
+        443
+      ];
+
       services.caddy = {
         enable = true;
         globalConfig = ''
