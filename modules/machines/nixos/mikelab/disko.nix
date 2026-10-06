@@ -65,12 +65,16 @@
           "root" = {
             type = "zfs_fs";
             mountpoint = "/";
-            options."com.sun:auto-snapshot" = "true";
+            options = {
+              mountpoint = "/";
+              "com.sun:auto-snapshot" = "true";
+            };
           };
           "nix" = {
             type = "zfs_fs";
             mountpoint = "/nix";
             options = {
+              mountpoint = "/nix";
               # nix store is read from constantly, atime updates are wasted writes
               atime = "off";
               # store is rebuildable from the flake, snapshots waste space
