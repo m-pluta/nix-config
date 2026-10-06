@@ -4,14 +4,15 @@
   ...
 }:
 let
-  service = "homepage-dashboard";
+  service = "homepage";
+  upstream = "homepage-dashboard";
   hl = config.homelab;
-  cfg = hl.services.homepage;
+  cfg = hl.services.${service};
 in
 {
-  options.homelab.services.homepage = {
+  options.homelab.services.${service} = {
     enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+      description = "Enable ${upstream}";
     };
     port = lib.mkOption {
       type = lib.types.port;
@@ -23,9 +24,7 @@ in
     };
     monitoredServices = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [
-        service
-      ];
+      default = [ upstream ];
     };
     misc = lib.mkOption {
       default = [ ];
@@ -53,10 +52,10 @@ in
   };
   config = lib.mkIf cfg.enable {
     services.glances.enable = true;
-    services.${service} = {
+    services.${upstream} = {
       enable = true;
       listenPort = cfg.port;
-      environmentFile = builtins.toFile "homepage.env" "HOMEPAGE_ALLOWED_HOSTS=${cfg.url}";
+      environmentFile = builtins.toFile "${service}.env" "HOMEPAGE_ALLOWED_HOSTS=${cfg.url}";
       customCSS = ''
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
         body, html {
@@ -142,7 +141,6 @@ in
             "Services"
             "Observability"
           ];
-          svc = hl.services;
           homepageServices =
             x:
             (lib.attrsets.filterAttrs (
@@ -153,11 +151,11 @@ in
           "${cat}" =
             lib.lists.forEach (lib.attrsets.mapAttrsToList (name: _value: name) (homepageServices "${cat}"))
               (x: {
-                "${svc.${x}.homepage.name}" = {
-                  icon = svc.${x}.homepage.icon;
-                  description = svc.${x}.homepage.description;
-                  href = "https://${svc.${x}.url}";
-                  siteMonitor = "https://${svc.${x}.url}";
+                "${hl.services.${x}.homepage.name}" = {
+                  icon = hl.services.${x}.homepage.icon;
+                  description = hl.services.${x}.homepage.description;
+                  href = "https://${hl.services.${x}.url}";
+                  siteMonitor = "https://${hl.services.${x}.url}";
                 };
               });
         })
