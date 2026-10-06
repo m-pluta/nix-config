@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        host: [mikeway, mikelab, vm]
+        host: [mikeway, mikelab]
     steps:
       - uses: actions/checkout@v4
       - name: Set up SSH
