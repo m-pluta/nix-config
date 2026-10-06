@@ -11,6 +11,11 @@ let
   isIngressHost = cfg.ingressHost == config.networking.hostName;
   lan = hl.networks.${config.networking.hostName}.lan.v4 or null;
   lanInterface = hl.networks.${config.networking.hostName}.lan.interface or null;
+  ingressHostAddress = hl.networks.${cfg.ingressHost}.lan.v4 or null;
+  trustedIngressAddress = if ingressHostAddress == null then "127.0.0.1" else ingressHostAddress;
+
+  proxyRoutes = lib.filterAttrs (_url: r: r.port != null);
+  hasServiceRoutes = (proxyRoutes cfg.routes) != { };
 
   # Build the Caddy reverse_proxy block that forwards a request to `upstream`. The
   # client address headers are overwritten with the address Caddy has verified, instead
@@ -45,14 +50,15 @@ let
         type = lib.types.nullOr lib.types.port;
         default = null;
         description = ''
-          Service port on 127.0.0.1 that the ingress host forwards to. null = a non-proxy
-          vhost rendered verbatim from `extraConfig` (e.g. static file serving).
+          Service port on 127.0.0.1. The service proxy forwards to it; the ingress host
+          forwards to the service host. null = a non-proxy vhost rendered verbatim from
+          `extraConfig` on the ingress host (e.g. static file serving).
         '';
       };
       extraConfig = lib.mkOption {
         type = lib.types.lines;
         default = "";
-        description = "Extra Caddy directives for this vhost.";
+        description = "Extra Caddy directives for this vhost, applied at the ingress host.";
       };
       serverAliases = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -69,21 +75,48 @@ in
         type = lib.types.str;
         description = ''
           hostName of the host running public ingress (TLS termination + tunnel).
-          That host renders the ingress Caddy configuration.
+          That host renders the ingress Caddy configuration; every other host with proxy
+          routes runs a service proxy.
         '';
       };
 
       routes = lib.mkOption {
         type = lib.types.attrsOf routeType;
         default = { };
-        description = "Ingress routes served by this host (URL -> service).";
+        description = "Ingress routes served by this host (URL -> service), auto-published to the ingress host.";
+      };
+
+      remoteRoutes = lib.mkOption {
+        internal = true;
+        default = { };
+        type = lib.types.attrsOf (
+          lib.types.submodule {
+            options = {
+              lanIP = lib.mkOption { type = lib.types.str; };
+              port = lib.mkOption {
+                type = lib.types.nullOr lib.types.port;
+                default = null;
+              };
+              extraConfig = lib.mkOption {
+                type = lib.types.lines;
+                default = "";
+              };
+              serverAliases = lib.mkOption {
+                type = lib.types.listOf lib.types.str;
+                default = [ ];
+              };
+            };
+          }
+        );
+        description = "Routes for services on other hosts, injected by the flake for the ingress host to proxy to.";
       };
     };
   };
 
   config = lib.mkMerge [
     # Only the ingress host runs this part. It terminates TLS, obtains the wildcard
-    # certificate, and serves one Caddy virtual host per declared route.
+    # certificate, and serves one Caddy virtual host per declared route, whether the
+    # service runs on this host or on another one.
     (lib.mkIf isIngressHost {
       assertions = [
         {
@@ -157,7 +190,53 @@ in
           (lib.mapAttrs (
             _: r: mkIngressVhost r (if r.port == null then null else "http://127.0.0.1:${toString r.port}")
           ) cfg.routes)
+          # One virtual host per route for a service on another host, proxied over the LAN
+          # to the service proxy running on that host.
+          (lib.mapAttrs (
+            _: r: mkIngressVhost r (if r.port == null then null else "http://${r.lanIP}:80")
+          ) cfg.remoteRoutes)
         ];
+      };
+    })
+
+    # Service proxy: plain HTTP on the LAN, proxies each local service to localhost. No TLS.
+    (lib.mkIf (!isIngressHost && hasServiceRoutes) {
+      assertions = [
+        {
+          assertion = lan != null;
+          message = "homelab.networks.${config.networking.hostName}.lan must be set so the ingress host can reach this service proxy";
+        }
+        {
+          assertion = ingressHostAddress != null;
+          message = "homelab.networks.${toString cfg.ingressHost}.lan must be set so service proxies can trust the ingress host";
+        }
+      ];
+
+      networking.firewall.interfaces.${lanInterface}.allowedTCPPorts = [ 80 ];
+
+      services.caddy = {
+        enable = true;
+        globalConfig = ''
+          auto_https off
+          servers {
+            # Only the ingress host may supply a forwarded client address.
+            trusted_proxies static ${trustedIngressAddress}/32
+            trusted_proxies_strict
+            client_ip_headers X-Forwarded-For
+          }
+        '';
+        virtualHosts = lib.mapAttrs' (
+          url: r:
+          lib.nameValuePair "http://${url}" {
+            # Only the ingress host may connect, so ingress-level policy can't be bypassed.
+            extraConfig = ''
+              bind ${lan}
+              @direct not remote_ip ${trustedIngressAddress}
+              respond @direct 403
+              ${mkReverseProxy "http://127.0.0.1:${toString r.port}"}
+            '';
+          }
+        ) (proxyRoutes cfg.routes);
       };
     })
   ];

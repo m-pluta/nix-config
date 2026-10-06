@@ -16,6 +16,14 @@ in
       description = "Domains answered locally (wildcard-redirected per view) instead of resolved normally.";
     };
 
+    resolverHost = lib.mkOption {
+      type = lib.types.str;
+      description = ''
+        hostName of the host running Unbound. This is independent of `enable` so
+        clients can consume it without running Unbound.
+      '';
+    };
+
     upstreams = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
