@@ -24,7 +24,9 @@ in
       };
     };
     virtualisation.containers.containersConf.settings = {
-      containers.dns_servers = [ hl.tailscale.address ];
+      containers.dns_servers = [
+        config.homelab.networks.${config.homelab.splitDns.resolverHost}.lan.v4
+      ];
     };
     virtualisation.oci-containers = {
       backend = "podman";
