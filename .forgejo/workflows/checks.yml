@@ -27,6 +27,38 @@ jobs:
       - run: git config --global --add safe.directory "${PWD}"
       - run: nix flake check --accept-flake-config --all-systems
 
+  build:
+    runs-on: nix
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [mikeway, mikelab, vm]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up SSH
+        uses: https://git.mpluta.dev/mikey/actions/set-up-ssh@main
+        with:
+          git-host: ${{ env.FORGEJO_HOST }}
+          ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
+          git-hostkey: ${{ secrets.GIT_HOSTKEY }}
+      - run: git config --global --add safe.directory "${PWD}"
+
+      - name: Set up Attic cache
+        if: ${{ secrets.ATTIC_TOKEN != '' }}
+        uses: https://git.mpluta.dev/mikey/actions/setup-attic-cache@main
+        with:
+          attic-token: ${{ secrets.ATTIC_TOKEN }}
+          attic-url: ${{ secrets.ATTIC_URL }}
+
+      - name: Build ${{ matrix.host }}
+        run: |
+          nix build --no-link --print-out-paths --accept-flake-config \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel"
+
+      - name: Cache built paths to Attic
+        if: ${{ secrets.ATTIC_TOKEN != '' }}
+        uses: https://git.mpluta.dev/mikey/actions/cache-to-attic@main
+
   readme:
     runs-on: nix
     steps:
