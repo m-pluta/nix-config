@@ -7,3 +7,4 @@
 - [ ] Remove paperless test skip overlay once upstream fixes it
 - [ ] Enable "Above 4G Decoding" in BIOS for GPU
 - [ ] Enable and configure forgejo-runner
+- [ ] Review Attic dataset and CI nix-store volume growth, bound them if needed
