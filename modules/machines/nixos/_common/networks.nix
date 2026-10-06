@@ -1,5 +1,6 @@
 {
   homelab.ingress.ingressHost = "mikelab";
+  homelab.splitDns.resolverHost = "mikelab";
 
   homelab.networks = {
     mikeway = {

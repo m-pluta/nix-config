@@ -40,8 +40,8 @@ in
     ./motd
     ./cloudflared
     ./ingress
-    ./dnsmasq
     ./networks
+    ./split-dns
     ./tailscale
     ./wireguard-netns
   ];
