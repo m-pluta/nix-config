@@ -208,7 +208,7 @@
             mountpoint = "/var/lib/private/atticd";
             options = {
               "com.sun:auto-snapshot" = "true";
-              quota = "50G";
+              quota = "200G";
             };
           };
           "services/nextcloud" = {
