@@ -1,4 +1,9 @@
 {
+  nixConfig = {
+    extra-substituters = [ "https://cache.mpluta.dev/nix-config" ];
+    extra-trusted-public-keys = [ "nix-config:zGjB0uPB1ecKv9Ab4rHwQF3I83zAveDYNHvnVEihppA=" ];
+  };
+
   inputs = {
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixos-25.11";
