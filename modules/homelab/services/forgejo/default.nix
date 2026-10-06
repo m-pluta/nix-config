@@ -45,6 +45,14 @@ in
           ENABLE_NOTIFY_MAIL = true;
           REGISTER_EMAIL_CONFIRM = true;
         };
+        repository = {
+          DEFAULT_PRIVATE = "private";
+          DEFAULT_REPO_UNITS = "repo.code,repo.issues,repo.pulls,repo.packages,repo.actions";
+        };
+        "repository.pull-request" = {
+          DEFAULT_MERGE_STYLE = "squash";
+          DEFAULT_UPDATE_STYLE = "rebase";
+        };
       };
     };
     services.caddy.virtualHosts."${cfg.url}" = {
