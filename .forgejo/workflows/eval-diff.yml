@@ -1,10 +1,6 @@
 name: eval diff
 on:
-  pull_request:
-    paths:
-      - "**.nix"
-      - "flake.lock"
-      - ".forgejo/workflows/eval-diff.yml"
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
