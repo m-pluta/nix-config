@@ -1,4 +1,6 @@
 {
+  homelab.ingress.ingressHost = "mikelab";
+
   homelab.networks = {
     mikeway = {
       lan = {
