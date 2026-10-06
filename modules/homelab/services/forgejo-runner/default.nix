@@ -51,7 +51,11 @@ in
           runner.capacity = 4;
           # Keep the Nix store across jobs. A named volume is seeded from the
           # image on first use, so image updates need `podman volume rm nix-store`.
-          container.options = "--device /dev/fuse -v nix-store:/nix";
+          # The runner drops every volume that is not listed in valid_volumes.
+          container = {
+            options = "--device /dev/fuse -v nix-store:/nix";
+            valid_volumes = [ "nix-store" ];
+          };
         };
         labels = [
           "alpine:docker://alpine:latest"
