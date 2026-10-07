@@ -47,6 +47,7 @@ in
     ./motd
     ./cloudflared
     ./dnsmasq
+    ./networks
     ./tailscale
     ./wireguard-netns
   ];

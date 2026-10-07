@@ -13,10 +13,7 @@
     cloudflare.dnsCredentialsFile = config.age.secrets.cloudflare-dns-api.path;
     timeZone = "Europe/London";
     groups.media = 15000;
-    tailscale = {
-      enable = true;
-      address = "100.120.225.75";
-    };
+    tailscale.enable = true;
     dnsmasq = {
       enable = true;
       domains = [ "mpluta.dev" ];

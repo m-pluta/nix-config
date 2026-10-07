@@ -1,5 +1,6 @@
 {
   lib,
+  config,
   ...
 }:
 let
@@ -12,8 +13,9 @@ let
   };
   wanIf = "eth0";
   lanPorts = lib.attrNames (removeAttrs ports [ wanIf ]);
-  lanBridge = "br-lan";
-  lanSubnet = "192.168.100";
+  lan = config.homelab.networks.mikeway.lan;
+  lanBridge = lan.interface;
+  lanGateway = lan.v4;
 
   tvWiredMac = "68:07:0a:75:61:a7";
   # deadnix: skip
@@ -69,7 +71,7 @@ in
       # Bridge carries the gateway address + DHCP server (auto-sized /24 pool).
       "30-${lanBridge}" = {
         matchConfig.Name = lanBridge;
-        address = [ "${lanSubnet}.1/24" ];
+        address = [ "${lanGateway}/${toString lan.prefixLength}" ];
         networkConfig.DHCPServer = true;
         dhcpServerConfig.DNS = [
           "1.1.1.1"

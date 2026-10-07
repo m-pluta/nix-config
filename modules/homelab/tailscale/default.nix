@@ -13,8 +13,8 @@ in
   options.homelab.${service} = {
     enable = lib.mkEnableOption "Tailscale VPN";
     address = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = null;
+      type = lib.types.str;
+      default = config.homelab.networks.${config.networking.hostName}.mesh.v4;
       description = "Tailscale IP address of this host";
     };
   };
