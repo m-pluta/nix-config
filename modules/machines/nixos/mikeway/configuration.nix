@@ -4,6 +4,7 @@
 }:
 {
   imports = [
+    ./disko.nix
     ./hardware-configuration.nix
     ./routing.nix
   ];
