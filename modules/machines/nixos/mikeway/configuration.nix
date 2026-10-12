@@ -32,9 +32,9 @@
         {
           name = "tailnet";
           interface = config.homelab.networks.mikeway.mesh.interface;
-          listen = config.homelab.tailscale.address;
+          listen = config.homelab.networks.mikeway.mesh.v4;
           subnet = config.homelab.networks.mikeway.mesh.subnet;
-          answer = config.homelab.tailscale.address;
+          answer = config.homelab.networks.mikeway.mesh.v4;
         }
       ];
     };
