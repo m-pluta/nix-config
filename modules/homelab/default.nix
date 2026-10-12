@@ -35,13 +35,13 @@ in
     };
   };
   imports = [
-    ./services
-    ./samba
-    ./motd
     ./cloudflared
     ./ingress
-    ./dnsmasq
+    ./motd
     ./networks
+    ./samba
+    ./services
+    ./split-dns
     ./tailscale
     ./wireguard-netns
   ];
