@@ -95,11 +95,6 @@ in
       ];
     };
 
-    services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = hl.baseDomain;
-      extraConfig = ''
-        reverse_proxy ${vmUrl}
-      '';
-    };
+    homelab.ingress.routes."${cfg.url}".port = cfg.port;
   };
 }
