@@ -12,7 +12,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 3000;
-    url = "grafana.${hl.baseDomain}";
+    url = "grafana.${hl.mainDomain}";
     homepage = {
       name = "Grafana";
       description = "Platform for data analytics and monitoring";

@@ -8,7 +8,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8113;
-    url = "audiobooks.${hl.baseDomain}";
+    url = "audiobooks.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
     homepage = {
       name = "Audiobookshelf";

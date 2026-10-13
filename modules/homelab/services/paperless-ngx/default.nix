@@ -13,7 +13,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 28981;
-    url = "${service}.${hl.baseDomain}";
+    url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
     monitoredServices = [
       "paperless-consumer"

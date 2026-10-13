@@ -8,7 +8,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8123;
-    url = "hass.${hl.baseDomain}";
+    url = "hass.${hl.mainDomain}";
     configDir = "/var/lib/hass";
     homepage = {
       name = "Home Assistant";

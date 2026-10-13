@@ -1,4 +1,5 @@
 {
+  homelab.mainDomain = "mpluta.dev";
   homelab.ingress.ingressHost = "mikelab";
 
   homelab.networks = {

@@ -15,7 +15,7 @@ in
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 8009;
-      url = "cloud.${hl.baseDomain}";
+      url = "cloud.${hl.mainDomain}";
       configDir = "/var/lib/${service}";
       monitoredServices = [
         "phpfpm-nextcloud"

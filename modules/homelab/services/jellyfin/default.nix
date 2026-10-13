@@ -12,7 +12,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8096;
-    url = "${service}.${hl.baseDomain}";
+    url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
     homepage = {
       name = "Jellyfin";

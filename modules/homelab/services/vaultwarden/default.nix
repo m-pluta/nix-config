@@ -8,7 +8,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8222;
-    url = "pass.${hl.baseDomain}";
+    url = "pass.${hl.mainDomain}";
     configDir = "/var/lib/bitwarden_rs";
     homepage = {
       name = "Vaultwarden";

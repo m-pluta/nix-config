@@ -14,7 +14,7 @@ in
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 8428;
-      url = "vm.${hl.baseDomain}";
+      url = "vm.${hl.mainDomain}";
       homepage = {
         name = "VictoriaMetrics";
         description = "Time series database and monitoring";

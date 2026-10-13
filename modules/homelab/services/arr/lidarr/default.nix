@@ -8,7 +8,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8686;
-    url = "${service}.${hl.baseDomain}";
+    url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
     homepage = {
       name = "Lidarr";

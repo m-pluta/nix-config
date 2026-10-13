@@ -29,7 +29,7 @@ let
   # `upstream` is null, only the route's own extraConfig is used, which allows vhosts
   # that don't proxy anything, such as static file serving.
   mkIngressVhost = r: upstream: {
-    useACMEHost = hl.baseDomain;
+    useACMEHost = hl.mainDomain;
     serverAliases = r.serverAliases;
     extraConfig = lib.concatStringsSep "\n" (
       lib.filter (s: s != "") [
@@ -87,8 +87,8 @@ in
     (lib.mkIf isIngressHost {
       assertions = [
         {
-          assertion = hl.baseDomain != "";
-          message = "homelab.ingress ingressHost requires homelab.baseDomain to be set";
+          assertion = hl.mainDomain != "";
+          message = "homelab.ingress ingressHost requires homelab.mainDomain to be set";
         }
         {
           assertion = lan != null;
@@ -100,15 +100,15 @@ in
       # prove domain ownership through Cloudflare DNS (the DNS-01 challenge).
       age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare/dns-api.age";
 
-      # Request a single wildcard certificate for the base domain and all its subdomains,
+      # Request a single wildcard certificate for the main domain and all its subdomains,
       # and reload Caddy whenever it is renewed.
       security.acme = {
         acceptTerms = true;
-        defaults.email = "mikey@${hl.baseDomain}";
-        certs.${hl.baseDomain} = {
+        defaults.email = "mikey@${hl.mainDomain}";
+        certs.${hl.mainDomain} = {
           reloadServices = [ "caddy.service" ];
-          domain = hl.baseDomain;
-          extraDomainNames = [ "*.${hl.baseDomain}" ];
+          domain = hl.mainDomain;
+          extraDomainNames = [ "*.${hl.mainDomain}" ];
           dnsProvider = "cloudflare";
           dnsResolver = "1.1.1.1:53";
           dnsPropagationCheck = true;
@@ -145,10 +145,10 @@ in
           # Redirect plain HTTP to HTTPS, and answer 404 for any subdomain that has no
           # route declared.
           {
-            "http://${hl.baseDomain}".extraConfig = "redir https://{host}{uri}";
-            "http://*.${hl.baseDomain}".extraConfig = "redir https://{host}{uri}";
-            "*.${hl.baseDomain}" = {
-              useACMEHost = hl.baseDomain;
+            "http://${hl.mainDomain}".extraConfig = "redir https://{host}{uri}";
+            "http://*.${hl.mainDomain}".extraConfig = "redir https://{host}{uri}";
+            "*.${hl.mainDomain}" = {
+              useACMEHost = hl.mainDomain;
               extraConfig = "respond 404";
             };
           }

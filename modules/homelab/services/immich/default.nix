@@ -13,7 +13,7 @@ in
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 2283;
-      url = "photos.${hl.baseDomain}";
+      url = "photos.${hl.mainDomain}";
       monitoredServices = [
         "immich-server"
         "immich-machine-learning"

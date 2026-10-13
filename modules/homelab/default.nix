@@ -26,11 +26,11 @@ in
         Time zone to be used for the homelab services
       '';
     };
-    baseDomain = lib.mkOption {
+    mainDomain = lib.mkOption {
       default = "";
       type = lib.types.str;
       description = ''
-        Base domain name to be used to access the homelab services via Caddy reverse proxy
+        Main domain name, used to build the homelab service URLs and for the ingress certificate
       '';
     };
   };

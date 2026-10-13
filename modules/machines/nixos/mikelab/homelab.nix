@@ -8,15 +8,14 @@
   homelab = {
     enable = true;
     description = "Primary server hosting storage and the self-hosted services";
-    baseDomain = "mpluta.dev";
     timeZone = "Europe/London";
     groups.media = 15000;
     tailscale.enable = true;
     # Split-horizon DNS: Unbound picks a view by the client's source subnet, so
-    # mpluta.dev resolves to the LAN IP on the LAN and the tailnet IP over tailscale.
+    # the main domain resolves to the LAN IP on the LAN and the tailnet IP over tailscale.
     splitDns = {
       enable = true;
-      domains = [ "mpluta.dev" ];
+      domains = [ config.homelab.mainDomain ];
       views = [
         {
           name = "lan";
@@ -37,7 +36,7 @@
     cloudflared = {
       enable = true;
       tunnelId = "7a16d95b-031d-483f-befa-d8fdc081fe5c";
-      expose."mpluta.dev" = [
+      expose.${config.homelab.mainDomain} = [
         ""
         "www"
         "git"

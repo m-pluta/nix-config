@@ -14,7 +14,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8112;
-    url = "${service}.${hl.baseDomain}";
+    url = "${service}.${hl.mainDomain}";
     homepage = {
       name = "Deluge";
       description = "Torrent client";

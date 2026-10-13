@@ -13,7 +13,7 @@ in
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 4533;
-      url = "music.${hl.baseDomain}";
+      url = "music.${hl.mainDomain}";
       configDir = "/var/lib/${service}";
       homepage = {
         name = "Navidrome";

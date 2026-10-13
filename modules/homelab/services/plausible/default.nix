@@ -13,7 +13,7 @@ in
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 8000;
-      url = "numbers.${hl.baseDomain}";
+      url = "numbers.${hl.mainDomain}";
       homepage = {
         name = "Plausible";
         description = "Open-source web analytics platform";

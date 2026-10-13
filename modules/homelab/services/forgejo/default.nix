@@ -13,7 +13,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 3000;
-    url = "git.${hl.baseDomain}";
+    url = "git.${hl.mainDomain}";
     homepage = {
       name = "Forgejo";
       description = "A painless, self-hosted Git service";

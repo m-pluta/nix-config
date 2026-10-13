@@ -13,7 +13,7 @@ in
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 8069;
-      url = "bin.${hl.baseDomain}";
+      url = "bin.${hl.mainDomain}";
       configDir = "/var/lib/${service}";
       homepage = {
         name = "Microbin";

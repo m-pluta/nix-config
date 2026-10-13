@@ -8,7 +8,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 3001;
-    url = "uptime.${hl.baseDomain}";
+    url = "uptime.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
     homepage = {
       name = "Uptime Kuma";

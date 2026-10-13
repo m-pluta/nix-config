@@ -20,7 +20,7 @@ in
     };
     url = lib.mkOption {
       type = lib.types.str;
-      default = "home.${hl.baseDomain}";
+      default = "home.${hl.mainDomain}";
     };
     monitoredServices = lib.mkOption {
       type = lib.types.listOf lib.types.str;

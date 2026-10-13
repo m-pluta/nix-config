@@ -12,7 +12,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 5055;
-    url = "${service}.${hl.baseDomain}";
+    url = "${service}.${hl.mainDomain}";
     homepage = {
       name = "Jellyseerr";
       description = "Media request and discovery manager";
