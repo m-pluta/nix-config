@@ -6,7 +6,7 @@
 {
   "mpluta.dev".enable = true;
 
-  age.secrets.perfetto-forgejo-token.file = "${inputs.secrets}/services/perfetto/forgejo-token.age";
+  age.secrets.traces-forgejo-token.file = "${inputs.secrets}/services/perfetto/forgejo-token.age";
 
   homelab = {
     enable = true;
@@ -95,11 +95,12 @@
       attic.enable = true;
       forgejo-runner.enable = true;
       audiobookshelf.enable = true;
-      perfetto = {
+      traces = {
         enable = true;
-        forgejoTraces = {
+        perfetto.enable = true;
+        forgejo = {
           enable = true;
-          tokenFile = config.age.secrets.perfetto-forgejo-token.path;
+          tokenFile = config.age.secrets.traces-forgejo-token.path;
         };
       };
       lidarr.enable = true;

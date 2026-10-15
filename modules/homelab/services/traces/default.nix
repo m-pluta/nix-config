@@ -5,31 +5,32 @@
   ...
 }:
 let
-  service = "perfetto";
+  service = "traces";
   hl = config.homelab;
   cfg = hl.services.${service};
   forgejo = hl.services.forgejo;
 
   # nixpkgs packages only Perfetto's command-line tools, so use the prebuilt UI from
   # the GitHub release.
-  version = "58.2";
-  ui = pkgs.fetchzip {
-    url = "https://github.com/google/perfetto/releases/download/v${version}/perfetto-ui.zip";
+  perfettoVersion = "58.2";
+  perfetto = pkgs.fetchzip {
+    url = "https://github.com/google/perfetto/releases/download/v${perfettoVersion}/perfetto-ui.zip";
     hash = "sha256-DZTOCTHQ+4mi6oefwv1SY/fJ3WfM3Q3BnOhs/Xy+W6s=";
     stripRoot = false;
   };
 in
 {
   options.homelab.services.${service} = {
-    enable = lib.mkEnableOption "Perfetto trace viewer";
+    enable = lib.mkEnableOption "trace viewers";
     url = lib.mkOption {
       type = lib.types.str;
-      default = "perfetto.${hl.mainDomain}";
+      default = "traces.${hl.mainDomain}";
     };
-    forgejoTraces = {
+    perfetto.enable = lib.mkEnableOption "the Perfetto UI at /perfetto/";
+    forgejo = {
       enable = lib.mkEnableOption ''
         serving Forgejo release attachments named timings.json under
-        /traces/<owner>/<repo>/<tag>/timings.json, so release notes can link straight to
+        /releases/<owner>/<repo>/<tag>/timings.json, so release notes can link straight to
         a trace
       '';
       tokenFile = lib.mkOption {
@@ -45,11 +46,11 @@ in
     homepage = {
       name = lib.mkOption {
         type = lib.types.str;
-        default = "Perfetto";
+        default = "Traces";
       };
       description = lib.mkOption {
         type = lib.types.str;
-        default = "Trace viewer";
+        default = "Trace viewers";
       };
       icon = lib.mkOption {
         type = lib.types.str;
@@ -65,35 +66,45 @@ in
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
       # The vhost is not exposed through the tunnel, so it is reachable only from the LAN
-      # and tailnet.
+      # and tailnet. Each viewer lives in its own folder, and traces are served from the
+      # same origin, so viewers can open them without CORS.
       {
         homelab.ingress.routes.${cfg.url}.extraConfig = ''
           handle {
-            root * ${ui}
-            file_server
+            respond 404
           }
         '';
       }
 
-      # Traces are served from the viewer's own origin, so they open without CORS. Only
-      # files named timings.json are proxied, so the token cannot read anything else.
-      (lib.mkIf cfg.forgejoTraces.enable {
+      (lib.mkIf cfg.perfetto.enable {
+        homelab.ingress.routes.${cfg.url}.extraConfig = ''
+          redir / /perfetto/
+          redir /perfetto /perfetto/
+          handle_path /perfetto/* {
+            root * ${perfetto}
+            file_server
+          }
+        '';
+      })
+
+      # Only files named timings.json are proxied, so the token cannot read anything else.
+      (lib.mkIf cfg.forgejo.enable {
         assertions = [
           {
             assertion = forgejo.enable;
-            message = "homelab.services.perfetto.forgejoTraces needs homelab.services.forgejo";
+            message = "homelab.services.traces.forgejo needs homelab.services.forgejo";
           }
         ];
 
         homelab.ingress.routes.${cfg.url}.extraConfig = ''
-          @trace path_regexp trace ^/traces/([^/]+)/([^/]+)/([^/]+)/timings\.json$
-          handle @trace {
-            rewrite * /{re.trace.1}/{re.trace.2}/releases/download/{re.trace.3}/timings.json
+          @release path_regexp release ^/releases/([^/]+)/([^/]+)/([^/]+)/timings\.json$
+          handle @release {
+            rewrite * /{re.release.1}/{re.release.2}/releases/download/{re.release.3}/timings.json
             reverse_proxy http://127.0.0.1:${toString forgejo.port} {
               header_up Host ${forgejo.url}
               header_up -Cookie
               ${
-                if cfg.forgejoTraces.tokenFile != null then
+                if cfg.forgejo.tokenFile != null then
                   ''header_up Authorization "token {env.FORGEJO_TRACES_TOKEN}"''
                 else
                   "header_up -Authorization"
@@ -103,8 +114,8 @@ in
         '';
 
         systemd.services.caddy.serviceConfig.EnvironmentFile = lib.mkIf (
-          cfg.forgejoTraces.tokenFile != null
-        ) cfg.forgejoTraces.tokenFile;
+          cfg.forgejo.tokenFile != null
+        ) cfg.forgejo.tokenFile;
       })
     ]
   );

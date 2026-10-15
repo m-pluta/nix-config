@@ -59,9 +59,9 @@ in
     ./navidrome
     ./nextcloud
     ./paperless-ngx
-    ./perfetto
     ./plausible
     ./sabnzbd
+    ./traces
     ./uptime-kuma
     ./vaultwarden
   ];
