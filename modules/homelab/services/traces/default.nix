@@ -16,6 +16,19 @@ let
     "speedscope"
   ];
 
+  # Upstream settings for requests to Forgejo. The viewer's cookies are not sent on, and
+  # the token is added when there is one.
+  forgejoUpstream = ''
+    header_up Host ${forgejo.url}
+    header_up -Cookie
+    ${
+      if cfg.forgejo.tokenFile != null then
+        ''header_up Authorization "token {env.FORGEJO_TRACES_TOKEN}"''
+      else
+        "header_up -Authorization"
+    }
+  '';
+
   # nixpkgs packages only Perfetto's command-line tools, so use the prebuilt UI from
   # the GitHub release.
   perfettoVersion = "58.2";
@@ -36,9 +49,10 @@ in
     speedscope.enable = lib.mkEnableOption "the Speedscope UI at /speedscope/";
     forgejo = {
       enable = lib.mkEnableOption ''
-        serving Forgejo release attachments named timings.json under
-        /releases/<owner>/<repo>/<tag>/timings.json, so release notes can link straight to
-        a trace
+        serving traces stored in Forgejo: release attachments named timings.json under
+        /releases/<owner>/<repo>/<tag>/timings.json, and comment attachments named
+        build-trace-*.json under /attachments/<uuid>, so releases and CI comments can link
+        straight to a trace
       '';
       tokenFile = lib.mkOption {
         type = lib.types.nullOr lib.types.path;
@@ -104,7 +118,9 @@ in
         '';
       })
 
-      # Only files named timings.json are proxied, so the token cannot read anything else.
+      # Only trace files are proxied, so the token cannot read anything else. Comment
+      # attachment URLs carry no file name, so those are checked by the file name Forgejo
+      # returns instead.
       (lib.mkIf cfg.forgejo.enable {
         assertions = [
           {
@@ -118,13 +134,20 @@ in
           handle @release {
             rewrite * /{re.release.1}/{re.release.2}/releases/download/{re.release.3}/timings.json
             reverse_proxy http://127.0.0.1:${toString forgejo.port} {
-              header_up Host ${forgejo.url}
-              header_up -Cookie
-              ${
-                if cfg.forgejo.tokenFile != null then
-                  ''header_up Authorization "token {env.FORGEJO_TRACES_TOKEN}"''
-                else
-                  "header_up -Authorization"
+              ${forgejoUpstream}
+            }
+          }
+
+          @attachment path_regexp ^/attachments/[0-9a-f-]+$
+          handle @attachment {
+            reverse_proxy http://127.0.0.1:${toString forgejo.port} {
+              ${forgejoUpstream}
+              @trace header Content-Disposition *filename="build-trace-*
+              handle_response @trace {
+                copy_response
+              }
+              handle_response {
+                respond 404
               }
             }
           }

@@ -52,12 +52,44 @@ jobs:
 
       - name: Build ${{ matrix.host }}
         run: |
-          nix build --no-link --print-out-paths --accept-flake-config \
-            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel"
+          set -o pipefail
+          # Record a Perfetto trace of the build, see bin/nix-build-trace.py.
+          nix build --no-link --print-out-paths --accept-flake-config --log-format internal-json \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" 2>&1 \
+            | nix run nixpkgs#python3 -- bin/nix-build-trace.py "build-trace-${{ matrix.host }}.json"
+
+      # Failed and slow runs are the ones worth looking at, so upload regardless.
+      - name: Upload build trace
+        if: always()
+        uses: https://code.forgejo.org/forgejo/upload-artifact@v4
+        with:
+          name: build-trace-${{ matrix.host }}
+          path: build-trace-${{ matrix.host }}.json
+          if-no-files-found: ignore
 
       - name: Cache built paths to Attic
         if: ${{ secrets.ATTIC_TOKEN != '' }}
         uses: https://git.mpluta.dev/mikey/actions/cache-to-attic@main
+
+  # Attach both hosts' traces to one sticky PR comment with trace viewer links. A single job
+  # writes the comment, so the parallel builds cannot overwrite each other's links.
+  traces:
+    needs: build
+    if: ${{ always() && github.event_name == 'pull_request' }}
+    runs-on: nix
+    steps:
+      - uses: actions/checkout@v4
+      - uses: https://code.forgejo.org/forgejo/download-artifact@v4
+        with:
+          pattern: build-trace-*
+          merge-multiple: true
+          path: traces
+      - name: Post build traces
+        env:
+          TOKEN: ${{ secrets.FORGEJO_TOKEN || secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          TRACES: https://traces.mpluta.dev
+        run: bin/post-build-traces.sh traces
 
   readme:
     runs-on: nix

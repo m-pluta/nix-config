@@ -9,6 +9,13 @@ readme out="README.md":
   (grep -B 99999 "BEGIN SERVICE LIST" README.md && nix eval --offline --raw --file bin/generateServicesTable.nix && grep -A 99999 "END SERVICE LIST" README.md) > {{out}}.tmp
   mv {{out}}.tmp {{out}}
 
+# Build a host and record a Perfetto trace of the build into trace-<host>.json
+trace host:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  nix build --no-link --log-format internal-json ".#nixosConfigurations.{{host}}.config.system.build.toplevel" 2>&1 \
+    | nix run nixpkgs#python3 -- bin/nix-build-trace.py "trace-{{host}}.json"
+
 dry-activate host:
   nixos-rebuild-ng dry-activate --flake .#{{host}} --target-host {{host}} --sudo
 

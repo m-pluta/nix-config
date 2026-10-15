@@ -1,3 +1,5 @@
 .direnv
 result
 .claude
+trace-*.json
+build-trace-*.json
