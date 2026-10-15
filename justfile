@@ -13,8 +13,10 @@ readme out="README.md":
 trace host:
   #!/usr/bin/env bash
   set -euo pipefail
+  # Fetch Python first, so the converter is already reading when Nix starts.
+  python="$(nix build --no-link --print-out-paths --inputs-from . nixpkgs#python3)/bin/python3"
   nix build --no-link --log-format internal-json ".#nixosConfigurations.{{host}}.config.system.build.toplevel" 2>&1 \
-    | nix run --inputs-from . nixpkgs#python3 -- bin/nix-build-trace.py "trace-{{host}}.json"
+    | "$python" bin/nix-build-trace.py "trace-{{host}}.json"
 
 dry-activate host:
   nixos-rebuild-ng dry-activate --flake .#{{host}} --target-host {{host}} --sudo

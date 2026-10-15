@@ -53,10 +53,13 @@ jobs:
       - name: Build ${{ matrix.host }}
         run: |
           set -o pipefail
-          # Record a Perfetto trace of the build, see bin/nix-build-trace.py.
+          # Record a Perfetto trace of the build, see bin/nix-build-trace.py. Python is
+          # fetched first, because events Nix writes before the converter starts would be
+          # stamped late, and a full pipe would stall the build.
+          python="$(nix build --no-link --print-out-paths --inputs-from . nixpkgs#python3)/bin/python3"
           nix build --no-link --print-out-paths --accept-flake-config --log-format internal-json \
             ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" 2>&1 \
-            | nix run --inputs-from . nixpkgs#python3 -- bin/nix-build-trace.py "build-trace-${{ matrix.host }}.json"
+            | "$python" bin/nix-build-trace.py "build-trace-${{ matrix.host }}.json"
 
       # Failed and slow runs are the ones worth looking at, so upload regardless.
       - name: Upload build trace

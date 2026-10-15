@@ -78,7 +78,8 @@ def assign_lanes(spans):
 def main():
     out = sys.argv[1]
     start = time.monotonic_ns()
-    now = lambda: (time.monotonic_ns() - start) / 1000  # microseconds
+    # Whole microseconds, so start + duration converts to nanoseconds exactly.
+    now = lambda: (time.monotonic_ns() - start) // 1000
 
     open_acts, phases, spans = {}, {}, []
 
@@ -148,16 +149,19 @@ def main():
         )
 
     lanes = assign_lanes(spans)
+    # Perfetto merges a thread whose ID is 0 or equals the process ID (1) into the
+    # process's main thread, which would put two lanes on one track.
+    tid = lambda lane: lane + 2
     events = [{"ph": "M", "pid": 1, "name": "process_name", "args": {"name": "nix build"}}]
     events += [
-        {"ph": "M", "pid": 1, "tid": n, "name": "thread_name", "args": {"name": f"lane {n}"}}
+        {"ph": "M", "pid": 1, "tid": tid(n), "name": "thread_name", "args": {"name": f"lane {n}"}}
         for n in range(lanes)
     ]
     events += [
         {
             "ph": "X",
             "pid": 1,
-            "tid": s["lane"],
+            "tid": tid(s["lane"]),
             "name": s["name"],
             "cat": s["cat"],
             "ts": s["ts"],
