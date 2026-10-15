@@ -6,7 +6,7 @@
 {
   "mpluta.dev".enable = true;
 
-  age.secrets.traces-forgejo-token.file = "${inputs.secrets}/services/perfetto/forgejo-token.age";
+  age.secrets.traces-forgejo-token.file = "${inputs.secrets}/services/traces/forgejo-token.age";
 
   homelab = {
     enable = true;
