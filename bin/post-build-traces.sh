@@ -10,7 +10,8 @@ dir="$1"
 marker="<!-- build-traces -->"
 api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
 auth="Authorization: token $TOKEN"
-jq() { nix run nixpkgs#jq -- "$@"; }
+# The flake's own nixpkgs, so parallel jobs never race to fetch the global registry.
+jq() { nix run --inputs-from . nixpkgs#jq -- "$@"; }
 
 id="$(curl -sSf -H "$auth" "$api/issues/$PR/comments?limit=50" |
 	jq -r --arg m "$marker" 'map(select(.body | startswith($m))) | .[0].id // empty')"

@@ -56,7 +56,7 @@ jobs:
           # Record a Perfetto trace of the build, see bin/nix-build-trace.py.
           nix build --no-link --print-out-paths --accept-flake-config --log-format internal-json \
             ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" 2>&1 \
-            | nix run nixpkgs#python3 -- bin/nix-build-trace.py "build-trace-${{ matrix.host }}.json"
+            | nix run --inputs-from . nixpkgs#python3 -- bin/nix-build-trace.py "build-trace-${{ matrix.host }}.json"
 
       # Failed and slow runs are the ones worth looking at, so upload regardless.
       - name: Upload build trace

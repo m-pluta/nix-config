@@ -14,7 +14,7 @@ trace host:
   #!/usr/bin/env bash
   set -euo pipefail
   nix build --no-link --log-format internal-json ".#nixosConfigurations.{{host}}.config.system.build.toplevel" 2>&1 \
-    | nix run nixpkgs#python3 -- bin/nix-build-trace.py "trace-{{host}}.json"
+    | nix run --inputs-from . nixpkgs#python3 -- bin/nix-build-trace.py "trace-{{host}}.json"
 
 dry-activate host:
   nixos-rebuild-ng dry-activate --flake .#{{host}} --target-host {{host}} --sudo
