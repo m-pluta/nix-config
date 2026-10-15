@@ -31,6 +31,7 @@ Primary server hosting storage and the self-hosted services
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/navidrome.svg' width=32 height=32>|Navidrome|Self-hosted music streaming service|Media|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextcloud.svg' width=32 height=32>|Nextcloud|File sync and sharing|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/paperless.svg' width=32 height=32>|Paperless-ngx|Document management system|Services|
+|<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/chrome-devtools.svg' width=32 height=32>|Perfetto|Trace viewer|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/prowlarr.svg' width=32 height=32>|Prowlarr|PVR indexer|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/radarr.svg' width=32 height=32>|Radarr|Movie collection manager|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/sabnzbd.svg' width=32 height=32>|SABnzbd|The free and easy binary newsreader|Downloads|

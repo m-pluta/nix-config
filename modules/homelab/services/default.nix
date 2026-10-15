@@ -59,6 +59,7 @@ in
     ./navidrome
     ./nextcloud
     ./paperless-ngx
+    ./perfetto
     ./plausible
     ./sabnzbd
     ./uptime-kuma
