@@ -98,6 +98,7 @@
       traces = {
         enable = true;
         perfetto.enable = true;
+        speedscope.enable = true;
         forgejo = {
           enable = true;
           tokenFile = config.age.secrets.traces-forgejo-token.path;

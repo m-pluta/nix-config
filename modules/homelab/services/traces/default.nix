@@ -10,6 +10,12 @@ let
   cfg = hl.services.${service};
   forgejo = hl.services.forgejo;
 
+  # The root opens the first enabled viewer.
+  rootViewer = lib.findFirst (v: cfg.${v}.enable) null [
+    "perfetto"
+    "speedscope"
+  ];
+
   # nixpkgs packages only Perfetto's command-line tools, so use the prebuilt UI from
   # the GitHub release.
   perfettoVersion = "58.2";
@@ -27,6 +33,7 @@ in
       default = "traces.${hl.mainDomain}";
     };
     perfetto.enable = lib.mkEnableOption "the Perfetto UI at /perfetto/";
+    speedscope.enable = lib.mkEnableOption "the Speedscope UI at /speedscope/";
     forgejo = {
       enable = lib.mkEnableOption ''
         serving Forgejo release attachments named timings.json under
@@ -70,6 +77,7 @@ in
       # same origin, so viewers can open them without CORS.
       {
         homelab.ingress.routes.${cfg.url}.extraConfig = ''
+          ${lib.optionalString (rootViewer != null) "redir / /${rootViewer}/"}
           handle {
             respond 404
           }
@@ -78,10 +86,19 @@ in
 
       (lib.mkIf cfg.perfetto.enable {
         homelab.ingress.routes.${cfg.url}.extraConfig = ''
-          redir / /perfetto/
           redir /perfetto /perfetto/
           handle_path /perfetto/* {
             root * ${perfetto}
+            file_server
+          }
+        '';
+      })
+
+      (lib.mkIf cfg.speedscope.enable {
+        homelab.ingress.routes.${cfg.url}.extraConfig = ''
+          redir /speedscope /speedscope/
+          handle_path /speedscope/* {
+            root * ${pkgs.speedscope}/lib/node_modules/speedscope/dist/release
             file_server
           }
         '';
