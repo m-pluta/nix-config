@@ -55,13 +55,13 @@ in
           container = {
             options = "--device /dev/fuse -v nix-store:/nix";
             valid_volumes = [ "nix-store" ];
+            # Labels point at :latest, so pull every time to pick up new releases.
+            force_pull = true;
           };
         };
         labels = [
-          "alpine:docker://alpine:latest"
-          "buildah:docker://quay.io/containers/buildah:latest"
-          "debian-latest:docker://debian:bookworm"
-          "nix:docker://git.mpluta.dev/mikey/nix-ci-builder:latest"
+          "buildah:docker://git.mpluta.dev/mikey/buildah:latest"
+          "nix:docker://git.mpluta.dev/mikey/nix:latest"
           "native:host"
         ];
       };
