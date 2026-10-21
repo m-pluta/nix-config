@@ -1,0 +1,24 @@
+--- a/web_src/js/components/RepoActionView.vue
++++ b/web_src/js/components/RepoActionView.vue
+@@ -72,8 +72,8 @@
+       menuVisible: undefined,
+       isFullScreen: false,
+       timeVisible: {
+-        'log-time-stamp': false,
+-        'log-time-seconds': false,
++        'log-time-stamp': localStorage.getItem('actions-log-time-stamp') === 'true',
++        'log-time-seconds': localStorage.getItem('actions-log-time-seconds') === 'true',
+       },
+ 
+       // provided by backend
+@@ -406,7 +406,9 @@
+     },
+ 
+     toggleTimeDisplay(type) {
+-      this.timeVisible[`log-time-${type}`] = !this.timeVisible[`log-time-${type}`];
++      const key = `log-time-${type}`;
++      this.timeVisible[key] = !this.timeVisible[key];
++      localStorage.setItem(`actions-${key}`, String(this.timeVisible[key]));
+     },
+ 
+     toggleFullScreen() {

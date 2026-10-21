@@ -9,6 +9,19 @@ let
   serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.${service};
+  # nixpkgs builds the frontend from the unpatched source, so patches to it need their
+  # own frontend build swapped into the package's static files.
+  frontend = pkgs.buildNpmPackage {
+    pname = "forgejo-frontend";
+    inherit (pkgs.forgejo) version npmDeps;
+    src = pkgs.applyPatches {
+      name = "forgejo-src-patched";
+      inherit (pkgs.forgejo) src;
+      patches = [ ./remember-log-time-options.patch ];
+    };
+    buildPhase = "./node_modules/.bin/webpack";
+    installPhase = "mkdir $out; cp -R ./public $out/";
+  };
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
@@ -25,7 +38,14 @@ in
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     services.openssh.settings.AcceptEnv = "GIT_PROTOCOL";
     services.${service} = {
-      package = pkgs.forgejo;
+      package = pkgs.forgejo.overrideAttrs (old: {
+        postInstall = old.postInstall + ''
+          # The copy from the store is read-only, so make it writable before removing it.
+          chmod -R u+w $data/public
+          rm -r $data/public
+          cp -R ${frontend}/public $data
+        '';
+      });
       enable = true;
       database.type = lib.mkDefault "sqlite3";
       lfs.enable = true;
