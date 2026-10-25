@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   ...
 }:
@@ -40,9 +41,20 @@ in
   hardware.graphics.enable = true;
   hardware.amdgpu.initrd.enable = true;
   hardware.enableRedistributableFirmware = true;
+  # NVIDIA GPU
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia = {
+    # Pascal predates the open kernel modules, which need Turing or newer
+    open = false;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    # Keeps the driver initialised with no display client attached
+    nvidiaPersistenced = true;
+    nvidiaSettings = false;
+  };
   zramSwap.enable = true;
   environment.systemPackages = with pkgs; [
     libva-utils
-    nvtopPackages.amd
+    nvtopPackages.full
+    rocmPackages.rocm-smi
   ];
 }
