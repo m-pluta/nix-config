@@ -51,6 +51,11 @@ in
     nvidiaPersistenced = true;
     nvidiaSettings = false;
   };
+  # Fan headers: mainline it87 doesn't support the board's IT8688E
+  boot.extraModulePackages = [ config.boot.kernelPackages.it87 ];
+  boot.kernelModules = [ "it87" ];
+  # Gigabyte's ACPI claims the chip's I/O ports, which otherwise blocks the driver
+  boot.extraModprobeConfig = "options it87 ignore_resource_conflict=1";
   zramSwap.enable = true;
   environment.systemPackages = with pkgs; [
     libva-utils
