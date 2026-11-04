@@ -4,7 +4,8 @@
   ...
 }:
 let
-  cfg = config.homelab.splitDns;
+  hl = config.homelab;
+  cfg = hl.splitDns;
 in
 {
   options.homelab.splitDns = {

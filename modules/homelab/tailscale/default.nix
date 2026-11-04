@@ -14,7 +14,7 @@ in
     enable = lib.mkEnableOption "Tailscale VPN";
     address = lib.mkOption {
       type = lib.types.str;
-      default = config.homelab.networks.${config.networking.hostName}.mesh.v4;
+      default = hl.networks.${config.networking.hostName}.mesh.v4;
       description = "Tailscale IP address of this host";
     };
   };
