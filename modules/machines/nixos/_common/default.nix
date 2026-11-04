@@ -5,6 +5,7 @@
 }:
 {
   imports = [
+    ./age-secrets.nix
     ./filesystems
     ./networks.nix
     ./nix
