@@ -46,6 +46,8 @@ in
   hardware.graphics.enable = true;
   hardware.amdgpu.initrd.enable = true;
   hardware.enableRedistributableFirmware = true;
+  # Runtime suspend of the headless RX 6800 warns in smu_suspend and leaves it unable to probe after the next reset
+  boot.kernelParams = [ "amdgpu.runpm=0" ];
   # NVIDIA GPU
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
