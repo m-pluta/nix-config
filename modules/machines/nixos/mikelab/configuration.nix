@@ -16,7 +16,7 @@ in
   networking.hostId = "deadbeef";
   # Pin the onboard I211 by MAC: its PCI-path name shifts when PCIe cards change
   systemd.network.links."10-lan" = {
-    matchConfig.PermanentMACAddress = "18:c0:4d:82:21:a4";
+    matchConfig.PermanentMACAddress = config.homelab.networks.mikelab.lan.mac;
     linkConfig.Name = config.homelab.networks.mikelab.lan.interface;
   };
   wifi = {

@@ -14,6 +14,11 @@ let
             type = lib.types.str;
             description = "Interface carrying this address.";
           };
+          mac = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            description = "Permanent MAC address of the interface, or null if not pinned.";
+          };
           subnet = lib.mkOption {
             type = lib.types.str;
             description = "CIDR of the network this address belongs to.";

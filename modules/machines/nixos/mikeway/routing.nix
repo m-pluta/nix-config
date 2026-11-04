@@ -77,6 +77,11 @@ in
           "1.1.1.1"
           "8.8.8.8"
         ];
+        # Hand every host with a pinned MAC its declared LAN address.
+        dhcpServerStaticLeases = lib.mapAttrsToList (_: net: {
+          MACAddress = net.lan.mac;
+          Address = net.lan.v4;
+        }) (lib.filterAttrs (_: net: net.lan != null && net.lan.mac != null) config.homelab.networks);
       };
 
       # Backup uplink: USB tethering.
