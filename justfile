@@ -21,6 +21,9 @@ boot host:
 switch host:
   nixos-rebuild-ng switch --flake .#{{host}} --target-host {{host}} --sudo
 
+deploy host:
+  deploy .#{{host}}
+
 reboot host:
   ssh {{host}} sudo reboot
 

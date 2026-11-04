@@ -27,6 +27,7 @@
       };
       packages.default = pkgs.mkShell {
         packages = [
+          pkgs.deploy-rs
           pkgs.jq
           # Unstable for the dynamic completion that the host completion builds on.
           inputs'.nixpkgs-unstable.legacyPackages.just

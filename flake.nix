@@ -39,6 +39,10 @@
       inputs.disko.follows = "disko";
       inputs.flake-parts.follows = "flake-parts";
     };
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -60,6 +64,7 @@
         imports = [
           ./modules/machines/nixos
           ./modules/devshell.nix
+          ./modules/deploy.nix
         ];
       }
     );

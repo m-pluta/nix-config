@@ -30,6 +30,7 @@ let
     (./. + "/_common/default.nix")
     ../../users/root
     ../../users/mikey
+    ../../users/deploy
   ];
 
   homeManagerCfg = {
