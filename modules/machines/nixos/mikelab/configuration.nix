@@ -11,6 +11,7 @@ in
     ./hardware-configuration.nix
     ./disko.nix
     ./homelab.nix
+    ./fan-curves.nix
   ];
   networking.hostName = "mikelab";
   networking.hostId = "deadbeef";
