@@ -15,7 +15,7 @@
       lan = {
         v4 = "192.168.100.10";
         subnet = "192.168.100.0/24";
-        interface = "enp6s0";
+        interface = "lan0";
       };
       mesh.v4 = "100.120.225.75";
     };

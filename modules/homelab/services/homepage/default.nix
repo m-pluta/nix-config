@@ -205,7 +205,7 @@ in
                     widget = {
                       type = "glances";
                       url = "http://localhost:${port}";
-                      metric = "network:enp6s0";
+                      metric = "network:lan0";
                       chart = false;
                       version = 4;
                     };
