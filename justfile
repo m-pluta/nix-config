@@ -1,3 +1,7 @@
+# Build on mikelab by default; BUILD_HOST= builds locally
+build_host := env("BUILD_HOST", "mikelab")
+build_host_flag := if build_host == "" { "" } else { "--build-host " + build_host }
+
 update input="":
   nix flake update {{ input }}
 
@@ -10,16 +14,16 @@ readme out="README.md":
   mv {{out}}.tmp {{out}}
 
 dry-activate host:
-  nixos-rebuild-ng dry-activate --flake .#{{host}} --target-host {{host}} --sudo
+  nixos-rebuild-ng dry-activate --flake .#{{host}} --target-host {{host}} {{build_host_flag}} --sudo
 
 test host:
-  nixos-rebuild-ng test --flake .#{{host}} --target-host {{host}} --sudo
+  nixos-rebuild-ng test --flake .#{{host}} --target-host {{host}} {{build_host_flag}} --sudo
 
 boot host:
-  nixos-rebuild-ng boot --flake .#{{host}} --target-host {{host}} --sudo
+  nixos-rebuild-ng boot --flake .#{{host}} --target-host {{host}} {{build_host_flag}} --sudo
 
 switch host:
-  nixos-rebuild-ng switch --flake .#{{host}} --target-host {{host}} --sudo
+  nixos-rebuild-ng switch --flake .#{{host}} --target-host {{host}} {{build_host_flag}} --sudo
 
 deploy host:
   deploy .#{{host}}
