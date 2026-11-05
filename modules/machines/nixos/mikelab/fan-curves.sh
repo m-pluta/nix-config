@@ -30,9 +30,13 @@ cpu_temp() {
   cat "$(find_hwmon_dir k10temp)/temp1_input"
 }
 
-# Print the hottest drive temperature in millidegrees
+# Print the hottest drive temperature in millidegrees, or 0 when no drives are present
 drive_temp() {
   local d
+  if ! grep -qx drivetemp "$hwmon"/hwmon*/name 2>/dev/null; then
+    echo 0
+    return
+  fi
   for d in "$hwmon"/hwmon*; do
     if [ "$(cat "$d/name")" = drivetemp ]; then
       cat "$d/temp1_input"
