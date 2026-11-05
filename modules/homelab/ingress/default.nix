@@ -28,7 +28,7 @@ let
   # `upstream` is null, only the route's own extraConfig is used, which allows vhosts
   # that don't proxy anything, such as static file serving.
   mkIngressVhost = r: upstream: {
-    useACMEHost = hl.mainDomain;
+    useACMEHost = r.acmeHost;
     serverAliases = r.serverAliases;
     extraConfig = lib.concatStringsSep "\n" (
       lib.filter (s: s != "") [
@@ -52,6 +52,11 @@ let
         type = lib.types.lines;
         default = "";
         description = "Extra Caddy directives for this vhost.";
+      };
+      acmeHost = lib.mkOption {
+        type = lib.types.str;
+        default = hl.mainDomain;
+        description = "Certificate this vhost uses.";
       };
       serverAliases = lib.mkOption {
         type = lib.types.listOf lib.types.str;

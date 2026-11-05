@@ -22,7 +22,6 @@ let
   commonModules = [
     ../../homelab
     ../../misc/wifi
-    ../../misc/mpluta.dev
     self.inputs.agenix.nixosModules.default
     self.inputs.disko.nixosModules.disko
     self.inputs.disko-zfs.nixosModules.default
