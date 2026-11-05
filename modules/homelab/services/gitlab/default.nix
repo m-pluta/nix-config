@@ -24,7 +24,7 @@ in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     url = "gitlab.${hl.mainDomain}";
-    configDir = "/var/gitlab/state";
+    configDir = "/var/lib/gitlab";
     monitoredServices = [
       "gitlab"
       "gitaly"
@@ -55,6 +55,10 @@ in
       port = 443;
       https = true;
       statePath = cfg.configDir;
+      backup = {
+        startAt = "03:00";
+        keepTime = 168;
+      };
       databaseCreateLocally = true;
       initialRootEmail = "mikey@${hl.mainDomain}";
       initialRootPasswordFile = secret "root-password";
