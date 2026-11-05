@@ -43,7 +43,11 @@ let
         deploy)
           path=''${args[3]:-}
           store_path "$path"
+          [[ "''${path#/nix/store/*-}" == "$domain" ]] || { echo "not a build of $domain: $path" >&2; exit 1; }
           nix-store --realise "$path" >/dev/null
+          # A site build is plain files, so it references nothing but itself.
+          references=$(nix-store --query --references "$path")
+          [[ -z "$references" || "$references" == "$path" ]] || { echo "not a build of $domain: $path has references" >&2; exit 1; }
           nix-env --profile "$link" --set "$path"
           nix-env --profile "$link" --delete-generations +${toString generationsKept}
           echo "$domain $env -> $path"
