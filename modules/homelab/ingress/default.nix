@@ -8,7 +8,6 @@ let
   hl = config.homelab;
   cfg = hl.ingress;
 
-  isIngressHost = cfg.ingressHost == config.networking.hostName;
   lan = hl.networks.${config.networking.hostName}.lan.v4 or null;
   lanInterface = hl.networks.${config.networking.hostName}.lan.interface or null;
 
@@ -45,7 +44,7 @@ let
         type = lib.types.nullOr lib.types.port;
         default = null;
         description = ''
-          Service port on 127.0.0.1 that the ingress host forwards to. null = a non-proxy
+          Service port on 127.0.0.1 that Caddy forwards to. null = a non-proxy
           vhost rendered verbatim from `extraConfig` (e.g. static file serving).
         '';
       };
@@ -65,30 +64,22 @@ in
 {
   options.homelab = {
     ingress = {
-      ingressHost = lib.mkOption {
-        type = lib.types.str;
-        description = ''
-          hostName of the host running public ingress (TLS termination + tunnel).
-          That host renders the ingress Caddy configuration.
-        '';
-      };
-
       routes = lib.mkOption {
         type = lib.types.attrsOf routeType;
         default = { };
-        description = "Ingress routes served by this host (URL -> service).";
+        description = "Routes served by this host (URL -> service).";
       };
     };
   };
 
   config = lib.mkMerge [
-    # Only the ingress host runs this part. It terminates TLS, obtains the wildcard
-    # certificate, and serves one Caddy virtual host per declared route.
-    (lib.mkIf isIngressHost {
+    # Any host that declares routes terminates TLS, obtains the wildcard certificate,
+    # and serves one Caddy virtual host per route.
+    (lib.mkIf (cfg.routes != { }) {
       assertions = [
         {
           assertion = hl.mainDomain != "";
-          message = "homelab.ingress ingressHost requires homelab.mainDomain to be set";
+          message = "homelab.ingress.routes requires homelab.mainDomain to be set";
         }
         {
           assertion = lan != null;
@@ -153,7 +144,7 @@ in
             };
           }
           # One virtual host per declared route. Routes with a port proxy to that port on
-          # this machine's loopback address, because these services run on the ingress host.
+          # this machine's loopback address.
           (lib.mapAttrs (
             _: r: mkIngressVhost r (if r.port == null then null else "http://127.0.0.1:${toString r.port}")
           ) cfg.routes)
