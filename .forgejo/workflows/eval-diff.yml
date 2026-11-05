@@ -24,7 +24,8 @@ jobs:
           git-host: ${{ env.FORGEJO_HOST }}
           ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
           git-hostkey: ${{ secrets.GIT_HOSTKEY }}
-      - run: git config --global --add safe.directory "${PWD}"
+      - name: Trust the checkout for git
+        run: git config --global --add safe.directory "${PWD}"
 
       - name: Set up Attic cache
         if: ${{ secrets.ATTIC_TOKEN != '' }}

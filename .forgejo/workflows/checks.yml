@@ -24,8 +24,10 @@ jobs:
           git-host: ${{ env.FORGEJO_HOST }}
           ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
           git-hostkey: ${{ secrets.GIT_HOSTKEY }}
-      - run: git config --global --add safe.directory "${PWD}"
-      - run: nix flake check --accept-flake-config --all-systems
+      - name: Trust the checkout for git
+        run: git config --global --add safe.directory "${PWD}"
+      - name: Check the flake
+        run: nix flake check --accept-flake-config --all-systems
 
   build:
     runs-on: nix
@@ -41,7 +43,8 @@ jobs:
           git-host: ${{ env.FORGEJO_HOST }}
           ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
           git-hostkey: ${{ secrets.GIT_HOSTKEY }}
-      - run: git config --global --add safe.directory "${PWD}"
+      - name: Trust the checkout for git
+        run: git config --global --add safe.directory "${PWD}"
 
       - name: Set up Attic cache
         if: ${{ secrets.ATTIC_TOKEN != '' }}
@@ -50,7 +53,7 @@ jobs:
           attic-token: ${{ secrets.ATTIC_TOKEN }}
           attic-url: ${{ secrets.ATTIC_URL }}
 
-      - name: Build ${{ matrix.host }}
+      - name: Build the host
         run: |
           nix build --no-link --print-out-paths --accept-flake-config \
             ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel"
@@ -69,10 +72,12 @@ jobs:
           git-host: ${{ env.FORGEJO_HOST }}
           ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
           git-hostkey: ${{ secrets.GIT_HOSTKEY }}
-      - run: git config --global --add safe.directory "${PWD}"
+      - name: Trust the checkout for git
+        run: git config --global --add safe.directory "${PWD}"
       # For pull_request this builds the merge commit, so the check reflects the
       # merged tree rather than a stale PR branch.
-      - run: nix develop --accept-flake-config --command just readme /tmp/README.generated
+      - name: Generate the README service list
+        run: nix develop --accept-flake-config --command just readme /tmp/README.generated
       - name: Verify README.md is up to date
         run: |
           if ! diff -u README.md /tmp/README.generated; then
