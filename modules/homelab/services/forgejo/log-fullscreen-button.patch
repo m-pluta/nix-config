@@ -1,0 +1,151 @@
+diff --git a/web_src/js/components/RepoActionView.test.js b/web_src/js/components/RepoActionView.test.js
+index e66c7d5..01656c3 100644
+--- a/web_src/js/components/RepoActionView.test.js
++++ b/web_src/js/components/RepoActionView.test.js
+@@ -613,3 +613,63 @@ test('view with pre-execution error', async () => {
+   expect(block.exists()).toBe(true);
+   expect(block.text()).toBe('pre-execution error Oops, I dropped it.');
+ });
++
++test('full screen button and Escape', async () => {
++  document.body.innerHTML = `
++    <div class="full height">
++      <div id="navbar"></div>
++      <div class="page-content repository"><div id="mount-point"></div></div>
++      <div class="page-footer"></div>
++    </div>`;
++  const wrapper = mount(RepoActionView, {
++    props: defaultTestProps,
++    attachTo: '#mount-point',
++  });
++  await flushPromises();
++
++  const pressEscape = async () => {
++    document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
++    await flushPromises();
++  };
++  // Full screen moves the log panel out of the component root, so query the document
++  const click = async (selector) => {
++    document.querySelector(selector).click();
++    await flushPromises();
++  };
++  const gearMenuOpen = () => document.querySelector('.job-gear-dropdown .action-job-menu') !== null;
++  const isFullScreen = () => document.querySelector('.full.height > .action-view-right') !== null;
++
++  // Full screen is no longer an item in the gear menu
++  await click('.job-gear-dropdown');
++  expect(document.querySelectorAll('.job-gear-dropdown .action-job-menu .item').length).toEqual(3);
++  wrapper.vm.closeDropdown();
++  await flushPromises();
++
++  await click('.job-fullscreen-toggle');
++  expect(isFullScreen()).toBe(true);
++  expect(document.querySelector('.job-fullscreen-toggle').getAttribute('aria-pressed')).toEqual('true');
++  expect(document.querySelector('#navbar').classList.contains('tw-hidden')).toBe(true);
++
++  // Escape closes an open menu before leaving full screen
++  await click('.job-gear-dropdown');
++  expect(gearMenuOpen()).toBe(true);
++  await pressEscape();
++  expect(gearMenuOpen()).toBe(false);
++  expect(isFullScreen()).toBe(true);
++
++  await pressEscape();
++  expect(isFullScreen()).toBe(false);
++  expect(document.querySelector('#navbar').classList.contains('tw-hidden')).toBe(false);
++
++  // Escape outside full screen does nothing
++  await pressEscape();
++  expect(isFullScreen()).toBe(false);
++
++  await click('.job-fullscreen-toggle');
++  expect(isFullScreen()).toBe(true);
++  await click('.job-fullscreen-toggle');
++  expect(isFullScreen()).toBe(false);
++
++  wrapper.unmount();
++  document.body.innerHTML = '';
++});
+diff --git a/web_src/js/components/RepoActionView.vue b/web_src/js/components/RepoActionView.vue
+index 9795b0d..3746c38 100644
+--- a/web_src/js/components/RepoActionView.vue
++++ b/web_src/js/components/RepoActionView.vue
+@@ -208,12 +208,14 @@ export default {
+     // responsible for setting up its refresh interval during this first invocation.
+     await this.loadJob({initialJobData: this.initialJobData, initialArtifactData: this.initialArtifactData});
+     document.body.addEventListener('click', this.closeDropdown);
++    document.addEventListener('keydown', this.keydownListener);
+     this.hashChangeListener();
+     window.addEventListener('hashchange', this.hashChangeListener);
+   },
+ 
+   beforeUnmount() {
+     document.body.removeEventListener('click', this.closeDropdown);
++    document.removeEventListener('keydown', this.keydownListener);
+     window.removeEventListener('hashchange', this.hashChangeListener);
+   },
+ 
+@@ -429,6 +431,14 @@ export default {
+         actionBodyEl.append(fullScreenEl);
+       }
+     },
++    keydownListener(event) {
++      if (event.key !== 'Escape' || event.defaultPrevented) return;
++      if (this.menuVisible) {
++        this.closeDropdown();
++      } else if (this.isFullScreen) {
++        this.toggleFullScreen();
++      }
++    },
+     async hashChangeListener() {
+       const selectedLogStep = window.location.hash;
+       if (!selectedLogStep) return;
+@@ -570,24 +580,23 @@ export default {
+               </div>
+             </div>
+           </div>
+-          <div class="job-info-header-right">
++          <div class="job-info-header-right tw-flex tw-items-center tw-gap-1">
++            <button class="btn interact-bg tw-p-2 job-fullscreen-toggle" :aria-pressed="isFullScreen" :aria-label="locale.showFullScreen" :data-tooltip-content="locale.showFullScreen" @click.stop="toggleFullScreen()">
++              <SvgIcon :name="isFullScreen ? 'octicon-screen-normal' : 'octicon-screen-full'" :size="18"/>
++            </button>
+             <div class="ui top right pointing dropdown dark-dropdown custom jump item job-gear-dropdown" @click.stop="toggleGearDropdown()">
+               <button class="btn interact-bg tw-p-2">
+                 <SvgIcon name="octicon-gear" :size="18"/>
+               </button>
+               <div class="menu transition action-job-menu" :class="{visible: displayGearDropdown}" v-if="displayGearDropdown" v-cloak>
+                 <a class="item" tabindex="0" @click="toggleTimeDisplay('seconds')" @keyup.space="toggleTimeDisplay('seconds')" @keyup.enter="toggleTimeDisplay('seconds')">
+                   <i class="icon"><SvgIcon :name="timeVisible['log-time-seconds'] ? 'octicon-check' : 'gitea-empty-checkbox'"/></i>
+                   {{ locale.showLogSeconds }}
+                 </a>
+                 <a class="item" tabindex="0" @click="toggleTimeDisplay('stamp')" @keyup.space="toggleTimeDisplay('stamp')" @keyup.enter="toggleTimeDisplay('stamp')">
+                   <i class="icon"><SvgIcon :name="timeVisible['log-time-stamp'] ? 'octicon-check' : 'gitea-empty-checkbox'"/></i>
+                   {{ locale.showTimeStamps }}
+                 </a>
+-                <a class="item" tabindex="0" @click="toggleFullScreen()" @keyup.space="toggleFullScreen()" @keyup.enter="toggleFullScreen()">
+-                  <i class="icon"><SvgIcon :name="isFullScreen ? 'octicon-check' : 'gitea-empty-checkbox'"/></i>
+-                  {{ locale.showFullScreen }}
+-                </a>
+                 <div class="divider"/>
+                 <a :class="['item', !currentJob.steps.length ? 'disabled' : '']" :href="run.link+'/jobs/'+jobIndex+'/attempt/'+viewingAttemptNumber+'/logs'" target="_blank">
+                   <i class="icon"><SvgIcon name="octicon-download"/></i>
+diff --git a/web_src/js/svg.js b/web_src/js/svg.js
+index 9481f0e..87bdf25 100644
+--- a/web_src/js/svg.js
++++ b/web_src/js/svg.js
+@@ -62,6 +62,7 @@ import octiconRepoForked from '../../public/assets/img/svg/octicon-repo-forked.s
+ import octiconRepoTemplate from '../../public/assets/img/svg/octicon-repo-template.svg';
+ import octiconRss from '../../public/assets/img/svg/octicon-rss.svg';
+ import octiconScreenFull from '../../public/assets/img/svg/octicon-screen-full.svg';
++import octiconScreenNormal from '../../public/assets/img/svg/octicon-screen-normal.svg';
+ import octiconSearch from '../../public/assets/img/svg/octicon-search.svg';
+ import octiconSidebarCollapse from '../../public/assets/img/svg/octicon-sidebar-collapse.svg';
+ import octiconSidebarExpand from '../../public/assets/img/svg/octicon-sidebar-expand.svg';
+@@ -140,6 +141,7 @@ const svgs = {
+   'octicon-repo-template': octiconRepoTemplate,
+   'octicon-rss': octiconRss,
+   'octicon-screen-full': octiconScreenFull,
++  'octicon-screen-normal': octiconScreenNormal,
+   'octicon-search': octiconSearch,
+   'octicon-sidebar-collapse': octiconSidebarCollapse,
+   'octicon-sidebar-expand': octiconSidebarExpand,

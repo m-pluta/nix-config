@@ -17,7 +17,10 @@ let
     src = pkgs.applyPatches {
       name = "forgejo-src-patched";
       inherit (pkgs.forgejo) src;
-      patches = [ ./remember-log-time-options.patch ];
+      patches = [
+        ./remember-log-time-options.patch
+        ./log-fullscreen-button.patch
+      ];
     };
     buildPhase = "./node_modules/.bin/webpack";
     installPhase = "mkdir $out; cp -R ./public $out/";
