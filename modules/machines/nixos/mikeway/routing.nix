@@ -69,14 +69,12 @@ in
       };
 
       # Bridge carries the gateway address + DHCP server (auto-sized /24 pool).
+      # DNS = the router itself, so clients use its split-horizon resolver.
       "30-${lanBridge}" = {
         matchConfig.Name = lanBridge;
         address = [ "${lanGateway}/${toString lan.prefixLength}" ];
         networkConfig.DHCPServer = true;
-        dhcpServerConfig.DNS = [
-          "1.1.1.1"
-          "8.8.8.8"
-        ];
+        dhcpServerConfig.DNS = [ lanGateway ];
         # Hand every host with a pinned MAC its declared LAN address.
         dhcpServerStaticLeases = lib.mapAttrsToList (_: net: {
           MACAddress = net.lan.mac;
