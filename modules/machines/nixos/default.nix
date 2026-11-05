@@ -33,6 +33,19 @@ let
     ../../users/deploy
   ];
 
+  # Every hostname a host serves, from its routes, so split DNS can point each name at
+  # the host that serves it. Hosts read each other's routes, which never depend on DNS.
+  splitDnsRecords = {
+    homelab.splitDns.records = lib.mkMerge (
+      lib.concatMap (
+        host:
+        lib.mapAttrsToList (
+          url: r: lib.genAttrs ([ url ] ++ r.serverAliases) (_: host)
+        ) self.nixosConfigurations.${host}.config.homelab.ingress.routes
+      ) hostNames
+    );
+  };
+
   homeManagerCfg = {
     home-manager.useGlobalPkgs = false;
     home-manager.useUserPackages = false;
@@ -60,6 +73,7 @@ in
         self.inputs."home-manager${meta.channel}".nixosModules.home-manager
         (./. + "/${name}/configuration.nix")
         homeManagerCfg
+        splitDnsRecords
       ];
     }
   );

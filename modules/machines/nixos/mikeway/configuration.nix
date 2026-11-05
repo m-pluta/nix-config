@@ -15,6 +15,9 @@
     enable = true;
     description = "Router and network gateway";
     tailscale.enable = true;
+    # Split-horizon DNS: each homelab name resolves to its host's address on the
+    # client's network.
+    splitDns.enable = true;
   };
 
   # No ZFS on this box (ext4 root); _common/filesystems forces it on.

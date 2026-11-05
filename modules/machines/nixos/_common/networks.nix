@@ -1,5 +1,6 @@
 {
   homelab.mainDomain = "mpluta.dev";
+  homelab.splitDns.resolverHost = "mikeway";
 
   homelab.networks = {
     mikeway = {

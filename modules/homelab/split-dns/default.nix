@@ -6,15 +6,46 @@
 let
   hl = config.homelab;
   cfg = hl.splitDns;
+
+  # One view per network the resolver host is on, keyed by network name. Unbound
+  # selects the view by the query's source subnet, so a name resolves to the address
+  # its host has on the client's network.
+  views = lib.filterAttrs (_: net: net != null) hl.networks.${cfg.resolverHost};
+
+  # The address `host` has on `network`, or null if it has none there.
+  addressOn = network: host: hl.networks.${host}.${network}.v4 or null;
 in
 {
   options.homelab.splitDns = {
     enable = lib.mkEnableOption "Split-horizon DNS for homelab domains (Unbound)";
 
+    resolverHost = lib.mkOption {
+      type = lib.types.str;
+      description = ''
+        hostName of the host running Unbound. This is independent of `enable` so
+        clients can consume it without running Unbound.
+      '';
+    };
+
     domains = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [ ];
-      description = "Domains answered locally (wildcard-redirected per view) instead of resolved normally.";
+      default = [ hl.mainDomain ];
+      description = ''
+        Zones answered locally. Names with a record resolve to the host serving them,
+        and other names in the zone resolve normally.
+      '';
+    };
+
+    records = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      example = {
+        "git.example.com" = "server";
+      };
+      description = ''
+        Hostname -> hostName of the machine serving it. Each view answers with that
+        machine's address on the view's network.
+      '';
     };
 
     upstreams = lib.mkOption {
@@ -28,46 +59,19 @@ in
         (Unbound talks to the root servers directly, nothing leaks to a public resolver).
       '';
     };
-
-    views = lib.mkOption {
-      description = ''
-        One Unbound view per network. Unbound selects the view by the query's *source*
-        subnet (access-control-view), so the same name resolves to `answer` appropriate to
-        where the client is — a LAN client gets the LAN address, a tailnet client the tailnet
-        address. Source-based selection is why this works on a Tailscale /32, where dnsmasq's
-        interface-based localise-queries cannot.
-      '';
-      type = lib.types.nonEmptyListOf (
-        lib.types.submodule {
-          options = {
-            name = lib.mkOption {
-              type = lib.types.str;
-              description = "View name (must be unique).";
-            };
-            interface = lib.mkOption {
-              type = lib.types.str;
-              description = "Interface to open port 53 on.";
-            };
-            listen = lib.mkOption {
-              type = lib.types.str;
-              description = "Address Unbound binds/answers on for this view.";
-            };
-            subnet = lib.mkOption {
-              type = lib.types.str;
-              example = "192.168.100.0/24";
-              description = "Client source CIDR that selects this view.";
-            };
-            answer = lib.mkOption {
-              type = lib.types.str;
-              description = "Address the split domains resolve to for clients in this view.";
-            };
-          };
-        }
-      );
-    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = lib.concatLists (
+      lib.mapAttrsToList (
+        network: _:
+        lib.mapAttrsToList (name: host: {
+          assertion = addressOn network host != null;
+          message = "homelab.splitDns: ${name} is served by ${host}, which has no ${network} address";
+        }) cfg.records
+      ) views
+    );
+
     services.unbound = {
       enable = true;
       # Don't point this host's /etc/resolv.conf at 127.0.0.1, since Unbound doesn't listen there.
@@ -75,22 +79,24 @@ in
       settings = {
         server = {
           # The addresses Unbound answers DNS on, one per view.
-          interface = map (v: v.listen) cfg.views;
+          interface = lib.mapAttrsToList (_: net: net.v4) views;
           # Bind listen addresses even before they exist (tailscale0 comes up late).
           ip-freebind = true;
           # Only answer clients in a view's subnet, and give each client that view.
-          access-control = map (v: "${v.subnet} allow") cfg.views;
-          access-control-view = map (v: "${v.subnet} ${v.name}") cfg.views;
+          access-control = lib.mapAttrsToList (_: net: "${net.subnet} allow") views;
+          access-control-view = lib.mapAttrsToList (network: net: "${net.subnet} ${network}") views;
           # Don't reveal the server's identity or version to clients.
           hide-identity = true;
           hide-version = true;
         };
-        view = map (v: {
-          name = v.name;
-          # Reply with this view's address even for implicit subdomains.
-          local-zone = map (d: ''"${d}." redirect'') cfg.domains;
-          local-data = map (d: ''"${d}. A ${v.answer}"'') cfg.domains;
-        }) cfg.views;
+        view = lib.mapAttrsToList (network: _: {
+          name = network;
+          # Names without a record fall through to normal resolution.
+          local-zone = map (d: ''"${d}." transparent'') cfg.domains;
+          local-data = lib.mapAttrsToList (
+            name: host: ''"${name}. A ${addressOn network host}"''
+          ) cfg.records;
+        }) views;
       }
       # Forward all other queries to the upstreams, or recurse from the root servers if none.
       // lib.optionalAttrs (cfg.upstreams != [ ]) {
@@ -108,14 +114,12 @@ in
     systemd.services.unbound.wants = [ "tailscaled.service" ];
 
     # Open DNS (port 53, over both UDP and TCP) on each view's interface only.
-    networking.firewall.interfaces = lib.listToAttrs (
-      map (
-        v:
-        lib.nameValuePair v.interface {
-          allowedUDPPorts = [ 53 ];
-          allowedTCPPorts = [ 53 ];
-        }
-      ) cfg.views
-    );
+    networking.firewall.interfaces = lib.mapAttrs' (
+      _: net:
+      lib.nameValuePair net.interface {
+        allowedUDPPorts = [ 53 ];
+        allowedTCPPorts = [ 53 ];
+      }
+    ) views;
   };
 }
