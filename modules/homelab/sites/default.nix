@@ -9,8 +9,9 @@ let
   cfg = hl.sites;
   root = "/var/lib/sites";
 
-  # Run as the forced command for the deploy key: `deploy <domain> <env> <store path>`,
-  # `remove <domain> <env>` or `current <domain> <env>`, where env is prod, qa or pr-<n>.
+  # Run as the forced command for a site's deploy key, with the site's domain as its
+  # argument: `deploy <domain> <env> <store path>`, `remove <domain> <env>` or
+  # `current <domain> <env>`, where env is prod, qa or pr-<n>.
   deployCommand = pkgs.writeShellApplication {
     name = "sites-deploy";
     runtimeInputs = [
@@ -18,17 +19,13 @@ let
       config.nix.package
     ];
     text = ''
+      site=$1
       read -r -a args <<< "''${SSH_ORIGINAL_COMMAND:-}"
       action=''${args[0]:-}
       domain=''${args[1]:-}
       env=''${args[2]:-}
 
-      domains=(${lib.escapeShellArgs (lib.attrNames cfg.domains)})
-      known=
-      for d in "''${domains[@]}"; do
-        [[ "$d" == "$domain" ]] && known=1
-      done
-      [[ -n "$known" ]] || { echo "unknown site: $domain" >&2; exit 1; }
+      [[ "$domain" == "$site" ]] || { echo "this key can only deploy $site" >&2; exit 1; }
       case "$env" in
         prod | qa) link="${root}/$domain/$env" ;;
         pr-[0-9]*) [[ "$env" =~ ^pr-[0-9]+$ ]] || { echo "bad environment: $env" >&2; exit 1; }
@@ -57,10 +54,10 @@ let
 
   siteType = lib.types.submodule {
     options = {
-      seed = lib.mkOption {
-        type = lib.types.nullOr lib.types.path;
-        default = null;
-        description = "Content for prod until the first deploy.";
+      deployKeys = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "SSH keys allowed to deploy this site, and only this site.";
       };
     };
   };
@@ -76,11 +73,6 @@ in
         request at pr-<n>.sandbox.<domain>.
       '';
     };
-    deployKeys = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      default = [ ];
-      description = "SSH keys allowed to run the deploy command.";
-    };
   };
 
   config = lib.mkIf (cfg.domains != { }) {
@@ -89,9 +81,12 @@ in
       group = "sites";
       home = root;
       useDefaultShell = true;
-      openssh.authorizedKeys.keys = map (
-        key: ''command="${lib.getExe deployCommand}",restrict ${key}''
-      ) cfg.deployKeys;
+      openssh.authorizedKeys.keys = lib.concatLists (
+        lib.mapAttrsToList (
+          domain: site:
+          map (key: ''command="${lib.getExe deployCommand} ${domain}",restrict ${key}'') site.deployKeys
+        ) cfg.domains
+      );
     };
     users.groups.sites = { };
 
@@ -99,14 +94,10 @@ in
       "d ${root} 0755 sites sites - -"
     ]
     ++ lib.concatLists (
-      lib.mapAttrsToList (
-        domain: site:
-        [
-          "d ${root}/${domain} 0755 sites sites - -"
-          "d ${root}/${domain}/sandbox 0755 sites sites - -"
-        ]
-        ++ lib.optional (site.seed != null) "L ${root}/${domain}/prod - - - - ${site.seed}"
-      ) cfg.domains
+      lib.mapAttrsToList (domain: _: [
+        "d ${root}/${domain} 0755 sites sites - -"
+        "d ${root}/${domain}/sandbox 0755 sites sites - -"
+      ]) cfg.domains
     );
 
     # A wildcard certificate for each domain's sandboxes.
