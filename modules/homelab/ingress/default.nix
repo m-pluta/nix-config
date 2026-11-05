@@ -108,15 +108,19 @@ in
         };
       };
 
-      # Allow HTTP and HTTPS in from the LAN interface only. Caddy listens on all
-      # addresses, so opening the ports globally could expose it on the WAN if the router
-      # were misconfigured. Other routes into the host need no rule: the tailnet is
-      # already a trusted interface, and public traffic arrives through the Cloudflare
-      # tunnel on loopback.
-      networking.firewall.interfaces.${lanInterface}.allowedTCPPorts = [
-        80
-        443
-      ];
+      # Allow HTTP and HTTPS in from the LAN interface, and from this host's Podman
+      # networks when it runs containers. Caddy listens on all addresses, so opening the
+      # ports globally could expose it on the WAN if the router were misconfigured. Other
+      # routes into the host need no rule: the tailnet is already a trusted interface,
+      # and public traffic arrives through the Cloudflare tunnel on loopback.
+      networking.firewall.interfaces =
+        lib.genAttrs ([ lanInterface ] ++ lib.optional config.virtualisation.podman.enable "podman+")
+          (_: {
+            allowedTCPPorts = [
+              80
+              443
+            ];
+          });
 
       services.caddy = {
         enable = true;
