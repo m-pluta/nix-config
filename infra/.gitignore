@@ -1,0 +1,5 @@
+# Generated from the Nix modules by `just infra`
+config.tf.json
+.terraform/
+terraform.tfstate.backup
+*.tfplan

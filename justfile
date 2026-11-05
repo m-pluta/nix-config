@@ -1,6 +1,9 @@
 # Evaluate and build on mikelab by default; BUILD_HOST= does both locally
 build_host := env("BUILD_HOST", "mikelab")
 
+identity := home_directory() / ".ssh/id_ed25519"
+age_identity := env("AGE_IDENTITY", identity)
+
 update input="":
   nix flake update {{ input }}
 
@@ -41,3 +44,33 @@ reboot host:
 
 shutdown host:
   ssh {{host}} sudo shutdown now
+
+# Run OpenTofu on infra/, e.g. `just infra plan`
+infra *args="plan":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  secrets=$(nix eval --raw --impure --expr '(builtins.getFlake (toString ./.)).inputs.secrets.outPath')
+  decrypt() { age -d -i "{{age_identity}}" "$secrets/$1"; }
+  CLOUDFLARE_API_TOKEN=$(decrypt infra/cloudflare-api-token.age)
+  export CLOUDFLARE_API_TOKEN
+  passphrase=$(decrypt infra/tofu-state-passphrase.age)
+  export TF_ENCRYPTION="
+    key_provider \"pbkdf2\" \"state\" {
+      passphrase = \"$passphrase\"
+    }
+    method \"aes_gcm\" \"state\" {
+      keys = key_provider.pbkdf2.state
+    }
+    state {
+      method   = method.aes_gcm.state
+      enforced = true
+    }
+    plan {
+      method   = method.aes_gcm.state
+      enforced = true
+    }
+  "
+  cd infra
+  install -m 644 "$(nix build --no-link --print-out-paths ..#infra)" config.tf.json
+  tofu init -input=false >/dev/null
+  tofu {{args}}

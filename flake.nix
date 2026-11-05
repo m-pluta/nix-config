@@ -47,6 +47,10 @@
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    terranix = {
+      url = "github:terranix/terranix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     secrets = {
       url = "git+ssh://forgejo@git.mpluta.dev/mikey/nix-secrets.git";
       flake = false;
@@ -65,6 +69,7 @@
           ./modules/machines/nixos
           ./modules/devshell.nix
           ./modules/deploy.nix
+          ./infra
         ];
       }
     );

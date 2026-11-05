@@ -28,7 +28,9 @@
       packages.default = pkgs.mkShell {
         packages = [
           pkgs.deploy-rs
+          pkgs.age
           pkgs.jq
+          pkgs.opentofu
           # Unstable for the dynamic completion that the host completion builds on.
           inputs'.nixpkgs-unstable.legacyPackages.just
           pkgs.nh
