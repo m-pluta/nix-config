@@ -2,7 +2,7 @@
 {
   mkServiceOptions =
     {
-      port,
+      port ? null,
       url,
       homepage,
       configDir ? null,
@@ -10,10 +10,6 @@
     }:
     {
       enable = lib.mkEnableOption { description = "Enable ${homepage.name}"; };
-      port = lib.mkOption {
-        type = lib.types.port;
-        default = port;
-      };
       url = lib.mkOption {
         type = lib.types.str;
         default = url;
@@ -35,6 +31,12 @@
           type = lib.types.str;
           default = homepage.category;
         };
+      };
+    }
+    // lib.optionalAttrs (port != null) {
+      port = lib.mkOption {
+        type = lib.types.port;
+        default = port;
       };
     }
     // lib.optionalAttrs (configDir != null) {

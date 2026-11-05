@@ -43,6 +43,7 @@
         enable = true;
         port = 3001;
       };
+      gitlab.enable = true;
       homepage.enable = true;
       jellyfin.enable = true;
       sabnzbd.enable = true;
