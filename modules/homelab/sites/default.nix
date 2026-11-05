@@ -101,20 +101,12 @@ in
     );
 
     # A wildcard certificate for each domain's sandboxes.
-    security.acme.certs = lib.mapAttrs' (
+    homelab.ingress.certificates = lib.mapAttrs' (
       domain: _:
-      lib.nameValuePair "sandbox.${domain}" {
-        inherit (config.security.acme.certs.${hl.mainDomain})
-          reloadServices
-          dnsProvider
-          dnsResolver
-          dnsPropagationCheck
-          group
-          environmentFile
-          ;
-        domain = "sandbox.${domain}";
-        extraDomainNames = [ "*.sandbox.${domain}" ];
-      }
+      lib.nameValuePair "sandbox.${domain}" [
+        "sandbox.${domain}"
+        "*.sandbox.${domain}"
+      ]
     ) cfg.domains;
 
     homelab.ingress.routes = lib.mkMerge (
@@ -137,10 +129,7 @@ in
             extraConfig = serve "${root}/${domain}/prod";
           };
           "qa.${domain}".extraConfig = serve "${root}/${domain}/qa";
-          "*.sandbox.${domain}" = {
-            acmeHost = "sandbox.${domain}";
-            extraConfig = serve "${root}/${domain}/sandbox/{labels.${sandboxLabel}}";
-          };
+          "*.sandbox.${domain}".extraConfig = serve "${root}/${domain}/sandbox/{labels.${sandboxLabel}}";
         }
       ) cfg.domains
     );
