@@ -118,7 +118,9 @@ in
       ${lib.concatMapStrings (ip: ''
         iptables -w -t nat -A dns-redirect -s ${ip} -j RETURN
       '') managedLanAddresses}
-      iptables -w -t nat -A dns-redirect -j DNAT --to-destination ${lanGateway}:53
+      for proto in udp tcp; do
+        iptables -w -t nat -A dns-redirect -p $proto -j DNAT --to-destination ${lanGateway}:53
+      done
       for proto in udp tcp; do
         iptables -w -t nat -D PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanGateway} -j dns-redirect 2>/dev/null || true
         iptables -w -t nat -A PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanGateway} -j dns-redirect
