@@ -10,6 +10,10 @@
         "nix-command"
         "flakes"
       ];
+      extra-substituters = [ "https://cache.mpluta.dev/nix-config" ];
+      extra-trusted-public-keys = [ "nix-config:zGjB0uPB1ecKv9Ab4rHwQF3I83zAveDYNHvnVEihppA=" ];
+      connect-timeout = 5;
+      fallback = true;
     };
 
     gc = {
