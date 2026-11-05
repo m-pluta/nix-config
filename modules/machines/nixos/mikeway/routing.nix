@@ -16,6 +16,12 @@ let
   lan = config.homelab.networks.mikeway.lan;
   lanBridge = lan.interface;
   lanGateway = lan.v4;
+  # LAN addresses of the other hosts in the networks table.
+  managedLanAddresses = lib.mapAttrsToList (_: net: net.lan.v4) (
+    lib.filterAttrs (
+      name: net: name != config.networking.hostName && net.lan != null
+    ) config.homelab.networks
+  );
 
   tvWiredMac = "68:07:0a:75:61:a7";
   # deadnix: skip
@@ -99,4 +105,31 @@ in
   };
 
   networking.firewall.interfaces.${lanBridge}.allowedUDPPorts = [ 67 ];
+
+  # Force LAN clients' plain DNS (even a hardcoded 8.8.8.8) through the local
+  # resolver, so split-horizon applies to devices that ignore the DHCP-supplied
+  # DNS server. Hosts in the networks table are left alone, since their resolvers
+  # are set on purpose. DoH on 443 can't be caught this way.
+  networking.firewall = {
+    # The chain is rebuilt and the jumps are deleted before being added, so reloads
+    # (every nixos-rebuild switch) don't stack duplicate rules.
+    extraCommands = ''
+      iptables -w -t nat -N dns-redirect 2>/dev/null || iptables -w -t nat -F dns-redirect
+      ${lib.concatMapStrings (ip: ''
+        iptables -w -t nat -A dns-redirect -s ${ip} -j RETURN
+      '') managedLanAddresses}
+      iptables -w -t nat -A dns-redirect -j DNAT --to-destination ${lanGateway}:53
+      for proto in udp tcp; do
+        iptables -w -t nat -D PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanGateway} -j dns-redirect 2>/dev/null || true
+        iptables -w -t nat -A PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanGateway} -j dns-redirect
+      done
+    '';
+    extraStopCommands = ''
+      for proto in udp tcp; do
+        iptables -w -t nat -D PREROUTING -i ${lanBridge} -p $proto --dport 53 ! -d ${lanGateway} -j dns-redirect 2>/dev/null || true
+      done
+      iptables -w -t nat -F dns-redirect 2>/dev/null || true
+      iptables -w -t nat -X dns-redirect 2>/dev/null || true
+    '';
+  };
 }
