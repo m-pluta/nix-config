@@ -101,6 +101,7 @@
       perms = "2775 root media - -";
     in
     [
+      "d /tank/import ${perms}"
       "${mediaDir} ${perms}"
       "${mediaDir}/torrents ${perms}"
       "${mediaDir}/torrents/movies ${perms}"

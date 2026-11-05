@@ -236,6 +236,14 @@
               recordsize = "1M";
             };
           };
+          "import" = {
+            type = "zfs_fs";
+            mountpoint = "/tank/import";
+            options = {
+              "com.sun:auto-snapshot" = "true";
+              recordsize = "1M";
+            };
+          };
           # carves out space nothing can use, keeps pool from hitting 100%
           "reserved" = {
             type = "zfs_fs";
