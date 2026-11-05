@@ -63,19 +63,17 @@ let
   };
 in
 {
-  options.homelab.sites = {
-    domains = lib.mkOption {
-      type = lib.types.attrsOf siteType;
-      default = { };
-      description = ''
-        Static sites served from deployed builds, keyed by domain. Each gets prod at the
-        domain and its www and prod. names, qa at qa.<domain>, and a sandbox per pull
-        request at pr-<n>.sandbox.<domain>.
-      '';
-    };
+  options.homelab.sites = lib.mkOption {
+    type = lib.types.attrsOf siteType;
+    default = { };
+    description = ''
+      Static sites served from deployed builds, keyed by domain. Each gets prod at the
+      domain and its www and prod. names, qa at qa.<domain>, and a sandbox per pull
+      request at pr-<n>.sandbox.<domain>.
+    '';
   };
 
-  config = lib.mkIf (cfg.domains != { }) {
+  config = lib.mkIf (cfg != { }) {
     users.users.sites = {
       isSystemUser = true;
       group = "sites";
@@ -85,7 +83,7 @@ in
         lib.mapAttrsToList (
           domain: site:
           map (key: ''command="${lib.getExe deployCommand} ${domain}",restrict ${key}'') site.deployKeys
-        ) cfg.domains
+        ) cfg
       );
     };
     users.groups.sites = { };
@@ -97,7 +95,7 @@ in
       lib.mapAttrsToList (domain: _: [
         "d ${root}/${domain} 0755 sites sites - -"
         "d ${root}/${domain}/sandbox 0755 sites sites - -"
-      ]) cfg.domains
+      ]) cfg
     );
 
     # A wildcard certificate for each domain's sandboxes.
@@ -107,7 +105,7 @@ in
         "sandbox.${domain}"
         "*.sandbox.${domain}"
       ]
-    ) cfg.domains;
+    ) cfg;
 
     homelab.ingress.routes = lib.mkMerge (
       lib.mapAttrsToList (
@@ -131,7 +129,7 @@ in
           "qa.${domain}".extraConfig = serve "${root}/${domain}/qa";
           "*.sandbox.${domain}".extraConfig = serve "${root}/${domain}/sandbox/{labels.${sandboxLabel}}";
         }
-      ) cfg.domains
+      ) cfg
     );
   };
 }

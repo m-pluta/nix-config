@@ -19,7 +19,7 @@
     # Split-horizon DNS: each homelab name resolves to its host's address on the
     # client's network.
     splitDns.enable = true;
-    sites.domains."mpluta.dev" = {
+    sites."mpluta.dev" = {
       deployKeys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPhcdldg3NxYfFAzIPVlLeUXHX538wgQmZclDLlse6i1 sites@forgejo-actions"
       ];
