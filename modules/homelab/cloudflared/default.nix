@@ -67,6 +67,11 @@ in
       '';
     };
 
+    # Connect to Cloudflare's edge over HTTP/2 instead of QUIC.
+    # TODO: remove once QUIC reaches Cloudflare's edge from this network.
+    systemd.services."cloudflared-tunnel-${cfg.tunnelId}".environment.TUNNEL_TRANSPORT_PROTOCOL =
+      "http2";
+
     services.cloudflared = {
       enable = true;
       tunnels.${cfg.tunnelId} = {
