@@ -12,7 +12,8 @@ let
 
   # Run as the forced command for a site's deploy key, with the site's domain as its
   # argument: `deploy <domain> <env> <store path>`, `rollback <domain> <env> <store path>`,
-  # `remove <domain> <env>` or `current <domain> <env>`, where env is prod, qa or pr-<n>.
+  # `remove <domain> <env>`, `current <domain> <env>` or `list <domain>`, where env is
+  # prod, qa or pr-<n>, and list prints the sandboxes.
   # Each environment is a Nix profile, so its recent builds stay available as generations.
   deployCommand = pkgs.writeShellApplication {
     name = "sites-deploy";
@@ -28,6 +29,15 @@ let
       env=''${args[2]:-}
 
       [[ "$domain" == "$site" ]] || { echo "this key can only deploy $site" >&2; exit 1; }
+
+      if [[ "$action" == list ]]; then
+        for l in "${root}/$domain"/sandbox/pr-*; do
+          name=''${l##*/}
+          if [[ "$name" =~ ^pr-[0-9]+$ ]]; then echo "$name"; fi
+        done
+        exit 0
+      fi
+
       case "$env" in
         prod | qa) link="${root}/$domain/$env" ;;
         pr-[0-9]*) [[ "$env" =~ ^pr-[0-9]+$ ]] || { echo "bad environment: $env" >&2; exit 1; }
