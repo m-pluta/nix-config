@@ -3,6 +3,11 @@
   homelab.cloudflared.accountId = "0d4c80186d7a57bd42349891cb26b929";
   homelab.splitDns.resolverHost = "mikeway";
 
+  homelab.hostKeys = {
+    mikeway = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDuwyQgCK+b9FbW80KEnUdSbv8VoJrsd3Th5ASA0y2QN";
+    mikelab = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINsSPBqBuJinIvu2sa6/4R0TfAcJduiKONEr9IQIzBq/";
+  };
+
   homelab.networks = {
     mikeway = {
       lan = {
