@@ -8,10 +8,12 @@ let
   hl = config.homelab;
   cfg = hl.sites;
   root = "/var/lib/sites";
+  generationsKept = 10;
 
   # Run as the forced command for a site's deploy key, with the site's domain as its
-  # argument: `deploy <domain> <env> <store path>`, `remove <domain> <env>` or
-  # `current <domain> <env>`, where env is prod, qa or pr-<n>.
+  # argument: `deploy <domain> <env> <store path>`, `rollback <domain> <env> <store path>`,
+  # `remove <domain> <env>` or `current <domain> <env>`, where env is prod, qa or pr-<n>.
+  # Each environment is a Nix profile, so its recent builds stay available as generations.
   deployCommand = pkgs.writeShellApplication {
     name = "sites-deploy";
     runtimeInputs = [
@@ -33,19 +35,40 @@ let
         *) echo "bad environment: $env" >&2; exit 1 ;;
       esac
 
+      store_path() {
+        [[ "$1" =~ ^/nix/store/[a-z0-9]{32}-[A-Za-z0-9+._?=-]+$ ]] || { echo "bad store path: $1" >&2; exit 1; }
+      }
+
       case "$action" in
         deploy)
           path=''${args[3]:-}
-          [[ "$path" =~ ^/nix/store/[a-z0-9]{32}-[A-Za-z0-9+._?=-]+$ ]] || { echo "bad store path: $path" >&2; exit 1; }
-          nix-store --realise "$path" --add-root "$link" >/dev/null
+          store_path "$path"
+          nix-store --realise "$path" >/dev/null
+          nix-env --profile "$link" --set "$path"
+          nix-env --profile "$link" --delete-generations +${toString generationsKept}
+          echo "$domain $env -> $path"
+          ;;
+        rollback)
+          path=''${args[3]:-}
+          store_path "$path"
+          generation=
+          for g in "$link"-*-link; do
+            if [[ "$(readlink "$g")" == "$path" ]]; then
+              n=''${g#"$link"-}
+              n=''${n%-link}
+              if [[ -z "$generation" || "$n" -gt "$generation" ]]; then generation=$n; fi
+            fi
+          done
+          [[ -n "$generation" ]] || { echo "$path was not recently deployed to $env" >&2; exit 1; }
+          nix-env --profile "$link" --switch-generation "$generation"
           echo "$domain $env -> $path"
           ;;
         remove)
           [[ "$env" == pr-* ]] || { echo "only sandboxes can be removed" >&2; exit 1; }
-          rm -f "$link"
+          rm -f "$link" "$link"-*-link
           ;;
         current)
-          readlink "$link"
+          readlink -e "$link"
           ;;
         *) echo "unknown action: $action" >&2; exit 1 ;;
       esac
