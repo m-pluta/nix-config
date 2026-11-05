@@ -4,7 +4,6 @@
   ...
 }:
 {
-  "mpluta.dev".enable = true;
 
   age.secrets.traces-forgejo-token.file = "${inputs.secrets}/services/traces/forgejo-token.age";
 
@@ -17,11 +16,7 @@
     cloudflared = {
       enable = true;
       tunnelId = "7a16d95b-031d-483f-befa-d8fdc081fe5c";
-      expose.${config.homelab.mainDomain} = [
-        ""
-        "www"
-        "git"
-      ];
+      expose.${config.homelab.mainDomain} = [ "git" ];
     };
     samba = {
       enable = true;
