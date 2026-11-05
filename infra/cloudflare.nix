@@ -40,11 +40,21 @@ in
   # The API token comes from CLOUDFLARE_API_TOKEN.
   provider.cloudflare = { };
 
+  # Each tunnel's secret comes from TF_VAR_tunnel_secret_<host>.
+  variable = lib.mapAttrs' (
+    host: _:
+    lib.nameValuePair "tunnel_secret_${host}" {
+      type = "string";
+      sensitive = true;
+    }
+  ) tunnelHosts;
+
   resource = {
     cloudflare_zero_trust_tunnel_cloudflared = lib.mapAttrs (host: _: {
       account_id = cloudflareAccountId;
       name = host;
       config_src = "local";
+      tunnel_secret = "\${var.tunnel_secret_${host}}";
     }) tunnelHosts;
 
     cloudflare_dns_record = lib.listToAttrs (

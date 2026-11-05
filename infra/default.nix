@@ -1,4 +1,9 @@
-{ inputs, self, ... }:
+{
+  inputs,
+  self,
+  lib,
+  ...
+}:
 {
   perSystem =
     { system, ... }:
@@ -8,7 +13,8 @@
         inherit system;
         extraArgs = {
           inherit (self) nixosConfigurations;
-          cloudflareAccountId = "0d4c80186d7a57bd42349891cb26b929";
+          cloudflareAccountId =
+            (lib.head (lib.attrValues self.nixosConfigurations)).config.homelab.cloudflared.accountId;
         };
         # One file per Cloudflare zone, with the zone and its hand-written records.
         modules = [

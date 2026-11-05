@@ -1,5 +1,6 @@
 {
   homelab.mainDomain = "mpluta.dev";
+  homelab.cloudflared.accountId = "0d4c80186d7a57bd42349891cb26b929";
   homelab.splitDns.resolverHost = "mikeway";
 
   homelab.networks = {

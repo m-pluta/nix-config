@@ -2,19 +2,29 @@
   lib,
   config,
   inputs,
+  pkgs,
   ...
 }:
 let
   service = "cloudflared";
   hl = config.homelab;
   cfg = hl.${service};
+  credentialsDir = "/run/cloudflared-credentials";
 in
 {
   options.homelab.${service} = {
     enable = lib.mkEnableOption "Cloudflare Tunnel ingress for homelab services";
-    tunnelId = lib.mkOption {
+    accountId = lib.mkOption {
       type = lib.types.str;
-      description = "Cloudflare Tunnel UUID";
+      description = "Cloudflare account ID the tunnels belong to";
+    };
+    tunnelId = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = ''
+        Cloudflare Tunnel UUID, known once OpenTofu has created the tunnel. The connector
+        only runs when it is set.
+      '';
     };
     expose = lib.mkOption {
       type = lib.types.attrsOf (lib.types.listOf lib.types.str);
@@ -30,13 +40,37 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    age.secrets.cloudflared-tunnel.file = "${inputs.secrets}/network/cloudflare/tunnel.age";
+  config = lib.mkIf (cfg.enable && cfg.tunnelId != null) {
+    # The tunnel secret, shared with OpenTofu, which sets it on the tunnel.
+    age.secrets.cloudflared-tunnel-secret.file = "${inputs.secrets}/network/cloudflare/tunnels/${config.networking.hostName}.age";
+
+    # Assembles the credentials file cloudflared reads from the account ID, tunnel ID and
+    # secret, readable only by root.
+    systemd.services.cloudflared-credentials = {
+      requiredBy = [ "cloudflared-tunnel-${cfg.tunnelId}.service" ];
+      before = [ "cloudflared-tunnel-${cfg.tunnelId}.service" ];
+      path = [ pkgs.jq ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        RuntimeDirectory = baseNameOf credentialsDir;
+        RuntimeDirectoryMode = "0700";
+        UMask = "0077";
+      };
+      script = ''
+        jq -n \
+          --arg account ${lib.escapeShellArg cfg.accountId} \
+          --arg tunnel ${lib.escapeShellArg cfg.tunnelId} \
+          --rawfile secret ${config.age.secrets.cloudflared-tunnel-secret.path} \
+          '{AccountTag: $account, TunnelID: $tunnel, TunnelSecret: ($secret | rtrimstr("\n"))}' \
+          > ${credentialsDir}/credentials.json
+      '';
+    };
 
     services.cloudflared = {
       enable = true;
       tunnels.${cfg.tunnelId} = {
-        credentialsFile = config.age.secrets.cloudflared-tunnel.path;
+        credentialsFile = "${credentialsDir}/credentials.json";
         ingress =
           let
             entries = lib.flatten (
