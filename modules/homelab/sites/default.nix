@@ -19,6 +19,7 @@ let
     name = "sites-deploy";
     runtimeInputs = [
       pkgs.coreutils
+      pkgs.findutils
       config.nix.package
     ];
     text = ''
@@ -54,10 +55,13 @@ let
           path=''${args[3]:-}
           store_path "$path"
           [[ "''${path#/nix/store/*-}" == "$domain" ]] || { echo "not a build of $domain: $path" >&2; exit 1; }
-          nix-store --realise "$path" >/dev/null
+          pending="${root}/$domain/.pending-$$"
+          trap 'rm -f "$pending"' EXIT
+          nix-store --realise "$path" --add-root "$pending" >/dev/null
           # A site build is plain files, so it references nothing but itself.
           references=$(nix-store --query --references "$path")
           [[ -z "$references" || "$references" == "$path" ]] || { echo "not a build of $domain: $path has references" >&2; exit 1; }
+          [[ -z "$(find "$path" -type l -print -quit)" ]] || { echo "not a build of $domain: $path has symlinks" >&2; exit 1; }
           nix-env --profile "$link" --set "$path"
           nix-env --profile "$link" --delete-generations +${toString generationsKept}
           echo "$domain $env -> $path"
@@ -148,8 +152,12 @@ in
       lib.mapAttrsToList (
         domain: _:
         let
+          # Store files all share one modification time, so drop the validators built from it.
           serve = dir: ''
             root * ${dir}
+            header -ETag
+            header -Last-Modified
+            header Cache-Control no-cache
             file_server
           '';
           # Index of the sandbox name in Caddy's {labels.N}, counted from the right.
@@ -164,7 +172,15 @@ in
             extraConfig = serve "${root}/${domain}/prod";
           };
           "qa.${domain}".extraConfig = serve "${root}/${domain}/qa";
-          "*.sandbox.${domain}".extraConfig = serve "${root}/${domain}/sandbox/{labels.${sandboxLabel}}";
+          "*.sandbox.${domain}".extraConfig = ''
+            @sandbox vars_regexp {labels.${sandboxLabel}} ^pr-[0-9]+$
+            handle @sandbox {
+              ${serve "${root}/${domain}/sandbox/{labels.${sandboxLabel}}"}
+            }
+            handle {
+              respond 404
+            }
+          '';
         }
       ) cfg
     );

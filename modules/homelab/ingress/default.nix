@@ -180,11 +180,12 @@ in
           }
         '';
         virtualHosts = lib.mkMerge [
-          # Redirect plain HTTP to HTTPS, and answer 404 for any subdomain that has no
-          # route declared.
+          # Redirect plain HTTP to HTTPS for every certificate's hostnames.
+          (lib.genAttrs' (lib.concatLists (lib.attrValues cfg.certificates)) (
+            hostname: lib.nameValuePair "http://${hostname}" { extraConfig = "redir https://{host}{uri}"; }
+          ))
+          # Answer 404 for any subdomain that has no route declared.
           {
-            "http://${hl.mainDomain}".extraConfig = "redir https://{host}{uri}";
-            "http://*.${hl.mainDomain}".extraConfig = "redir https://{host}{uri}";
             "*.${hl.mainDomain}" = {
               useACMEHost = hl.mainDomain;
               extraConfig = "respond 404";
