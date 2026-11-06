@@ -45,6 +45,43 @@ reboot host:
 shutdown host:
   ssh {{host}} sudo shutdown now
 
+# Run a throwaway local Grafana for editing dashboards, with metrics from vm.mpluta.dev
+grafana-dev:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  grafana=$(nix build --no-link --print-out-paths --inputs-from . nixpkgs#grafana)
+  state=$(mktemp -d)
+  trap 'rm -rf "$state"' EXIT
+  mkdir -p "$state/plugins" "$state"/provisioning/{alerting,dashboards,datasources,plugins}
+  cat >"$state/provisioning/datasources/dev.yaml" <<YAML
+  apiVersion: 1
+  datasources:
+    - name: VictoriaMetrics
+      type: prometheus
+      url: https://vm.mpluta.dev
+      isDefault: true
+  YAML
+  cat >"$state/provisioning/dashboards/dev.yaml" <<YAML
+  apiVersion: 1
+  providers:
+    - name: nix-config
+      updateIntervalSeconds: 3
+      allowUiUpdates: true
+      options:
+        path: $PWD/modules/homelab/services/monitoring/grafana/dashboards
+  YAML
+  echo "Grafana: http://127.0.0.1:13000/d/storage"
+  GF_PATHS_DATA="$state/data" \
+    GF_PATHS_LOGS="$state/logs" \
+    GF_PATHS_PLUGINS="$state/plugins" \
+    GF_PATHS_PROVISIONING="$state/provisioning" \
+    GF_SERVER_HTTP_ADDR=127.0.0.1 \
+    GF_SERVER_HTTP_PORT=13000 \
+    GF_AUTH_ANONYMOUS_ENABLED=true \
+    GF_AUTH_ANONYMOUS_ORG_ROLE=Admin \
+    GF_LOG_LEVEL=warn \
+    "$grafana/bin/grafana" server --homepath "$grafana/share/grafana"
+
 # Run OpenTofu on infra/, e.g. `just infra plan`
 infra *args="plan":
   #!/usr/bin/env bash

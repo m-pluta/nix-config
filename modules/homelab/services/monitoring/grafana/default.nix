@@ -25,6 +25,12 @@ in
       enable = true;
       provision = {
         enable = true;
+        dashboards.settings.providers = [
+          {
+            name = "nix-config";
+            options.path = ./dashboards;
+          }
+        ];
       };
       settings = {
         server = {
