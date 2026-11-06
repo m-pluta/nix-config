@@ -25,24 +25,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 1860,
   "graphTooltip": 1,
-  "links": [
-    {
-      "icon": "external link",
-      "tags": [],
-      "targetBlank": true,
-      "title": "GitHub",
-      "type": "link",
-      "url": "https://github.com/rfmoz/grafana-dashboards"
-    },
-    {
-      "icon": "external link",
-      "tags": [],
-      "targetBlank": true,
-      "title": "Grafana",
-      "type": "link",
-      "url": "https://grafana.com/grafana/dashboards/1860"
-    }
-  ],
+  "links": [],
   "panels": [
     {
       "collapsed": false,
@@ -15420,7 +15403,8 @@
         "query": "prometheus",
         "refresh": 1,
         "regex": "",
-        "type": "datasource"
+        "type": "datasource",
+        "hide": 2
       },
       {
         "current": {},
@@ -15440,7 +15424,8 @@
         "refresh": 1,
         "regex": "",
         "sort": 1,
-        "type": "query"
+        "type": "query",
+        "hide": 2
       },
       {
         "current": {},
@@ -15450,7 +15435,7 @@
         },
         "definition": "label_values(node_uname_info{job=\"$job\"}, nodename)",
         "includeAll": false,
-        "label": "Nodename",
+        "label": "Host",
         "name": "nodename",
         "options": [],
         "query": {
@@ -15480,7 +15465,8 @@
         "refresh": 1,
         "regex": "",
         "sort": 1,
-        "type": "query"
+        "type": "query",
+        "hide": 2
       }
     ]
   },
