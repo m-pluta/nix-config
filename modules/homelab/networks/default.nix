@@ -35,12 +35,6 @@ let
     );
 in
 {
-  options.homelab.hostKeys = lib.mkOption {
-    type = lib.types.attrsOf lib.types.str;
-    default = { };
-    description = "SSH host public key of every homelab host, keyed by hostName.";
-  };
-
   options.homelab.networks = lib.mkOption {
     default = { };
     description = "Network addresses of every homelab host, keyed by hostName.";

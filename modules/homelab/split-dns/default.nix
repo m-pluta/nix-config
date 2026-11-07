@@ -92,14 +92,9 @@ in
         view = lib.mapAttrsToList (network: _: {
           name = network;
           # Names without a record fall through to normal resolution.
-          # A "*.x" record answers every name under x.
-          local-zone =
-            map (d: ''"${d}." transparent'') cfg.domains
-            ++ lib.mapAttrsToList (name: _: ''"${lib.removePrefix "*." name}." redirect'') (
-              lib.filterAttrs (name: _: lib.hasPrefix "*." name) cfg.records
-            );
+          local-zone = map (d: ''"${d}." transparent'') cfg.domains;
           local-data = lib.mapAttrsToList (
-            name: host: ''"${lib.removePrefix "*." name}. A ${addressOn network host}"''
+            name: host: ''"${name}. A ${addressOn network host}"''
           ) cfg.records;
         }) views;
       }

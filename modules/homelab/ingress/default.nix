@@ -23,40 +23,12 @@ let
     }
   '';
 
-  # Whether certificate name `pattern` (possibly "*.x") covers hostname `name`.
-  covers =
-    pattern: name:
-    pattern == name
-    || (
-      lib.hasPrefix "*." pattern
-      && (
-        let
-          parts = lib.splitString "." name;
-        in
-        lib.length parts > 1 && lib.concatStringsSep "." (lib.tail parts) == lib.removePrefix "*." pattern
-      )
-    );
-
-  # The most specific certificate on this host covering `name` and its aliases.
-  certFor =
-    name: aliases:
-    let
-      covering = lib.filterAttrs (
-        _: hostnames: lib.all (n: lib.any (p: covers p n) hostnames) ([ name ] ++ aliases)
-      ) cfg.certificates;
-      depth = cert: lib.length (lib.splitString "." cert);
-    in
-    if covering == { } then
-      throw "homelab.ingress: no certificate on ${config.networking.hostName} covers ${name}"
-    else
-      lib.last (lib.sort (a: b: depth a < depth b) (lib.attrNames covering));
-
-  # Build the Caddy virtual host for one route. It terminates TLS with the certificate
-  # covering its hostname and, when `upstream` is set, proxies requests to it. When
+  # Build the Caddy virtual host for one route. It terminates TLS with the shared
+  # wildcard certificate and, when `upstream` is set, proxies requests to it. When
   # `upstream` is null, only the route's own extraConfig is used, which allows vhosts
   # that don't proxy anything, such as static file serving.
-  mkIngressVhost = url: r: upstream: {
-    useACMEHost = certFor url r.serverAliases;
+  mkIngressVhost = r: upstream: {
+    useACMEHost = hl.mainDomain;
     serverAliases = r.serverAliases;
     extraConfig = lib.concatStringsSep "\n" (
       lib.filter (s: s != "") [
@@ -92,15 +64,6 @@ in
 {
   options.homelab = {
     ingress = {
-      certificates = lib.mkOption {
-        type = lib.types.attrsOf (lib.types.nonEmptyListOf lib.types.str);
-        default = { };
-        description = ''
-          ACME certificates for this host's routes, name -> hostnames (the first is the
-          certificate's domain). Each route uses the most specific one covering it.
-        '';
-      };
-
       routes = lib.mkOption {
         type = lib.types.attrsOf routeType;
         default = { };
@@ -128,27 +91,21 @@ in
       # prove domain ownership through Cloudflare DNS (the DNS-01 challenge).
       age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare/dns-api.age";
 
-      # The main domain and all its subdomains.
-      homelab.ingress.certificates.${hl.mainDomain} = [
-        hl.mainDomain
-        "*.${hl.mainDomain}"
-      ];
-
-      # Request each certificate through the DNS challenge, and reload Caddy whenever one
-      # is renewed.
+      # Request a single wildcard certificate for the main domain and all its subdomains,
+      # and reload Caddy whenever it is renewed.
       security.acme = {
         acceptTerms = true;
         defaults.email = "mikey@${hl.mainDomain}";
-        certs = lib.mapAttrs (_: hostnames: {
+        certs.${hl.mainDomain} = {
           reloadServices = [ "caddy.service" ];
-          domain = lib.head hostnames;
-          extraDomainNames = lib.tail hostnames;
+          domain = hl.mainDomain;
+          extraDomainNames = [ "*.${hl.mainDomain}" ];
           dnsProvider = "cloudflare";
           dnsResolver = "1.1.1.1:53";
           dnsPropagationCheck = true;
           group = config.services.caddy.group;
           environmentFile = config.age.secrets.cloudflare-dns-api.path;
-        }) cfg.certificates;
+        };
       };
 
       # Allow HTTP and HTTPS in from the LAN interface, and from this host's Podman
@@ -180,12 +137,11 @@ in
           }
         '';
         virtualHosts = lib.mkMerge [
-          # Redirect plain HTTP to HTTPS for every certificate's hostnames.
-          (lib.genAttrs' (lib.concatLists (lib.attrValues cfg.certificates)) (
-            hostname: lib.nameValuePair "http://${hostname}" { extraConfig = "redir https://{host}{uri}"; }
-          ))
-          # Answer 404 for any subdomain that has no route declared.
+          # Redirect plain HTTP to HTTPS, and answer 404 for any subdomain that has no
+          # route declared.
           {
+            "http://${hl.mainDomain}".extraConfig = "redir https://{host}{uri}";
+            "http://*.${hl.mainDomain}".extraConfig = "redir https://{host}{uri}";
             "*.${hl.mainDomain}" = {
               useACMEHost = hl.mainDomain;
               extraConfig = "respond 404";
@@ -194,8 +150,7 @@ in
           # One virtual host per declared route. Routes with a port proxy to that port on
           # this machine's loopback address.
           (lib.mapAttrs (
-            url: r:
-            mkIngressVhost url r (if r.port == null then null else "http://127.0.0.1:${toString r.port}")
+            _: r: mkIngressVhost r (if r.port == null then null else "http://127.0.0.1:${toString r.port}")
           ) cfg.routes)
         ];
       };
