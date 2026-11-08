@@ -4,7 +4,7 @@
   ...
 }:
 let
-  service = "jellyseerr";
+  service = "seerr";
   serviceLib = import ../../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.${service};
@@ -13,19 +13,23 @@ in
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 5055;
     url = "${service}.${hl.mainDomain}";
-    monitoredServices = [ "seerr" ];
+    configDir = "/var/lib/${service}";
+    monitoredServices = [ service ];
     homepage = {
-      name = "Jellyseerr";
+      name = "Seerr";
       description = "Media request and discovery manager";
-      icon = "jellyseerr.svg";
+      icon = "seerr.svg";
       category = "Arr";
     };
   };
   config = lib.mkIf cfg.enable {
-    services.seerr = {
+    services.${service} = {
       enable = true;
       port = cfg.port;
+      configDir = cfg.configDir;
     };
+    # The NixOS default from stateVersion 26.05
+    systemd.services.${service}.serviceConfig.StateDirectory = lib.mkForce service;
     homelab.ingress.routes."${cfg.url}".port = cfg.port;
   };
 

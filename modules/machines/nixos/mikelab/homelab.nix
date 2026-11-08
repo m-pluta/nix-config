@@ -51,7 +51,7 @@
       radarr.enable = true;
       bazarr.enable = true;
       prowlarr.enable = true;
-      jellyseerr.enable = true;
+      seerr.enable = true;
       uptime-kuma = {
         enable = true;
         port = 3002;

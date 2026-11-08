@@ -25,7 +25,6 @@ Primary server hosting storage and the self-hosted services
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/home-assistant.svg' width=32 height=32>|Home Assistant|Home automation platform|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/immich.svg' width=32 height=32>|Immich|Self-hosted photo and video management solution|Media|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/jellyfin.svg' width=32 height=32>|Jellyfin|The Free Software Media System|Media|
-|<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/jellyseerr.svg' width=32 height=32>|Jellyseerr|Media request and discovery manager|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/lidarr.svg' width=32 height=32>|Lidarr|Music collection manager|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/microbin.png' width=32 height=32>|Microbin|A minimal pastebin|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/miniflux-light.svg' width=32 height=32>|Miniflux|Minimalist and opinionated feed reader|Services|
@@ -35,6 +34,7 @@ Primary server hosting storage and the self-hosted services
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/prowlarr.svg' width=32 height=32>|Prowlarr|PVR indexer|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/radarr.svg' width=32 height=32>|Radarr|Movie collection manager|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/sabnzbd.svg' width=32 height=32>|SABnzbd|The free and easy binary newsreader|Downloads|
+|<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/seerr.svg' width=32 height=32>|Seerr|Media request and discovery manager|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/sonarr.svg' width=32 height=32>|Sonarr|TV show collection manager|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/chrome-devtools.svg' width=32 height=32>|Traces|Trace viewers|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/uptime-kuma.svg' width=32 height=32>|Uptime Kuma|Service monitoring tool|Services|

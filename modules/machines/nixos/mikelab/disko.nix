@@ -162,9 +162,9 @@
             mountpoint = "/var/lib/bazarr";
             options."com.sun:auto-snapshot" = "true";
           };
-          "services/jellyseerr" = {
+          "services/seerr" = {
             type = "zfs_fs";
-            mountpoint = "/var/lib/private/jellyseerr";
+            mountpoint = "/var/lib/private/seerr";
             options."com.sun:auto-snapshot" = "true";
           };
           "services/sabnzbd" = {

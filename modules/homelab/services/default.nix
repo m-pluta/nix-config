@@ -37,10 +37,10 @@ in
 
   imports = [
     ./arr/bazarr
-    ./arr/jellyseerr
     ./arr/lidarr
     ./arr/prowlarr
     ./arr/radarr
+    ./arr/seerr
     ./arr/sonarr
     ./attic
     ./audiobookshelf
