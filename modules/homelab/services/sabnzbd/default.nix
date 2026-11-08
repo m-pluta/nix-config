@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -23,15 +22,16 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    services.${service}.enable = true;
+    services.${service} = {
+      enable = true;
+      configFile = null;
+      settings.misc = {
+        port = cfg.port;
+        host_whitelist = cfg.url;
+      };
+    };
     users.users.${service}.extraGroups = [ "media" ];
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
-    # sabnzbd blocks reverse-proxied requests unless hostname is whitelisted
-    systemd.services.${service}.preStart = lib.mkAfter ''
-      if [ -f /var/lib/${service}/sabnzbd.ini ]; then
-        ${lib.getExe pkgs.gnused} -i 's/^host_whitelist.*/host_whitelist = ${cfg.url}/' /var/lib/${service}/sabnzbd.ini
-      fi
-    '';
     homelab.ingress.routes."${cfg.url}".port = cfg.port;
   };
 

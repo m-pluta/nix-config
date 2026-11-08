@@ -1,6 +1,8 @@
 {
   config,
   lib,
+  pkgs,
+  inputs,
   ...
 }:
 let
@@ -8,8 +10,13 @@ let
   serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.${service};
+  unstable = inputs.nixpkgs-unstable;
 in
 {
+  # Immich 3 until NixOS 26.11
+  disabledModules = [ "services/web-apps/immich.nix" ];
+  imports = [ "${unstable}/nixos/modules/services/web-apps/immich.nix" ];
+
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       port = 2283;
@@ -38,6 +45,7 @@ in
     ];
     services.${service} = {
       enable = true;
+      package = unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.immich;
       host = "127.0.0.1";
       port = cfg.port;
       mediaLocation = "${cfg.mediaDir}";

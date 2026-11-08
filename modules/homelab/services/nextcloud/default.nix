@@ -48,7 +48,7 @@ in
     services.${service} = {
       enable = true;
       hostName = "nix-nextcloud";
-      package = pkgs.nextcloud32;
+      package = pkgs.nextcloud33;
       database.createLocally = true;
       configureRedis = true;
       maxUploadSize = "16G";
