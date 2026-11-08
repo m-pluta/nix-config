@@ -56,9 +56,6 @@ jobs:
       - uses: https://git.mpluta.dev/mikey/actions/attic-use@main
         with:
           token: ${{ secrets.ATTIC_TOKEN }}
-      - uses: https://git.mpluta.dev/mikey/actions/attic-watch@main
-        with:
-          token: ${{ secrets.ATTIC_TOKEN }}
 
       - name: Build the host
         run: |
