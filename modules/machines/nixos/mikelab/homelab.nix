@@ -20,7 +20,10 @@
     cloudflared = {
       enable = true;
       tunnelId = "7a16d95b-031d-483f-befa-d8fdc081fe5c";
-      expose.${config.homelab.mainDomain} = [ "git" ];
+      expose.${config.homelab.mainDomain} = [
+        "git"
+        "gitlab"
+      ];
     };
     samba = {
       enable = true;
@@ -42,6 +45,7 @@
         enable = true;
         port = 3001;
       };
+      gitlab.enable = true;
       homepage.enable = true;
       jellyfin.enable = true;
       sabnzbd.enable = true;

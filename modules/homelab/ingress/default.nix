@@ -68,8 +68,17 @@ let
         type = lib.types.nullOr lib.types.port;
         default = null;
         description = ''
-          Service port on 127.0.0.1 that Caddy forwards to. null = a non-proxy
+          Service port on 127.0.0.1 that Caddy forwards to. null with no `upstream` = a non-proxy
           vhost rendered verbatim from `extraConfig` (e.g. static file serving).
+        '';
+      };
+      upstream = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        example = "unix//run/gitlab/gitlab-workhorse.socket";
+        description = ''
+          Caddy upstream address to forward to, for services that do not listen on a
+          loopback port. Takes precedence over `port`.
         '';
       };
       extraConfig = lib.mkOption {
@@ -188,11 +197,18 @@ in
               extraConfig = "respond 404";
             };
           }
-          # One virtual host per declared route. Routes with a port proxy to that port on
-          # this machine's loopback address.
+          # One virtual host per declared route. Routes with an upstream proxy to it, and
+          # routes with a port proxy to that port on this machine's loopback address.
           (lib.mapAttrs (
             url: r:
-            mkIngressVhost url r (if r.port == null then null else "http://127.0.0.1:${toString r.port}")
+            mkIngressVhost url r (
+              if r.upstream != null then
+                r.upstream
+              else if r.port != null then
+                "http://127.0.0.1:${toString r.port}"
+              else
+                null
+            )
           ) cfg.routes)
         ];
       };
