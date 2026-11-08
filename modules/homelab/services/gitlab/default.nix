@@ -46,7 +46,7 @@ in
         owner = config.services.${service}.user;
       }
     );
-    services.openssh.settings.AcceptEnv = "GIT_PROTOCOL";
+    services.openssh.settings.AcceptEnv = [ "GIT_PROTOCOL" ];
     services.${service} = {
       enable = true;
       host = cfg.url;

@@ -13,6 +13,7 @@ in
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 5055;
     url = "${service}.${hl.mainDomain}";
+    monitoredServices = [ "seerr" ];
     homepage = {
       name = "Jellyseerr";
       description = "Media request and discovery manager";
@@ -21,7 +22,7 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    services.${service} = {
+    services.seerr = {
       enable = true;
       port = cfg.port;
     };

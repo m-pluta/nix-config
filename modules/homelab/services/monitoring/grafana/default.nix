@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  inputs,
   ...
 }:
 let
@@ -21,6 +22,10 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
+    age.secrets."${service}-secret-key" = {
+      file = "${inputs.secrets}/services/${service}/secret-key.age";
+      owner = service;
+    };
     services.grafana = {
       enable = true;
       provision = {
@@ -33,6 +38,7 @@ in
         ];
       };
       settings = {
+        security.secret_key = "$__file{${config.age.secrets."${service}-secret-key".path}}";
         server = {
           http_addr = "127.0.0.1";
           http_port = cfg.port;

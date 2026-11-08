@@ -31,6 +31,8 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
+    # Until Immich 3
+    nixpkgs.config.permittedInsecurePackages = [ "immich-2.7.5" ];
     users.users.${service}.extraGroups = [
       "media"
       "video"

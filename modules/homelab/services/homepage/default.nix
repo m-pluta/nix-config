@@ -55,7 +55,7 @@ in
     services.${upstream} = {
       enable = true;
       listenPort = cfg.port;
-      environmentFile = builtins.toFile "${service}.env" "HOMEPAGE_ALLOWED_HOSTS=${cfg.url}";
+      environmentFiles = [ (builtins.toFile "${service}.env" "HOMEPAGE_ALLOWED_HOSTS=${cfg.url}") ];
       customCSS = ''
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
         body, html {

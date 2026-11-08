@@ -31,6 +31,7 @@ in
   };
   system.stateVersion = "25.11";
   boot.supportedFilesystems = [ "zfs" ];
+  boot.zfs.forceImportRoot = true;
   services.zfs.autoSnapshot = {
     enable = true;
     frequent = 4;
