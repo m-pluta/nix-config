@@ -62,7 +62,7 @@ in
         keepTime = 168;
       };
       databaseCreateLocally = true;
-      initialRootEmail = "mikey@${hl.mainDomain}";
+      initialRootEmail = "admin@${hl.mainDomain}";
       initialRootPasswordFile = secret "admin-password";
       secrets = lib.mapAttrs (_: secret) secretFiles;
     };
