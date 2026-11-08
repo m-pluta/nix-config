@@ -39,6 +39,7 @@ in
     ./ingress
     ./motd
     ./networks
+    ./postgres
     ./samba
     ./services
     ./sites

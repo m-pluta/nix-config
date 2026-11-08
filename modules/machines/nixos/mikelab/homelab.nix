@@ -13,6 +13,10 @@
     timeZone = "Europe/London";
     groups.media = 15000;
     tailscale.enable = true;
+    postgres = {
+      enable = true;
+      version = 17;
+    };
     cloudflared = {
       enable = true;
       tunnelId = "7a16d95b-031d-483f-befa-d8fdc081fe5c";
