@@ -87,7 +87,7 @@ in
           wget
         ];
         settings = {
-          runner.capacity = 8;
+          runner.capacity = 12;
           runner.envs = {
             ATTIC_URL = "https://${hl.services.attic.url}";
             ATTIC_CACHE = hl.services.attic.cache;
