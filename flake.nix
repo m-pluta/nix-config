@@ -22,7 +22,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     autoaspm = {
-      url = "git+https://git.mpluta.dev/mikey/AutoASPM.git";
+      url = "git+https://git.notthebe.ee/notthebee/AutoASPM.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     agenix = {

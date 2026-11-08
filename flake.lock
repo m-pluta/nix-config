@@ -33,11 +33,11 @@
         "rev": "11e921446423582836fb5b290e053fc7c6643efe",
         "revCount": 11,
         "type": "git",
-        "url": "https://git.mpluta.dev/mikey/AutoASPM.git"
+        "url": "https://git.notthebe.ee/notthebee/AutoASPM.git"
       },
       "original": {
         "type": "git",
-        "url": "https://git.mpluta.dev/mikey/AutoASPM.git"
+        "url": "https://git.notthebe.ee/notthebee/AutoASPM.git"
       }
     },
     "deploy-rs": {
