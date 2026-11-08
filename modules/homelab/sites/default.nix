@@ -43,7 +43,8 @@ in
     users.users.sites = {
       isSystemUser = true;
       group = "sites";
-      home = sitesDir;
+      home = "/home/sites";
+      createHome = true;
       useDefaultShell = true;
       openssh.authorizedKeys.keys = lib.mapAttrsToList (
         domain: _:
