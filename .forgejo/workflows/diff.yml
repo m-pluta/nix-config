@@ -1,4 +1,4 @@
-name: eval diff
+name: diff
 on:
   pull_request:
 
@@ -7,10 +7,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MARKER: "<!-- eval-diff -->"
+  MARKER: "<!-- diff -->"
 
 jobs:
-  eval-diff:
+  diff:
     runs-on: nix
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +39,7 @@ jobs:
           list_hosts() { # list_hosts <flake-dir>
             nix eval --json --accept-flake-config "$1#nixosConfigurations" --apply builtins.attrNames
           }
-          base_hosts=$(list_hosts /tmp/base)
+          base_hosts=$(list_hosts "git+file:///tmp/base?shallow=1")
           pr_hosts=$(list_hosts .)
           hosts=$(jq -rn --argjson a "$base_hosts" --argjson b "$pr_hosts" '$a + $b | unique | .[]')
 
@@ -56,7 +56,7 @@ jobs:
               elif ! jq -e --arg h "$h" 'index($h)' <<< "$pr_hosts" > /dev/null; then
                 echo "<details open><summary><code>$h</code>: removed host</summary></details>"
               else
-                base=$(build /tmp/base "$h")
+                base=$(build "git+file:///tmp/base?shallow=1" "$h")
                 pr=$(build . "$h")
                 if [ "$base" = "$pr" ]; then
                   echo "<details><summary><code>$h</code>: no changes</summary></details>"
@@ -71,9 +71,9 @@ jobs:
                 fi
               fi
             done
-          } > /tmp/eval-diff.md
+          } > /tmp/diff.md
 
-          cat /tmp/eval-diff.md
+          cat /tmp/diff.md
 
       - name: Post or update the comment
         env:
@@ -83,10 +83,10 @@ jobs:
           api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
 
           # Shortens the comment to fit Forgejo's size limit.
-          if [ "$(wc -c < /tmp/eval-diff.md)" -gt 60000 ]; then
-            { head -c 60000 /tmp/eval-diff.md; printf '\n```\n\nCut short, see the job log for the full diff.\n'; } > /tmp/comment.md
+          if [ "$(wc -c < /tmp/diff.md)" -gt 60000 ]; then
+            { head -c 60000 /tmp/diff.md; printf '\n```\n\nCut short, see the job log for the full diff.\n'; } > /tmp/comment.md
           else
-            cp /tmp/eval-diff.md /tmp/comment.md
+            cp /tmp/diff.md /tmp/comment.md
           fi
           payload=$(jq -n --rawfile body /tmp/comment.md '{body: $body}')
 
