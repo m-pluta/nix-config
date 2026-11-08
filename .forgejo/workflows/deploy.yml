@@ -58,7 +58,3 @@ jobs:
         run: >-
           nix develop --accept-flake-config --command deploy --skip-checks
           --ssh-user deploy --ssh-opts "-i $HOME/.ssh/deploy -o IdentitiesOnly=yes" ".#$HOST"
-
-      - uses: https://git.mpluta.dev/mikey/actions/attic-push@main
-        with:
-          token: ${{ secrets.ATTIC_TOKEN }}

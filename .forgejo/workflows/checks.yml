@@ -58,13 +58,16 @@ jobs:
           token: ${{ secrets.ATTIC_TOKEN }}
 
       - name: Build the host
+        id: build
         run: |
-          nix build --no-link --print-out-paths --accept-flake-config \
-            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel"
+          path=$(nix build --no-link --print-out-paths --accept-flake-config \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel")
+          echo "path=$path" >> "$GITHUB_OUTPUT"
 
       - uses: https://git.mpluta.dev/mikey/actions/attic-push@main
         with:
           token: ${{ secrets.ATTIC_TOKEN }}
+          paths: ${{ steps.build.outputs.path }}
 
   readme:
     runs-on: nix
