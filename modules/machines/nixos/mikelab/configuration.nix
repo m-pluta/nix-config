@@ -62,7 +62,15 @@ in
     nvidiaSettings = false;
   };
   # Fan headers: mainline it87 doesn't support the board's IT8688E
-  boot.extraModulePackages = [ config.boot.kernelPackages.it87 ];
+  boot.extraModulePackages = [
+    (config.boot.kernelPackages.it87.overrideAttrs (old: {
+      postInstall = (old.postInstall or "") + ''
+        cd $out/lib/modules/*/
+        mkdir updates
+        mv kernel/drivers/hwmon/it87.ko updates/
+      '';
+    }))
+  ];
   boot.kernelModules = [ "it87" ];
   # Gigabyte's ACPI claims the chip's I/O ports, which otherwise blocks the driver
   boot.extraModprobeConfig = "options it87 ignore_resource_conflict=1";
