@@ -17,6 +17,8 @@ jobs:
     runs-on: nix
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.AUTOMATION_TOKEN }}
       - uses: https://git.mpluta.dev/mikey/actions/forge-ssh@main
         with:
           key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
@@ -30,8 +32,8 @@ jobs:
 
       - name: Set the commit author
         run: |
-          git config user.name forgejo-actions
-          git config user.email forgejo@git.mpluta.dev
+          git config user.name automation
+          git config user.email automation@noreply.git.mpluta.dev
 
       - name: Commit and push to PR branch
         id: commit
@@ -50,7 +52,7 @@ jobs:
       - name: Open or update pull request
         if: steps.commit.outputs.changed == 'true'
         env:
-          TOKEN: ${{ secrets.FORGEJO_TOKEN || secrets.GITHUB_TOKEN }}
+          TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
         run: |
           api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
           body="$(printf '```\n%s\n```\n' "$(cat /tmp/flake-update.log)" | jq -Rs .)"
