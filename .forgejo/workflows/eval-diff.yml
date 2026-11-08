@@ -1,14 +1,12 @@
 name: eval diff
 on:
-  workflow_dispatch:
+  pull_request:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 env:
-  FORGEJO_HOST: git.mpluta.dev
-  HOSTS: "mikeway mikelab"
   MARKER: "<!-- eval-diff -->"
 
 jobs:
@@ -16,25 +14,16 @@ jobs:
     runs-on: nix
     steps:
       - uses: actions/checkout@v4
+      - uses: https://git.mpluta.dev/mikey/actions/forge-ssh@main
         with:
-          fetch-depth: 0
-      - name: Set up SSH
-        uses: https://git.mpluta.dev/mikey/actions/set-up-ssh@main
-        with:
-          git-host: ${{ env.FORGEJO_HOST }}
-          ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
-          git-hostkey: ${{ secrets.GIT_HOSTKEY }}
+          key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
       - name: Trust the checkout for git
         run: git config --global --add safe.directory "${PWD}"
-
-      - name: Set up Attic cache
-        if: ${{ secrets.ATTIC_TOKEN != '' }}
-        uses: https://git.mpluta.dev/mikey/actions/setup-attic-cache@main
+      - uses: https://git.mpluta.dev/mikey/actions/attic-use@main
         with:
-          attic-token: ${{ secrets.ATTIC_TOKEN }}
-          attic-url: ${{ secrets.ATTIC_URL }}
+          token: ${{ secrets.ATTIC_TOKEN }}
 
-      - name: Build closures and compute diff
+      - name: Diff each host against the base
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
@@ -43,62 +32,80 @@ jobs:
               "$1#nixosConfigurations.$2.config.system.build.toplevel"
           }
 
+          git fetch --depth 1 origin "$BASE_SHA"
           git worktree add /tmp/base "$BASE_SHA"
           git config --global --add safe.directory /tmp/base
 
+          list_hosts() { # list_hosts <flake-dir>
+            nix eval --json --accept-flake-config "$1#nixosConfigurations" --apply builtins.attrNames
+          }
+          base_hosts=$(list_hosts /tmp/base)
+          pr_hosts=$(list_hosts .)
+          hosts=$(jq -rn --argjson a "$base_hosts" --argjson b "$pr_hosts" '$a + $b | unique | .[]')
+
           {
             echo "$MARKER"
-            echo "## Closure diff per host"
+            echo "## Changes per host"
             echo
             echo "Base: \`${BASE_SHA:0:8}\`"
-            echo
-            for h in $HOSTS; do
-              base="$(build /tmp/base "$h")"
-              pr="$(build . "$h")"
-              if [ "$base" = "$pr" ]; then
-                echo "<details><summary><code>$h</code></summary>"
-              else
-                echo "<details open><summary><code>$h</code></summary>"
-              fi
+            for h in $hosts; do
               echo
-              echo '```'
-              if [ "$base" = "$pr" ]; then
-                echo "No changes."
+              if ! jq -e --arg h "$h" 'index($h)' <<< "$base_hosts" > /dev/null; then
+                build . "$h" > /dev/null
+                echo "<details open><summary><code>$h</code>: new host</summary></details>"
+              elif ! jq -e --arg h "$h" 'index($h)' <<< "$pr_hosts" > /dev/null; then
+                echo "<details open><summary><code>$h</code>: removed host</summary></details>"
               else
-                nix store diff-closures "$base" "$pr"
+                base=$(build /tmp/base "$h")
+                pr=$(build . "$h")
+                if [ "$base" = "$pr" ]; then
+                  echo "<details><summary><code>$h</code>: no changes</summary></details>"
+                else
+                  echo "<details open><summary><code>$h</code></summary>"
+                  echo
+                  echo '```'
+                  nix run --accept-flake-config --inputs-from . nixpkgs#nvd -- --color never diff "$base" "$pr"
+                  echo '```'
+                  echo
+                  echo "</details>"
+                fi
               fi
-              echo '```'
-              echo
-              echo "</details>"
             done
           } > /tmp/eval-diff.md
 
-      - name: Cache built paths to Attic
-        if: ${{ secrets.ATTIC_TOKEN != '' }}
-        uses: https://git.mpluta.dev/mikey/actions/cache-to-attic@main
+          cat /tmp/eval-diff.md
 
-      - name: Post sticky comment
+      - name: Post or update the comment
         env:
-          TOKEN: ${{ secrets.FORGEJO_TOKEN || secrets.GITHUB_TOKEN }}
+          TOKEN: ${{ forgejo.token }}
           PR: ${{ github.event.pull_request.number }}
         run: |
           api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
-          body="$(nix run nixpkgs#jq -- -Rs . < /tmp/eval-diff.md)"
-          payload="$(nix run nixpkgs#jq -- -n --argjson body "$body" '{body:$body}')"
 
-          id="$(curl -sSf -H "Authorization: token $TOKEN" \
-            "$api/issues/$PR/comments?limit=50" \
-            | nix run nixpkgs#jq -- -r --arg m "$MARKER" \
-                'map(select(.body | startswith($m))) | .[0].id // empty')"
+          # Shortens the comment to fit Forgejo's size limit.
+          if [ "$(wc -c < /tmp/eval-diff.md)" -gt 60000 ]; then
+            { head -c 60000 /tmp/eval-diff.md; printf '\n```\n\nCut short, see the job log for the full diff.\n'; } > /tmp/comment.md
+          else
+            cp /tmp/eval-diff.md /tmp/comment.md
+          fi
+          payload=$(jq -n --rawfile body /tmp/comment.md '{body: $body}')
+
+          id=
+          page=1
+          while :; do
+            comments=$(curl -sSf -H "Authorization: token $TOKEN" "$api/issues/$PR/comments?limit=50&page=$page")
+            [ "$(jq length <<< "$comments")" -gt 0 ] || break
+            id=$(jq -r --arg m "$MARKER" 'map(select(.body | startswith($m))) | .[0].id // empty' <<< "$comments")
+            [ -z "$id" ] || break
+            page=$((page + 1))
+          done
 
           if [ -z "$id" ]; then
-            curl -sSf -X POST -H "Authorization: token $TOKEN" \
-              -H "Content-Type: application/json" \
-              -d "$payload" "$api/issues/$PR/comments" >/dev/null
-            echo "Posted new sticky comment."
+            curl -sSf -X POST -H "Authorization: token $TOKEN" -H "Content-Type: application/json" \
+              -d "$payload" "$api/issues/$PR/comments" > /dev/null
+            echo "Posted the comment."
           else
-            curl -sSf -X PATCH -H "Authorization: token $TOKEN" \
-              -H "Content-Type: application/json" \
-              -d "$payload" "$api/issues/comments/$id" >/dev/null
-            echo "Updated sticky comment #$id."
+            curl -sSf -X PATCH -H "Authorization: token $TOKEN" -H "Content-Type: application/json" \
+              -d "$payload" "$api/issues/comments/$id" > /dev/null
+            echo "Updated comment $id."
           fi

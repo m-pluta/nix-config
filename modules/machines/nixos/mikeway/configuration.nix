@@ -12,8 +12,6 @@
 
   networking.hostName = "mikeway";
 
-  "mpluta.dev".enable = true;
-
   homelab = {
     enable = true;
     description = "Router and network gateway";
@@ -21,6 +19,7 @@
     # Split-horizon DNS: each homelab name resolves to its host's address on the
     # client's network.
     splitDns.enable = true;
+    sites."mpluta.dev" = { };
     cloudflared = {
       enable = true;
       expose.${config.homelab.mainDomain} = [

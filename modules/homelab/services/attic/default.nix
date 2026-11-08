@@ -11,17 +11,25 @@ let
   cfg = hl.services.${service};
 in
 {
-  options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 8070;
-    url = "cache.${hl.mainDomain}";
-    monitoredServices = [ "atticd" ];
-    homepage = {
-      name = "Attic";
-      description = "Nix binary cache";
-      icon = "nixos.svg";
-      category = "Services";
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      port = 8070;
+      url = "cache.${hl.mainDomain}";
+      monitoredServices = [ "atticd" ];
+      homepage = {
+        name = "Attic";
+        description = "Nix binary cache";
+        icon = "nixos.svg";
+        category = "Services";
+      };
+    }
+    // {
+      cache = lib.mkOption {
+        type = lib.types.str;
+        default = "nix-config";
+        description = "Name of the Attic cache hosts and CI use.";
+      };
     };
-  };
 
   config = lib.mkIf cfg.enable {
     age.secrets."${service}-token".file = "${inputs.secrets}/services/${service}/token.age";

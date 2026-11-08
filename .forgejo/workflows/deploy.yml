@@ -6,64 +6,62 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
 
-env:
-  FORGEJO_HOST: git.mpluta.dev
-
 jobs:
+  hosts:
+    if: github.ref == 'refs/heads/main'
+    runs-on: nix
+    outputs:
+      list: ${{ steps.hosts.outputs.list }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: https://git.mpluta.dev/mikey/actions/forge-ssh@main
+        with:
+          key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
+      - name: Trust the checkout for git
+        run: git config --global --add safe.directory "${PWD}"
+      - name: List the hosts
+        id: hosts
+        run: echo "list=$(nix eval --json --accept-flake-config .#deploy.nodes --apply builtins.attrNames)" >> "$GITHUB_OUTPUT"
+
   deploy:
     name: deploy ${{ matrix.host }}
+    needs: hosts
     if: github.ref == 'refs/heads/main'
     runs-on: nix
     strategy:
       fail-fast: false
       matrix:
-        host: [mikeway, mikelab]
+        host: ${{ fromJSON(needs.hosts.outputs.list) }}
     steps:
       - uses: actions/checkout@v4
-      - name: Set up SSH
-        uses: https://git.mpluta.dev/mikey/actions/set-up-ssh@main
+      - uses: https://git.mpluta.dev/mikey/actions/forge-ssh@main
         with:
-          git-host: ${{ env.FORGEJO_HOST }}
-          ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
-          git-hostkey: ${{ secrets.GIT_HOSTKEY }}
+          key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
       - name: Trust the checkout for git
         run: git config --global --add safe.directory "${PWD}"
 
-      - name: Set up Attic cache
-        if: ${{ secrets.ATTIC_TOKEN != '' }}
-        uses: https://git.mpluta.dev/mikey/actions/setup-attic-cache@main
+      - uses: https://git.mpluta.dev/mikey/actions/attic-use@main
         with:
-          attic-token: ${{ secrets.ATTIC_TOKEN }}
-          attic-url: ${{ secrets.ATTIC_URL }}
+          token: ${{ secrets.ATTIC_TOKEN }}
+      - uses: https://git.mpluta.dev/mikey/actions/attic-watch@main
+        with:
+          token: ${{ secrets.ATTIC_TOKEN }}
 
-      - name: Set up SSH to the host
+      - name: Add the deploy key
         env:
-          HOST: ${{ matrix.host }}
           SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
         run: |
           install -m 600 /dev/null ~/.ssh/deploy
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy
-          addr="$(nix eval --raw --accept-flake-config \
-            ".#nixosConfigurations.$HOST.config.homelab.networks.$HOST.lan.v4")"
-          cat >> ~/.ssh/config <<CONFIG
-          Host $HOST
-            HostName $addr
-            HostKeyAlias $HOST
-            User deploy
-            IdentityFile ~/.ssh/deploy
-            IdentitiesOnly yes
-          CONFIG
-          cat >> ~/.ssh/known_hosts <<KNOWN_HOSTS
-          mikelab ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINsSPBqBuJinIvu2sa6/4R0TfAcJduiKONEr9IQIzBq/
-          mikeway ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDuwyQgCK+b9FbW80KEnUdSbv8VoJrsd3Th5ASA0y2QN
-          KNOWN_HOSTS
 
       # Checks already run in the checks workflow.
       - name: Deploy the host
         env:
           HOST: ${{ matrix.host }}
-        run: nix develop --accept-flake-config --command deploy --skip-checks --ssh-user deploy ".#$HOST"
+        run: >-
+          nix develop --accept-flake-config --command deploy --skip-checks
+          --ssh-user deploy --ssh-opts "-i $HOME/.ssh/deploy -o IdentitiesOnly=yes" ".#$HOST"
 
-      - name: Cache built paths to Attic
-        if: ${{ secrets.ATTIC_TOKEN != '' }}
-        uses: https://git.mpluta.dev/mikey/actions/cache-to-attic@main
+      - uses: https://git.mpluta.dev/mikey/actions/attic-push@main
+        with:
+          token: ${{ secrets.ATTIC_TOKEN }}

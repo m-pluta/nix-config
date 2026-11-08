@@ -9,26 +9,29 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FORGEJO_HOST: git.mpluta.dev
-  PR_BRANCH: automation/update-flake-lock
   BASE_BRANCH: main
+  PR_BRANCH: automation/update-flake-lock
 
 jobs:
   update-flake-lock:
     runs-on: nix
     steps:
       - uses: actions/checkout@v4
-      - name: Set up SSH
-        uses: https://git.mpluta.dev/mikey/actions/set-up-ssh@main
+      - uses: https://git.mpluta.dev/mikey/actions/forge-ssh@main
         with:
-          git-host: ${{ env.FORGEJO_HOST }}
-          ssh-key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
-          git-hostkey: ${{ secrets.GIT_HOSTKEY }}
+          key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
       - name: Trust the checkout for git
         run: git config --global --add safe.directory "${PWD}"
 
       - name: Update flake.lock
-        run: nix flake update --accept-flake-config 2>&1 | tee /tmp/flake-update.log
+        run: |
+          set -o pipefail
+          nix flake update --accept-flake-config 2>&1 | tee /tmp/flake-update.log
+
+      - name: Set the commit author
+        run: |
+          git config user.name forgejo-actions
+          git config user.email forgejo@git.mpluta.dev
 
       - name: Commit and push to PR branch
         id: commit
@@ -38,8 +41,6 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          git config user.name forgejo-actions
-          git config user.email forgejo@git.mpluta.dev
           git checkout -B "$PR_BRANCH"
           git add flake.lock
           git commit -m "chore: update flake.lock"
@@ -52,8 +53,8 @@ jobs:
           TOKEN: ${{ secrets.FORGEJO_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
-          body="$(printf '```\n%s\n```\n' "$(cat /tmp/flake-update.log)" | nix run nixpkgs#jq -- -Rs .)"
-          payload="$(nix run nixpkgs#jq -- -n \
+          body="$(printf '```\n%s\n```\n' "$(cat /tmp/flake-update.log)" | jq -Rs .)"
+          payload="$(jq -n \
             --arg head "$PR_BRANCH" \
             --arg base "$BASE_BRANCH" \
             --arg title "chore: update flake.lock" \
@@ -62,7 +63,7 @@ jobs:
 
           num="$(curl -sSf -H "Authorization: token $TOKEN" \
             "$api/pulls?state=open&limit=50" \
-            | nix run nixpkgs#jq -- -r --arg b "$PR_BRANCH" \
+            | jq -r --arg b "$PR_BRANCH" \
                 '.[] | select(.head.ref==$b) | .number' | head -n1)"
 
           if [ -z "$num" ]; then
@@ -73,7 +74,7 @@ jobs:
           else
             curl -sSf -X PATCH -H "Authorization: token $TOKEN" \
               -H "Content-Type: application/json" \
-              -d "$(echo "$payload" | nix run nixpkgs#jq -- '{title,body}')" \
+              -d "$(echo "$payload" | jq '{title,body}')" \
               "$api/pulls/$num" >/dev/null
             echo "Refreshed existing pull request #$num."
           fi

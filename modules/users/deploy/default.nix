@@ -1,4 +1,4 @@
-{ ... }:
+{ keys, ... }:
 {
   # Root-equivalent through wheel.
   users = {
@@ -6,9 +6,7 @@
       isNormalUser = true;
       group = "deploy";
       extraGroups = [ "wheel" ];
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOuIvCbXJLcHBLIgP1NdsTrleJEHQevux9OTuI3yddCr deploy@forgejo-actions"
-      ];
+      openssh.authorizedKeys.keys = [ keys.deploy.hosts ];
     };
     groups.deploy = { };
   };

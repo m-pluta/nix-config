@@ -22,7 +22,6 @@ let
   commonModules = [
     ../../homelab
     ../../misc/wifi
-    ../../misc/mpluta.dev
     self.inputs.agenix.nixosModules.default
     self.inputs.disko.nixosModules.disko
     self.inputs.disko-zfs.nixosModules.default
@@ -65,6 +64,7 @@ in
       system = meta.system;
       specialArgs = {
         inherit (self) inputs;
+        keys = import "${self.inputs.secrets}/keys.nix";
         self = {
           nixosModules = self.nixosModules;
         };

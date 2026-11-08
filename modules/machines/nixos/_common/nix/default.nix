@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   nix = {
     settings = {
@@ -10,7 +10,9 @@
         "nix-command"
         "flakes"
       ];
-      extra-substituters = [ "https://cache.mpluta.dev/nix-config" ];
+      extra-substituters = [
+        "https://${config.homelab.services.attic.url}/${config.homelab.services.attic.cache}"
+      ];
       extra-trusted-public-keys = [ "nix-config:zGjB0uPB1ecKv9Ab4rHwQF3I83zAveDYNHvnVEihppA=" ];
       connect-timeout = 5;
       fallback = true;

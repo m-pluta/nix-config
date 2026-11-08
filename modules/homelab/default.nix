@@ -41,6 +41,7 @@ in
     ./networks
     ./samba
     ./services
+    ./sites
     ./split-dns
     ./tailscale
     ./wireguard-netns
