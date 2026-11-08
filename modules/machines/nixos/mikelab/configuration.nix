@@ -56,7 +56,7 @@ in
   hardware.nvidia = {
     # Pascal predates the open kernel modules, which need Turing or newer
     open = false;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
     # Keeps the driver initialised with no display client attached
     nvidiaPersistenced = true;
     nvidiaSettings = false;
