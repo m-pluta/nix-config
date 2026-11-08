@@ -35,4 +35,12 @@
       developer_can_initial_push = false;
     };
   };
+
+  data.gitlab_user.mikey.username = "mikey";
+
+  resource.gitlab_group_membership.homelab_mikey = {
+    group_id = "\${gitlab_group.homelab.id}";
+    user_id = "\${data.gitlab_user.mikey.id}";
+    access_level = "owner";
+  };
 }
