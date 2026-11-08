@@ -26,7 +26,9 @@ jobs:
   list-hosts:
     runs-on: nix
     outputs:
-      list: ${{ steps.hosts.outputs.list }}
+      pr-hosts: ${{ steps.hosts.outputs.pr-hosts }}
+      base-hosts: ${{ steps.hosts.outputs.base-hosts }}
+      all-hosts: ${{ steps.hosts.outputs.all-hosts }}
     steps:
       - uses: actions/checkout@v4
       - uses: https://git.mpluta.dev/mikey/actions/forge-ssh@main
@@ -36,7 +38,25 @@ jobs:
         run: git config --global --add safe.directory "${PWD}"
       - name: List the hosts
         id: hosts
-        run: echo "list=$(nix eval --json --accept-flake-config .#nixosConfigurations --apply builtins.attrNames)" >> "$GITHUB_OUTPUT"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          list_hosts() { # list_hosts <flake>
+            nix eval --json --accept-flake-config "$1#nixosConfigurations" --apply builtins.attrNames
+          }
+
+          pr=$(list_hosts .)
+          echo "pr-hosts=$pr" >> "$GITHUB_OUTPUT"
+
+          # Base and combined host lists, for pull requests
+          if [ -n "$BASE_SHA" ]; then
+            git fetch --depth 1 origin "$BASE_SHA"
+            git worktree add /tmp/base "$BASE_SHA"
+            git config --global --add safe.directory /tmp/base
+            base=$(list_hosts "git+file:///tmp/base?shallow=1")
+            echo "base-hosts=$base" >> "$GITHUB_OUTPUT"
+            echo "all-hosts=$(jq -cn --argjson a "$base" --argjson b "$pr" '$a + $b | unique')" >> "$GITHUB_OUTPUT"
+          fi
 
   build:
     needs: list-hosts
@@ -44,7 +64,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        host: ${{ fromJSON(needs.list-hosts.outputs.list) }}
+        host: ${{ fromJSON(needs.list-hosts.outputs.pr-hosts) }}
     steps:
       - uses: actions/checkout@v4
       - uses: https://git.mpluta.dev/mikey/actions/forge-ssh@main
@@ -87,4 +107,102 @@ jobs:
           if ! diff -u README.md /tmp/README.generated; then
             echo "::error::README.md is out of date. Run 'just readme'."
             exit 1
+          fi
+
+  diff:
+    if: github.event_name == 'pull_request'
+    needs:
+      - list-hosts
+      - build
+    runs-on: nix
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJSON(needs.list-hosts.outputs.all-hosts) }}
+    env:
+      HOST: ${{ matrix.host }}
+      MARKER: "<!-- diff:${{ matrix.host }} -->"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: https://git.mpluta.dev/mikey/actions/forge-ssh@main
+        with:
+          key: ${{ secrets.SECRETS_REPOSITORY_PRIVATE_KEY }}
+      - name: Trust the checkout for git
+        run: git config --global --add safe.directory "${PWD}"
+      - uses: https://git.mpluta.dev/mikey/actions/attic-use@main
+        with:
+          token: ${{ secrets.ATTIC_TOKEN }}
+
+      - name: Diff the host against the base
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_HOSTS: ${{ needs.list-hosts.outputs.base-hosts }}
+          PR_HOSTS: ${{ needs.list-hosts.outputs.pr-hosts }}
+        run: |
+          build() { # build <flake-dir>
+            nix build --no-link --print-out-paths --accept-flake-config \
+              "$1#nixosConfigurations.$HOST.config.system.build.toplevel"
+          }
+          has_host() { # has_host <host-list>
+            jq -e --arg h "$HOST" 'index($h)' <<< "$1" > /dev/null
+          }
+
+          {
+            echo "$MARKER"
+            echo "### Diff / $HOST"
+            echo
+            if ! has_host "$BASE_HOSTS"; then
+              echo "New host."
+            elif ! has_host "$PR_HOSTS"; then
+              echo "Removed by this PR."
+            else
+              {
+                git fetch --depth 1 origin "$BASE_SHA"
+                git worktree add /tmp/base "$BASE_SHA"
+                git config --global --add safe.directory /tmp/base
+              } >&2
+              base=$(build "git+file:///tmp/base?shallow=1")
+              pr=$(build .)
+              if [ "$base" = "$pr" ]; then
+                echo "No changes compared to $BASE_REF (${BASE_SHA:0:8})."
+              else
+                echo "Changes compared to $BASE_REF (${BASE_SHA:0:8}):"
+                echo
+                echo '```'
+                nix run --accept-flake-config --inputs-from . nixpkgs#nvd -- --color never diff "$base" "$pr" \
+                  | grep -v "^<<< \|^>>> "
+                echo '```'
+              fi
+            fi
+          } > /tmp/diff.md
+
+          cat /tmp/diff.md
+
+      - name: Post or update the comment
+        env:
+          TOKEN: ${{ forgejo.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
+
+          # Shortens the comment to fit Forgejo's size limit.
+          if [ "$(wc -c < /tmp/diff.md)" -gt 60000 ]; then
+            { head -c 60000 /tmp/diff.md; printf '\n```\n\nCut short, see the job log for the full diff.\n'; } > /tmp/comment.md
+          else
+            cp /tmp/diff.md /tmp/comment.md
+          fi
+          payload=$(jq -n --rawfile body /tmp/comment.md '{body: $body}')
+
+          id=$(curl -sSf -H "Authorization: token $TOKEN" "$api/issues/$PR/comments" \
+            | jq -r --arg m "$MARKER" 'map(select(.body | startswith($m))) | .[0].id // empty')
+
+          if [ -z "$id" ]; then
+            curl -sSf -X POST -H "Authorization: token $TOKEN" -H "Content-Type: application/json" \
+              -d "$payload" "$api/issues/$PR/comments" > /dev/null
+            echo "Posted the comment."
+          else
+            curl -sSf -X PATCH -H "Authorization: token $TOKEN" -H "Content-Type: application/json" \
+              -d "$payload" "$api/issues/comments/$id" > /dev/null
+            echo "Updated comment $id."
           fi
