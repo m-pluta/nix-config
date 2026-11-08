@@ -53,6 +53,10 @@ in
       port = 443;
       https = true;
       statePath = cfg.configDir;
+      # SSH user in clone URLs
+      user = "git";
+      group = "git";
+      databaseUsername = "git";
       backup = {
         startAt = "03:00";
         keepTime = 168;
