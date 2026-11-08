@@ -88,12 +88,12 @@ infra *args="plan":
   set -euo pipefail
   secrets=$(nix eval --raw --impure --expr '(builtins.getFlake (toString ./.)).inputs.secrets.outPath')
   decrypt() { age -d -i "{{age_identity}}" "$secrets/$1"; }
-  CLOUDFLARE_API_TOKEN=$(decrypt infra/cloudflare-api-token.age)
+  CLOUDFLARE_API_TOKEN=$(decrypt infra/cloudflare/tofu-token.age)
   export CLOUDFLARE_API_TOKEN
-  for file in "$secrets"/network/cloudflare/tunnels/*.age; do
-    export "TF_VAR_tunnel_secret_$(basename "$file" .age)=$(decrypt "network/cloudflare/tunnels/$(basename "$file")")"
+  for file in "$secrets"/infra/cloudflare/tunnels/*.age; do
+    export "TF_VAR_tunnel_secret_$(basename "$file" .age)=$(decrypt "infra/cloudflare/tunnels/$(basename "$file")")"
   done
-  passphrase=$(decrypt infra/tofu-state-passphrase.age)
+  passphrase=$(decrypt infra/tofu/state-passphrase.age)
   export TF_ENCRYPTION="
     key_provider \"pbkdf2\" \"state\" {
       passphrase = \"$passphrase\"

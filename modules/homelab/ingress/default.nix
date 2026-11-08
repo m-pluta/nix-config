@@ -123,7 +123,7 @@ in
 
       # Environment file holding CF_DNS_API_TOKEN and CF_API_EMAIL, which ACME uses to
       # prove domain ownership through Cloudflare DNS (the DNS-01 challenge).
-      age.secrets.cloudflare-dns-api.file = "${inputs.secrets}/network/cloudflare/dns-api.age";
+      age.secrets.cloudflare-dns-token.file = "${inputs.secrets}/infra/cloudflare/dns-token.age";
 
       # The main domain and all its subdomains.
       homelab.ingress.certificates.${hl.mainDomain} = [
@@ -144,7 +144,7 @@ in
           dnsResolver = "1.1.1.1:53";
           dnsPropagationCheck = true;
           group = config.services.caddy.group;
-          environmentFile = config.age.secrets.cloudflare-dns-api.path;
+          environmentFile = config.age.secrets.cloudflare-dns-token.path;
         }) cfg.certificates;
       };
 

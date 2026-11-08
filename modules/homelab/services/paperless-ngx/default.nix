@@ -29,7 +29,8 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    age.secrets."${service}-password".file = "${inputs.secrets}/services/${service}/password.age";
+    age.secrets."${service}-admin-password".file =
+      "${inputs.secrets}/services/${service}/admin-password.age";
     # TODO: remove once upstream nixpkgs fixes paperless-ngx consumer test failures
     nixpkgs.overlays = [
       (_final: prev: {
@@ -43,7 +44,7 @@ in
     services.${service} = {
       enable = true;
       port = cfg.port;
-      passwordFile = config.age.secrets."${service}-password".path;
+      passwordFile = config.age.secrets."${service}-admin-password".path;
       consumptionDirIsPublic = true;
       settings = {
         PAPERLESS_URL = "https://${cfg.url}";

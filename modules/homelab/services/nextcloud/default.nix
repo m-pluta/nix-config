@@ -35,7 +35,7 @@ in
     };
   config = lib.mkIf cfg.enable {
     age.secrets."${service}-admin-password" = {
-      file = "${inputs.secrets}/services/${service}/password.age";
+      file = "${inputs.secrets}/services/${service}/admin-password.age";
       owner = service;
     };
     # Nextcloud requires nginx internally as its PHP-FPM frontend

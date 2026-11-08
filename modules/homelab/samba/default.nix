@@ -78,7 +78,7 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    age.secrets.samba-password.file = "${inputs.secrets}/services/samba/password.age";
+    age.secrets.samba-user-password.file = "${inputs.secrets}/services/samba/user-password.age";
 
     environment.systemPackages = [ config.services.samba.package ];
 
@@ -88,7 +88,7 @@ in
     };
 
     systemd.services.samba-smbd.preStart = ''
-      smb_password=$(cat "${config.age.secrets.samba-password.path}")
+      smb_password=$(cat "${config.age.secrets.samba-user-password.path}")
       echo -e "$smb_password\n$smb_password\n" | ${lib.getExe' pkgs.samba "smbpasswd"} -a -s ${cfg.user}
     '';
 

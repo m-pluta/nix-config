@@ -42,7 +42,7 @@ in
 
   config = lib.mkIf (cfg.enable && cfg.tunnelId != null) {
     # The tunnel secret, shared with OpenTofu, which sets it on the tunnel.
-    age.secrets.cloudflared-tunnel-secret.file = "${inputs.secrets}/network/cloudflare/tunnels/${config.networking.hostName}.age";
+    age.secrets.cloudflared-tunnel-secret.file = "${inputs.secrets}/infra/cloudflare/tunnels/${config.networking.hostName}.age";
 
     # Assembles the credentials file cloudflared reads from the account ID, tunnel ID and
     # secret, readable only by root.
