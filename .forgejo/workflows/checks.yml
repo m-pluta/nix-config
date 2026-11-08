@@ -23,7 +23,7 @@ jobs:
       - name: Check the flake
         run: nix flake check --accept-flake-config --all-systems
 
-  hosts:
+  list-hosts:
     runs-on: nix
     outputs:
       list: ${{ steps.hosts.outputs.list }}
@@ -39,12 +39,12 @@ jobs:
         run: echo "list=$(nix eval --json --accept-flake-config .#nixosConfigurations --apply builtins.attrNames)" >> "$GITHUB_OUTPUT"
 
   build:
-    needs: hosts
+    needs: list-hosts
     runs-on: nix
     strategy:
       fail-fast: false
       matrix:
-        host: ${{ fromJSON(needs.hosts.outputs.list) }}
+        host: ${{ fromJSON(needs.list-hosts.outputs.list) }}
     steps:
       - uses: actions/checkout@v4
       - uses: https://git.mpluta.dev/mikey/actions/forge-ssh@main
