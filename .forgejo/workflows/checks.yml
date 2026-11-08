@@ -167,12 +167,14 @@ jobs:
               if [ "$base" = "$pr" ]; then
                 echo "No changes compared to $BASE_REF (${BASE_SHA:0:8})."
               else
-                echo "Changes compared to $BASE_REF (${BASE_SHA:0:8}):"
+                echo "<details open><summary>Changes compared to $BASE_REF (${BASE_SHA:0:8})</summary>"
                 echo
                 echo '```'
                 nix run --accept-flake-config --inputs-from . nixpkgs#nvd -- --color never diff "$base" "$pr" \
                   | grep -v "^<<< \|^>>> "
                 echo '```'
+                echo
+                echo "</details>"
               fi
             fi
           } > /tmp/diff.md
@@ -188,7 +190,7 @@ jobs:
 
           # Shortens the comment to fit Forgejo's size limit.
           if [ "$(wc -c < /tmp/diff.md)" -gt 60000 ]; then
-            { head -c 60000 /tmp/diff.md; printf '\n```\n\nCut short, see the job log for the full diff.\n'; } > /tmp/comment.md
+            { head -c 60000 /tmp/diff.md; printf '\n```\n\n</details>\n\nCut short, see the job log for the full diff.\n'; } > /tmp/comment.md
           else
             cp /tmp/diff.md /tmp/comment.md
           fi
