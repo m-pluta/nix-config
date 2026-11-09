@@ -79,6 +79,9 @@ in
       "30-${lanBridge}" = {
         matchConfig.Name = lanBridge;
         address = [ "${lanGateway}/${toString lan.prefixLength}" ];
+        # Resolve the homelab's own names with the local split-horizon resolver.
+        dns = [ lanGateway ];
+        domains = [ "~${config.homelab.mainDomain}" ];
         networkConfig.DHCPServer = true;
         dhcpServerConfig.DNS = [ lanGateway ];
         # Hand every host with a pinned MAC its declared LAN address.
