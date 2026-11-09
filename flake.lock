@@ -95,11 +95,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788384859,
-        "narHash": "sha256-NAZgH8S5iZQMFXTTK3ZMMH025EJsZsdVg+dPtRKjYto=",
+        "lastModified": 1794264953,
+        "narHash": "sha256-1Ye8c6nRNLTVIxZ87eigoSX1rgfEEGJiHNTzsOfg/1U=",
         "ref": "refs/heads/main",
-        "rev": "7a94dcf8d3e40a0a22cec084d1dc31dbb9aac986",
-        "revCount": 56,
+        "rev": "c4fb267d6beb5b834408e82585feaac73977d03a",
+        "revCount": 58,
         "type": "git",
         "url": "https://git.mpluta.dev/mikey/disko-zfs.git"
       },
