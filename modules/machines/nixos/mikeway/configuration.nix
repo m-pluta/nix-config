@@ -34,7 +34,7 @@
 
   networking.hostId = "f859d24b";
   boot.supportedFilesystems = [ "zfs" ];
-  boot.zfs.forceImportRoot = true;
+  boot.zfs.forceImportRoot = false;
   services.zfs.autoSnapshot = {
     enable = true;
     frequent = 4;

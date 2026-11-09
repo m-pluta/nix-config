@@ -31,7 +31,7 @@ in
   };
   system.stateVersion = "25.11";
   boot.supportedFilesystems = [ "zfs" ];
-  boot.zfs.forceImportRoot = true;
+  boot.zfs.forceImportRoot = false;
   systemd.services.zfs-import-tank.restartIfChanged = false;
   services.zfs.autoSnapshot = {
     enable = true;
