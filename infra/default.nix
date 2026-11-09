@@ -15,17 +15,10 @@
           inherit (self) nixosConfigurations;
           cloudflareAccountId =
             (lib.head (lib.attrValues self.nixosConfigurations)).config.homelab.cloudflared.accountId;
-          gitlabUrl = lib.head (
-            lib.concatMap (
-              host:
-              lib.optional host.config.homelab.services.gitlab.enable host.config.homelab.services.gitlab.url
-            ) (lib.attrValues self.nixosConfigurations)
-          );
         };
         # One file per Cloudflare zone, with the zone and its hand-written records.
         modules = [
           ./cloudflare.nix
-          ./gitlab.nix
         ]
         ++ map (file: ./zones + "/${file}") (builtins.attrNames (builtins.readDir ./zones));
       };

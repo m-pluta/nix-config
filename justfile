@@ -90,8 +90,6 @@ infra *args="plan":
   decrypt() { age -d -i "{{age_identity}}" "$secrets/$1"; }
   CLOUDFLARE_API_TOKEN=$(decrypt infra/cloudflare/tofu-token.age)
   export CLOUDFLARE_API_TOKEN
-  GITLAB_TOKEN=$(decrypt infra/gitlab/tofu-token.age)
-  export GITLAB_TOKEN
   for file in "$secrets"/infra/cloudflare/tunnels/*.age; do
     export "TF_VAR_tunnel_secret_$(basename "$file" .age)=$(decrypt "infra/cloudflare/tunnels/$(basename "$file")")"
   done

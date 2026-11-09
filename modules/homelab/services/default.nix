@@ -47,7 +47,6 @@ in
     ./deluge
     ./forgejo
     ./forgejo-runner
-    ./gitlab
     ./home-assistant
     ./homepage
     ./immich

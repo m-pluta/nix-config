@@ -132,11 +132,6 @@
             mountpoint = "/var/lib/forgejo";
             options."com.sun:auto-snapshot" = "true";
           };
-          "services/gitlab" = {
-            type = "zfs_fs";
-            mountpoint = "/var/lib/gitlab";
-            options."com.sun:auto-snapshot" = "true";
-          };
           "services/jellyfin" = {
             type = "zfs_fs";
             mountpoint = "/var/lib/jellyfin";

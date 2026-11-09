@@ -20,7 +20,6 @@ Primary server hosting storage and the self-hosted services
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/bazarr.svg' width=32 height=32>|Bazarr|Subtitle manager|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/deluge.svg' width=32 height=32>|Deluge|Torrent client|Downloads|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/forgejo.svg' width=32 height=32>|Forgejo|A painless, self-hosted Git service|Services|
-|<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/gitlab.svg' width=32 height=32>|GitLab|DevOps platform|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/grafana.svg' width=32 height=32>|Grafana|Platform for data analytics and monitoring|Observability|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/home-assistant.svg' width=32 height=32>|Home Assistant|Home automation platform|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/immich.svg' width=32 height=32>|Immich|Self-hosted photo and video management solution|Media|
