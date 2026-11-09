@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   ...
 }:
 {
@@ -30,8 +29,17 @@
     };
   };
 
-  # No ZFS on this box (ext4 root); _common/filesystems forces it on.
-  disko.zfs.enable = lib.mkForce false;
+  networking.hostId = "f859d24b";
+  boot.supportedFilesystems = [ "zfs" ];
+  boot.zfs.forceImportRoot = true;
+  services.zfs.autoSnapshot = {
+    enable = true;
+    frequent = 4;
+    hourly = 24;
+    daily = 7;
+    weekly = 4;
+    monthly = 12;
+  };
 
   system.stateVersion = "25.11";
 }
