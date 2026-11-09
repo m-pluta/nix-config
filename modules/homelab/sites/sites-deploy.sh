@@ -50,6 +50,40 @@ set_build() {
 }
 
 case "${args[0]:-} ${args[1]:-}" in
+  "list ")
+    check_args 1 "list"
+    for link in "$dir"/sandbox/pr-*; do
+      if [[ "$link" =~ /pr-([0-9]+)$ ]]; then
+        echo "${BASH_REMATCH[1]}"
+      fi
+    done
+    ;;
+  "current qa" | "current prod")
+    check_args 2 "current <qa|prod>"
+    readlink -e "$dir/${args[1]}" || fail "${args[1]} has nothing deployed"
+    ;;
+  "rollback qa" | "rollback prod")
+    [[ ${#args[@]} -eq 2 || ${#args[@]} -eq 3 ]] || fail "usage: rollback <qa|prod> [store path]"
+    profile="$dir/${args[1]}"
+    # Without a build, goes back to the previous generation.
+    if [[ ${#args[@]} -eq 2 ]]; then
+      nix-env --profile "$profile" --rollback
+      echo "$site ${args[1]} -> $(readlink -e "$profile")"
+      exit
+    fi
+    # Finds the newest generation that served the build.
+    generation=0
+    for link in "$profile"-*-link; do
+      n=${link#"$profile"-}
+      n=${n%-link}
+      if [[ "$n" =~ ^[0-9]+$ && "$(readlink "$link")" == "${args[2]}" ]] && ((n > generation)); then
+        generation=$n
+      fi
+    done
+    ((generation > 0)) || fail "${args[1]} never served ${args[2]}"
+    nix-env --profile "$profile" --switch-generation "$generation"
+    echo "$site ${args[1]} -> ${args[2]}"
+    ;;
   "sandbox deploy")
     check_args 4 "sandbox deploy <n> <store path>"
     check_sandbox_number "${args[2]}"
@@ -65,6 +99,11 @@ case "${args[0]:-} ${args[1]:-}" in
     check_args 3 "qa deploy <store path>"
     fetch_and_check_build "${args[2]}"
     set_build "$dir/qa" "${args[2]}"
+    ;;
+  "prod deploy")
+    check_args 3 "prod deploy <store path>"
+    fetch_and_check_build "${args[2]}"
+    set_build "$dir/prod" "${args[2]}"
     ;;
   "prod release")
     check_args 2 "prod release"
