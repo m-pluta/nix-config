@@ -63,6 +63,19 @@
           mountpoint = "/home";
           options."com.sun:auto-snapshot" = "true";
         };
+        "services" = {
+          type = "zfs_fs";
+          options = {
+            mountpoint = "none";
+            canmount = "off";
+            "com.sun:auto-snapshot" = "false";
+          };
+        };
+        "services/uptime-kuma" = {
+          type = "zfs_fs";
+          mountpoint = "/var/lib/private/uptime-kuma";
+          options."com.sun:auto-snapshot" = "true";
+        };
         "reserved" = {
           type = "zfs_fs";
           options = {

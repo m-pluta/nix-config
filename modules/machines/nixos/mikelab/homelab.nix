@@ -51,10 +51,6 @@
       bazarr.enable = true;
       prowlarr.enable = true;
       seerr.enable = true;
-      uptime-kuma = {
-        enable = true;
-        port = 3002;
-      };
       home-assistant.enable = true;
       immich = {
         enable = true;
