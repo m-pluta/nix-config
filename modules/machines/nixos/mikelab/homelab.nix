@@ -51,7 +51,6 @@
       bazarr.enable = true;
       prowlarr.enable = true;
       seerr.enable = true;
-      home-assistant.enable = true;
       immich = {
         enable = true;
         mediaDir = "/tank/photos";

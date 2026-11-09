@@ -172,11 +172,6 @@
             mountpoint = "/var/lib/deluge";
             options."com.sun:auto-snapshot" = "true";
           };
-          "services/hass" = {
-            type = "zfs_fs";
-            mountpoint = "/var/lib/hass";
-            options."com.sun:auto-snapshot" = "true";
-          };
           "services/immich" = {
             type = "zfs_fs";
             mountpoint = "/var/lib/immich";
