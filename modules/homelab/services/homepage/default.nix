@@ -51,7 +51,6 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    services.glances.enable = true;
     services.${upstream} = {
       enable = true;
       listenPort = cfg.port;
@@ -83,13 +82,6 @@ in
       '';
       settings = {
         layout = [
-          {
-            Glances = {
-              header = false;
-              style = "row";
-              columns = 4;
-            };
-          }
           {
             Services = {
               header = true;
@@ -159,61 +151,7 @@ in
                 };
               });
         })
-        ++ [ { Misc = cfg.misc; } ]
-        ++ [
-          {
-            Glances =
-              let
-                port = toString config.services.glances.port;
-              in
-              [
-                {
-                  Info = {
-                    widget = {
-                      type = "glances";
-                      url = "http://localhost:${port}";
-                      metric = "info";
-                      chart = false;
-                      version = 4;
-                    };
-                  };
-                }
-                {
-                  "CPU Temp" = {
-                    widget = {
-                      type = "glances";
-                      url = "http://localhost:${port}";
-                      metric = "sensor:Tctl";
-                      chart = false;
-                      version = 4;
-                    };
-                  };
-                }
-                {
-                  Processes = {
-                    widget = {
-                      type = "glances";
-                      url = "http://localhost:${port}";
-                      metric = "process";
-                      chart = false;
-                      version = 4;
-                    };
-                  };
-                }
-                {
-                  Network = {
-                    widget = {
-                      type = "glances";
-                      url = "http://localhost:${port}";
-                      metric = "network:lan0";
-                      chart = false;
-                      version = 4;
-                    };
-                  };
-                }
-              ];
-          }
-        ];
+        ++ [ { Misc = cfg.misc; } ];
     };
     homelab.ingress.routes."${cfg.url}".port = cfg.port;
   };

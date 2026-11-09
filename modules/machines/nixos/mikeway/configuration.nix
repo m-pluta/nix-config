@@ -28,6 +28,7 @@
       tunnelId = "4874c13d-f0db-4b6a-a5dc-bd8e6d06bb82";
     };
     services.uptime-kuma.enable = true;
+    services.homepage.enable = true;
     services.home-assistant.enable = true;
   };
 

@@ -42,7 +42,6 @@
         enable = true;
         port = 3001;
       };
-      homepage.enable = true;
       jellyfin.enable = true;
       sabnzbd.enable = true;
       deluge.enable = true;
