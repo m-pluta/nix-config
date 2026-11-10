@@ -68,6 +68,15 @@ in
       );
     };
 
+    # Job containers' conmon scopes, which otherwise hold up shutdown for the default 90s.
+    systemd.units."libpod-conmon-.scope" = {
+      overrideStrategy = "asDropin";
+      text = ''
+        [Scope]
+        TimeoutStopSec=10s
+      '';
+    };
+
     virtualisation.podman.enable = true;
     services.gitea-actions-runner = {
       package = pkgs.forgejo-runner;
