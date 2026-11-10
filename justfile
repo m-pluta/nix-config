@@ -39,6 +39,10 @@ rebuild action host:
 deploy host:
   deploy .#{{host}}
 
+# Print a one-time link for a person to set up their Kanidm login: just invite mikey
+invite name:
+  ssh -t mikeway sudo kanidm-invite {{name}}
+
 reboot host:
   ssh {{host}} sudo reboot
 

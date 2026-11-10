@@ -15,12 +15,16 @@ let
   # client address headers are overwritten with the address Caddy has verified, instead
   # of appending to whatever the client sent. Together with strict trusted-proxy parsing
   # (see the global Caddy config below), this stops clients from spoofing their address.
-  mkReverseProxy = upstream: ''
+  mkReverseProxy = upstream: upstreamCertName: ''
     reverse_proxy ${upstream} {
       header_up X-Forwarded-For {client_ip}
       header_up X-Real-IP {client_ip}
       header_up -CF-Connecting-IP
-    }
+    ${
+      lib.optionalString (
+        upstreamCertName != null
+      ) "  transport http {\n    tls_server_name ${upstreamCertName}\n  }\n"
+    }}
   '';
 
   # Whether certificate name `pattern` (possibly "*.x") covers hostname `name`.
@@ -56,7 +60,7 @@ let
     serverAliases = r.serverAliases;
     extraConfig = lib.concatStringsSep "\n" (
       lib.filter (s: s != "") [
-        (lib.optionalString (upstream != null) (mkReverseProxy upstream))
+        (lib.optionalString (upstream != null) (mkReverseProxy upstream r.upstreamCertName))
         r.extraConfig
       ]
     );
@@ -80,6 +84,11 @@ let
           Caddy upstream address to forward to, for services that do not listen on a
           loopback port. Takes precedence over `port`.
         '';
+      };
+      upstreamCertName = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Name to verify an HTTPS upstream's certificate against.";
       };
       extraConfig = lib.mkOption {
         type = lib.types.lines;

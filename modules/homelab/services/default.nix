@@ -51,6 +51,7 @@ in
     ./homepage
     ./immich
     ./jellyfin
+    ./kanidm
     ./microbin
     ./miniflux
     ./monitoring/exporters

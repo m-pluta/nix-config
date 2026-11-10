@@ -44,6 +44,7 @@ Router and network gateway
 |Icon|Name|Description|Category|
 |---|---|---|---|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/home-assistant.svg' width=32 height=32>|Home Assistant|Home automation platform|Services|
+|<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/kanidm.svg' width=32 height=32>|Kanidm|Identity and login|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/uptime-kuma.svg' width=32 height=32>|Uptime Kuma|Service monitoring tool|Services|
 
 

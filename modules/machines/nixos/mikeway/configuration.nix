@@ -29,6 +29,7 @@
     };
     services.uptime-kuma.enable = true;
     services.homepage.enable = true;
+    services.kanidm.enable = true;
     services.home-assistant.enable = true;
   };
 
