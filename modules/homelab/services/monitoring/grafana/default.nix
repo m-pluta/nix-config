@@ -22,10 +22,11 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    age.secrets."${service}-secret-key" = {
-      file = "${inputs.secrets}/services/${service}/secret-key.age";
-      owner = service;
-    };
+    age.secrets."${service}-secret-key".file = "${inputs.secrets}/services/${service}/secret-key.age";
+    # systemd hands Grafana a private copy of the key at each start.
+    systemd.services.grafana.serviceConfig.LoadCredential = [
+      "secret-key:${config.age.secrets."${service}-secret-key".path}"
+    ];
     services.grafana = {
       enable = true;
       provision = {
@@ -38,7 +39,7 @@ in
         ];
       };
       settings = {
-        security.secret_key = "$__file{${config.age.secrets."${service}-secret-key".path}}";
+        security.secret_key = "$__file{/run/credentials/grafana.service/secret-key}";
         server = {
           http_addr = "127.0.0.1";
           http_port = cfg.port;

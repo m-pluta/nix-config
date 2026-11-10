@@ -34,10 +34,9 @@ in
       };
     };
   config = lib.mkIf cfg.enable {
-    age.secrets."${service}-admin-password" = {
-      file = "${inputs.secrets}/services/${service}/admin-password.age";
-      owner = service;
-    };
+    # Nextcloud's setup reads it through LoadCredential, so it stays root-only.
+    age.secrets."${service}-admin-password".file =
+      "${inputs.secrets}/services/${service}/admin-password.age";
     # Nextcloud requires nginx internally as its PHP-FPM frontend
     services.nginx.virtualHosts."nix-nextcloud".listen = [
       {
