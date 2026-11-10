@@ -31,16 +31,6 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets."${service}-admin-password".file =
       "${inputs.secrets}/services/${service}/admin-password.age";
-    # TODO: remove once upstream nixpkgs fixes paperless-ngx consumer test failures
-    nixpkgs.overlays = [
-      (_final: prev: {
-        paperless-ngx = prev.paperless-ngx.overrideAttrs (old: {
-          disabledTestPaths = (old.disabledTestPaths or [ ]) ++ [
-            "src/documents/tests/test_management_consumer.py"
-          ];
-        });
-      })
-    ];
     services.${service} = {
       enable = true;
       port = cfg.port;
