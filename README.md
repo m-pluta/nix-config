@@ -25,7 +25,7 @@ Primary server hosting storage and the self-hosted services
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/jellyfin.svg' width=32 height=32>|Jellyfin|The Free Software Media System|Media|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/lidarr.svg' width=32 height=32>|Lidarr|Music collection manager|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/microbin.png' width=32 height=32>|Microbin|A minimal pastebin|Services|
-|<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/miniflux-light.svg' width=32 height=32>|Miniflux|Minimalist and opinionated feed reader|Services|
+|<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/miniflux-light.svg' width=32 height=32>|Miniflux 🔒|Minimalist and opinionated feed reader|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/navidrome.svg' width=32 height=32>|Navidrome|Self-hosted music streaming service|Media|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextcloud.svg' width=32 height=32>|Nextcloud|File sync and sharing|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/paperless.svg' width=32 height=32>|Paperless-ngx|Document management system|Services|

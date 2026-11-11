@@ -5,6 +5,7 @@
     displayName = "Mikey";
     mailAddresses = [ "mikey@mpluta.dev" ];
     groups = [
+      "miniflux.access"
       "immich.access"
       "grafana.access"
     ];
