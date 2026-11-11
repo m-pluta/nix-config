@@ -3,12 +3,26 @@
 {
   config,
   lib,
+  pkgs,
   inputs,
   ...
 }:
 let
   hl = config.homelab;
   secretName = name: "kanidm-client-${name}";
+
+  icons = import ./icons.nix;
+  kanidmIcon =
+    name:
+    if name == null || !(icons.hashes ? ${name}) then
+      null
+    else
+      pkgs.fetchurl {
+        url = "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/${icons.rev}/${
+          if lib.hasSuffix ".svg" name then "svg" else "png"
+        }/${name}";
+        hash = icons.hashes.${name};
+      };
 
   clientType = lib.types.submodule {
     options = {
@@ -75,6 +89,7 @@ in
         name: client:
         {
           inherit (client) displayName originUrl originLanding;
+          imageFile = kanidmIcon (lib.attrByPath [ name "homepage" "icon" ] null hl.services);
           basicSecretFile = config.age.secrets.${secretName name}.path;
           preferShortUsername = true;
           scopeMaps."${name}.access" = client.scopes;
