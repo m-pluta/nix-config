@@ -21,7 +21,7 @@ jobs:
         run: git config --global --add safe.directory "${PWD}"
       - name: List the hosts
         id: hosts
-        run: echo "list=$(nix eval --json --accept-flake-config .#deploy.nodes --apply builtins.attrNames)" >> "$GITHUB_OUTPUT"
+        run: echo "list=$(bin/list-hosts HEAD)" >> "$GITHUB_OUTPUT"
 
   deploy:
     name: deploy ${{ matrix.host }}

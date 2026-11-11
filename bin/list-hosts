@@ -1,0 +1,6 @@
+#!/bin/sh
+# Print the hosts at a git revision as a JSON list. A host is a folder under
+# modules/machines/nixos with a configuration.nix.
+git ls-tree -r --name-only "${1:-HEAD}" modules/machines/nixos |
+  sed -n 's|^modules/machines/nixos/\([^/]*\)/configuration\.nix$|\1|p' |
+  jq -R . | jq -cs .

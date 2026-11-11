@@ -41,18 +41,13 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          # A host is a folder under modules/machines/nixos with a configuration.nix
-          list_hosts() { # list_hosts <rev>
-            git ls-tree -r --name-only "$1" modules/machines/nixos | sed -n 's|^modules/machines/nixos/\([^/]*\)/configuration\.nix$|\1|p' | jq -R . | jq -cs .
-          }
-
-          pr=$(list_hosts HEAD)
+          pr=$(bin/list-hosts HEAD)
           echo "pr-hosts=$pr" >> "$GITHUB_OUTPUT"
 
           # Base and combined host lists, for pull requests
           if [ -n "$BASE_SHA" ]; then
             git fetch --depth 1 origin "$BASE_SHA"
-            base=$(list_hosts "$BASE_SHA")
+            base=$(bin/list-hosts "$BASE_SHA")
             echo "base-hosts=$base" >> "$GITHUB_OUTPUT"
             echo "all-hosts=$(jq -cn --argjson a "$base" --argjson b "$pr" '$a + $b | unique')" >> "$GITHUB_OUTPUT"
           fi
