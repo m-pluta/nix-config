@@ -49,6 +49,35 @@ in
       host = "127.0.0.1";
       port = cfg.port;
       mediaLocation = "${cfg.mediaDir}";
+      # Immich's whole config, including settings once changed in the admin UI
+      settings = {
+        storageTemplate.enabled = true;
+        server.externalDomain = "https://${cfg.url}";
+        oauth = {
+          enabled = true;
+          buttonText = "Log in with Kanidm";
+          issuerUrl = "https://${hl.services.kanidm.url}/oauth2/openid/${service}";
+          clientId = service;
+          clientSecret._secret = config.age.secrets."${service}-kanidm-secret".path;
+          scope = "openid email profile";
+          signingAlgorithm = "ES256";
+          autoRegister = true;
+          # Mobile app logins return through this page
+          mobileOverrideEnabled = true;
+          mobileRedirectUri = "https://${cfg.url}/api/oauth/mobile-redirect";
+        };
+      };
+    };
+    age.secrets."${service}-kanidm-secret".file =
+      "${inputs.secrets}/services/kanidm/clients/${service}.age";
+    homelab.sso.clients.${service} = {
+      displayName = "Immich";
+      originUrl = [
+        "https://${cfg.url}/auth/login"
+        "https://${cfg.url}/user-settings"
+        "https://${cfg.url}/api/oauth/mobile-redirect"
+      ];
+      originLanding = "https://${cfg.url}/";
     };
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     homelab.ingress.routes."${cfg.url}".port = cfg.port;
