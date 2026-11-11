@@ -30,7 +30,6 @@ let
           "openid"
           "profile"
           "email"
-          "groups"
         ];
         description = "What the service may read about a user, such as name and email.";
       };

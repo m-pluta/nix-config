@@ -4,5 +4,8 @@
   mikey = {
     displayName = "Mikey";
     mailAddresses = [ "mikey@mpluta.dev" ];
+    groups = [
+      "grafana.access"
+    ];
   };
 }
