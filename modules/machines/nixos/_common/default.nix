@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   lib,
   ...
@@ -34,17 +35,22 @@
 
   services.openssh = {
     enable = lib.mkDefault true;
-    openFirewall = lib.mkDefault true;
+    openFirewall = false;
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
-      LoginGraceTime = 0;
       PermitRootLogin = "no";
       ClientAliveInterval = lib.mkDefault 60;
       ClientAliveCountMax = lib.mkDefault 5;
     };
     ports = [ 22 ];
   };
+
+  # SSH is open on the LAN only. The tailnet is a trusted interface already.
+  networking.firewall.interfaces.${
+    config.homelab.networks.${config.networking.hostName}.lan.interface
+  }.allowedTCPPorts =
+    [ 22 ];
 
   security = {
     doas.enable = lib.mkDefault false;
