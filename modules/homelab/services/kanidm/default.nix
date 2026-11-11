@@ -23,6 +23,8 @@ let
   };
 in
 {
+  imports = [ ./sso.nix ];
+
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8443;
     url = "id.${hl.mainDomain}";

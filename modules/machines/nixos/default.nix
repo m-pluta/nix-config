@@ -45,6 +45,13 @@ let
     );
   };
 
+  # Every host's Kanidm login clients, so the host running Kanidm can create them all.
+  ssoClients = {
+    homelab.sso.allClients = lib.mkMerge (
+      map (host: self.nixosConfigurations.${host}.config.homelab.sso.clients) hostNames
+    );
+  };
+
   homeManagerCfg = {
     home-manager.useGlobalPkgs = false;
     home-manager.useUserPackages = false;
@@ -74,6 +81,7 @@ in
         (./. + "/${name}/configuration.nix")
         homeManagerCfg
         splitDnsRecords
+        ssoClients
       ];
     }
   );

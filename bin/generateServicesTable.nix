@@ -23,8 +23,9 @@ let
           icon:
           "<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/${format icon}/${icon}' width=32 height=32>";
         serviceConfig = (hl hostname).services.${service}.homepage;
+        name = serviceConfig.name + lib.optionalString ((hl hostname).sso.clients ? ${service}) " 🔒";
       in
-      "|${iconlink serviceConfig.icon}|${serviceConfig.name}|${serviceConfig.description}|${serviceConfig.category}|"
+      "|${iconlink serviceConfig.icon}|${name}|${serviceConfig.description}|${serviceConfig.category}|"
     ) (enabledHomepageServices hostname);
   hostSection =
     hostname:
