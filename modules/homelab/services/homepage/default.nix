@@ -5,51 +5,49 @@
 }:
 let
   service = "homepage";
+  serviceLib = import ../lib.nix { inherit lib; };
   upstream = "homepage-dashboard";
   hl = config.homelab;
   cfg = hl.services.${service};
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${upstream}";
-    };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8082;
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "home.${hl.mainDomain}";
-    };
-    monitoredServices = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      default = [ upstream ];
-    };
-    misc = lib.mkOption {
-      default = [ ];
-      type = lib.types.listOf (
-        lib.types.attrsOf (
-          lib.types.submodule {
-            options = {
-              description = lib.mkOption {
-                type = lib.types.str;
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      port = 8082;
+      url = "home.${hl.mainDomain}";
+      monitoredServices = [ upstream ];
+      homepage = {
+        name = "Homepage";
+        description = "Dashboard for the services";
+        icon = "homepage.png";
+        category = "Services";
+      };
+    }
+    // {
+      misc = lib.mkOption {
+        default = [ ];
+        type = lib.types.listOf (
+          lib.types.attrsOf (
+            lib.types.submodule {
+              options = {
+                description = lib.mkOption {
+                  type = lib.types.str;
+                };
+                href = lib.mkOption {
+                  type = lib.types.str;
+                };
+                siteMonitor = lib.mkOption {
+                  type = lib.types.str;
+                };
+                icon = lib.mkOption {
+                  type = lib.types.str;
+                };
               };
-              href = lib.mkOption {
-                type = lib.types.str;
-              };
-              siteMonitor = lib.mkOption {
-                type = lib.types.str;
-              };
-              icon = lib.mkOption {
-                type = lib.types.str;
-              };
-            };
-          }
-        )
-      );
+            }
+          )
+        );
+      };
     };
-  };
   config = lib.mkIf cfg.enable {
     services.${upstream} = {
       enable = true;
@@ -136,7 +134,7 @@ in
           homepageServices =
             x:
             (lib.attrsets.filterAttrs (
-              _name: value: value ? homepage && value.homepage.category == x
+              name: value: name != service && value ? homepage && value.homepage.category == x
             ) hl.services);
         in
         lib.lists.forEach homepageCategories (cat: {
