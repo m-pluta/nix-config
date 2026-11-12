@@ -94,6 +94,9 @@ infra *args="plan":
   decrypt() { age -d -i "{{age_identity}}" "$secrets/$1"; }
   CLOUDFLARE_API_TOKEN=$(decrypt admin/tofu/cloudflare-token.age)
   export CLOUDFLARE_API_TOKEN
+  TAILSCALE_OAUTH_CLIENT_ID=$(decrypt admin/tofu/tailscale-oauth-id.age)
+  TAILSCALE_OAUTH_CLIENT_SECRET=$(decrypt admin/tofu/tailscale-oauth-secret.age)
+  export TAILSCALE_OAUTH_CLIENT_ID TAILSCALE_OAUTH_CLIENT_SECRET
   for file in "$secrets"/network/cloudflare/tunnels/*.age; do
     export "TF_VAR_tunnel_secret_$(basename "$file" .age)=$(decrypt "network/cloudflare/tunnels/$(basename "$file")")"
   done

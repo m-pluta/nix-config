@@ -19,6 +19,7 @@
         # One file per Cloudflare zone, with the zone and its hand-written records.
         modules = [
           ./cloudflare.nix
+          ./tailscale.nix
         ]
         ++ map (file: ./zones + "/${file}") (builtins.attrNames (builtins.readDir ./zones));
       };
