@@ -51,6 +51,9 @@ in
       originUrl = "https://${cfg.url}/oauth2/oidc/callback";
       originLanding = "https://${cfg.url}/";
     };
-    homelab.ingress.routes."${cfg.url}".port = cfg.port;
+    homelab.ingress.routes."${cfg.url}" = {
+      port = cfg.port;
+      shortcut = cfg.shortcut;
+    };
   };
 }

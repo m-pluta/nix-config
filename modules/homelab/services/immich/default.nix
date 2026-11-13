@@ -21,6 +21,7 @@ in
     serviceLib.mkServiceOptions {
       port = 2283;
       url = "photos.${hl.mainDomain}";
+      shortcut = "photos";
       monitoredServices = [
         "immich-server"
         "immich-machine-learning"
@@ -80,7 +81,10 @@ in
       originLanding = "https://${cfg.url}/";
     };
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
-    homelab.ingress.routes."${cfg.url}".port = cfg.port;
+    homelab.ingress.routes."${cfg.url}" = {
+      port = cfg.port;
+      shortcut = cfg.shortcut;
+    };
   };
 
 }

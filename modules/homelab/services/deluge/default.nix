@@ -37,7 +37,10 @@ in
     users.users.${service}.extraGroups = [ "media" ];
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
 
-    homelab.ingress.routes."${cfg.url}".port = cfg.port;
+    homelab.ingress.routes."${cfg.url}" = {
+      port = cfg.port;
+      shortcut = cfg.shortcut;
+    };
 
     # Route torrent traffic through VPN namespace
     systemd = {

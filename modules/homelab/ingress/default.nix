@@ -100,6 +100,11 @@ let
         default = [ ];
         description = "Additional hostnames served by this vhost.";
       };
+      shortcut = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "One-word name that redirects to this route, such as git for http://git/.";
+      };
     };
   };
 in
@@ -199,6 +204,10 @@ in
           (lib.genAttrs' (lib.concatLists (lib.attrValues cfg.certificates)) (
             hostname: lib.nameValuePair "http://${hostname}" { extraConfig = "redir https://{host}{uri}"; }
           ))
+          # Redirect each route's shortcut to its full address.
+          (lib.mapAttrs' (
+            url: r: lib.nameValuePair "http://${r.shortcut}" { extraConfig = "redir https://${url}{uri}"; }
+          ) (lib.filterAttrs (_: r: r.shortcut != null) cfg.routes))
           # Answer 404 for any subdomain that has no route declared.
           {
             "*.${hl.mainDomain}" = {

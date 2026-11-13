@@ -13,6 +13,7 @@ in
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8096;
     url = "${service}.${hl.mainDomain}";
+    shortcut = "jellyfin";
     configDir = "/var/lib/${service}";
     homepage = {
       name = "Jellyfin";
@@ -44,7 +45,10 @@ in
     services.${service}.enable = true;
     users.users.${service}.extraGroups = [ "media" ];
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
-    homelab.ingress.routes."${cfg.url}".port = cfg.port;
+    homelab.ingress.routes."${cfg.url}" = {
+      port = cfg.port;
+      shortcut = cfg.shortcut;
+    };
   };
 
 }

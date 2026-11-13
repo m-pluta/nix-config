@@ -30,7 +30,10 @@ in
     };
     # The NixOS default from stateVersion 26.05
     systemd.services.${service}.serviceConfig.StateDirectory = lib.mkForce service;
-    homelab.ingress.routes."${cfg.url}".port = cfg.port;
+    homelab.ingress.routes."${cfg.url}" = {
+      port = cfg.port;
+      shortcut = cfg.shortcut;
+    };
   };
 
 }

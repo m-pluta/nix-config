@@ -30,6 +30,7 @@ in
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 3000;
     url = "git.${hl.mainDomain}";
+    shortcut = "git";
     homepage = {
       name = "Forgejo";
       description = "A painless, self-hosted Git service";
@@ -80,6 +81,7 @@ in
     };
     homelab.ingress.routes."${cfg.url}" = {
       port = cfg.port;
+      shortcut = cfg.shortcut;
       extraConfig = ''
         request_body {
           max_size 10GB

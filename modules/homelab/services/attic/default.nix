@@ -55,6 +55,7 @@ in
 
     homelab.ingress.routes.${cfg.url} = {
       port = cfg.port;
+      shortcut = cfg.shortcut;
       extraConfig = ''
         request_body {
           max_size 50GB

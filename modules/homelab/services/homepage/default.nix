@@ -15,6 +15,7 @@ in
     serviceLib.mkServiceOptions {
       port = 8082;
       url = "home.${hl.mainDomain}";
+      shortcut = "home";
       monitoredServices = [ upstream ];
       homepage = {
         name = "Homepage";
@@ -151,6 +152,9 @@ in
         })
         ++ [ { Misc = cfg.misc; } ];
     };
-    homelab.ingress.routes."${cfg.url}".port = cfg.port;
+    homelab.ingress.routes."${cfg.url}" = {
+      port = cfg.port;
+      shortcut = cfg.shortcut;
+    };
   };
 }

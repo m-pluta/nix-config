@@ -39,7 +39,8 @@ let
       lib.concatMap (
         host:
         lib.mapAttrsToList (
-          url: r: lib.genAttrs ([ url ] ++ r.serverAliases) (_: host)
+          url: r:
+          lib.genAttrs ([ url ] ++ r.serverAliases ++ lib.optional (r.shortcut != null) r.shortcut) (_: host)
         ) self.nixosConfigurations.${host}.config.homelab.ingress.routes
       ) hostNames
     );

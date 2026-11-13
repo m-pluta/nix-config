@@ -20,6 +20,9 @@ in
   config = lib.mkIf cfg.enable {
     services.${service}.enable = true;
     users.users.${service}.extraGroups = [ "media" ];
-    homelab.ingress.routes."${cfg.url}".port = cfg.port;
+    homelab.ingress.routes."${cfg.url}" = {
+      port = cfg.port;
+      shortcut = cfg.shortcut;
+    };
   };
 }

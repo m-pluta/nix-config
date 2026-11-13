@@ -78,6 +78,7 @@ in
     homelab.ingress.routes."${cfg.url}" = {
       upstream = "https://${listenAddress}";
       upstreamCertName = cfg.url;
+      shortcut = cfg.shortcut;
     };
   };
 }

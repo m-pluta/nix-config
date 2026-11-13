@@ -4,6 +4,7 @@
     {
       port ? null,
       url,
+      shortcut ? null,
       homepage,
       configDir ? null,
       monitoredServices ? null,
@@ -13,6 +14,11 @@
       url = lib.mkOption {
         type = lib.types.str;
         default = url;
+      };
+      shortcut = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = shortcut;
+        description = "One-word name that opens the service, such as git for http://git/.";
       };
       homepage = {
         name = lib.mkOption {

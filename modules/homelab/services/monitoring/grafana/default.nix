@@ -14,6 +14,7 @@ in
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 3000;
     url = "grafana.${hl.mainDomain}";
+    shortcut = "grafana";
     homepage = {
       name = "Grafana";
       description = "Platform for data analytics and monitoring";
@@ -74,7 +75,10 @@ in
           };
       };
     };
-    homelab.ingress.routes."${cfg.url}".port = cfg.port;
+    homelab.ingress.routes."${cfg.url}" = {
+      port = cfg.port;
+      shortcut = cfg.shortcut;
+    };
   };
 
 }

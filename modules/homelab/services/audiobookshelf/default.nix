@@ -23,7 +23,10 @@ in
       port = cfg.port;
     };
     users.users.${service}.extraGroups = [ "media" ];
-    homelab.ingress.routes."${cfg.url}".port = cfg.port;
+    homelab.ingress.routes."${cfg.url}" = {
+      port = cfg.port;
+      shortcut = cfg.shortcut;
+    };
   };
 
 }
