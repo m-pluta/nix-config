@@ -54,6 +54,7 @@ in
     homelab.ingress.routes."${cfg.url}" = {
       port = cfg.port;
       shortcut = cfg.shortcut;
+      forwardAuth = false;
     };
   };
 }

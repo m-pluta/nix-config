@@ -46,6 +46,7 @@ Router and network gateway
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/home-assistant.svg' width=32 height=32>|Home Assistant|Home automation platform|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/homepage.png' width=32 height=32>|Homepage|Dashboard for the services|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/kanidm.svg' width=32 height=32>|Kanidm|Identity and login|Services|
+|<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/oauth2-proxy.svg' width=32 height=32>|Login proxy 🔒|Kanidm login in front of services|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/uptime-kuma.svg' width=32 height=32>|Uptime Kuma|Service monitoring tool|Services|
 
 
