@@ -7,6 +7,7 @@
     groups = [
       "miniflux.access"
       "forgejo.access"
+      "nextcloud.access"
       "immich.access"
       "grafana.access"
     ];
