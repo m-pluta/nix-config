@@ -8,6 +8,7 @@
       "miniflux.access"
       "forgejo.access"
       "nextcloud.access"
+      "paperless.access"
       "immich.access"
       "grafana.access"
     ];
