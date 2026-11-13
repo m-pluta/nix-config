@@ -112,7 +112,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        host: ${{ fromJSON(needs.list-hosts.outputs.all-hosts) }}
+        host: ${{ fromJSON(needs.list-hosts.outputs.all-hosts || '[]') }}
     env:
       HOST: ${{ matrix.host }}
       MARKER: "<!-- diff:${{ matrix.host }} -->"
@@ -205,7 +205,7 @@ jobs:
 
   merge:
     name: Ready to Merge
-    if: always()
+    if: github.event_name == 'pull_request' && always()
     needs:
       - lint
       - list-hosts
