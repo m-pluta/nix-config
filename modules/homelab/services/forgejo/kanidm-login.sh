@@ -10,7 +10,7 @@ args=(
   --skip-local-2fa
 )
 
-id=$(forgejo admin auth list --vertical-bars | awk -F'|' '{ gsub(/ /, ""); if ($2 == "kanidm") print $1 }')
+id=$(forgejo admin auth list --vertical-bars | awk -F'|' '{ gsub(/[[:space:]]/, ""); if ($2 == "kanidm") print $1 }')
 if [ -n "$id" ]; then
   forgejo admin auth update-oauth --id "$id" "${args[@]}"
 else
