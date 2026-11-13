@@ -78,6 +78,8 @@ in
     };
 
     virtualisation.podman.enable = true;
+    # Job containers deploy to this host over its own LAN address.
+    networking.firewall.interfaces.podman0.allowedTCPPorts = [ 22 ];
     services.gitea-actions-runner = {
       package = pkgs.forgejo-runner;
       instances.default = {
