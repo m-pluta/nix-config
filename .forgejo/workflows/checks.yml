@@ -211,11 +211,12 @@ jobs:
       - list-hosts
       - build
       - readme
+      - diff
     runs-on: nix
     steps:
       - name: Check the results
         run: |
           for result in "${{ needs.lint.result }}" "${{ needs.list-hosts.result }}" \
-            "${{ needs.build.result }}" "${{ needs.readme.result }}"; do
+            "${{ needs.build.result }}" "${{ needs.readme.result }}" "${{ needs.diff.result }}"; do
             [ "$result" = success ] || { echo "A needed job ended with: $result"; exit 1; }
           done
