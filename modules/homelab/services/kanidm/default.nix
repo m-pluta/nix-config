@@ -67,7 +67,17 @@ in
         instanceUrl = "https://${listenAddress}";
         acceptInvalidCerts = true;
         idmAdminPasswordFile = idmAdminPassword;
-        persons = import ./people.nix;
+        persons = lib.mapAttrs (
+          _: person:
+          removeAttrs person [ "allServices" ]
+          // {
+            groups =
+              (person.groups or [ ])
+              ++ lib.optionals (person.allServices or false) (
+                map (name: "${name}.access") (lib.attrNames hl.sso.allClients)
+              );
+          }
+        ) (import ./people.nix);
       };
     };
     # systemd hands Kanidm private copies of the certificate files at each start.
