@@ -28,6 +28,7 @@ in
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 8443;
     url = "id.${hl.mainDomain}";
+    shortcut = "id";
     homepage = {
       name = "Kanidm";
       description = "Identity and login";
