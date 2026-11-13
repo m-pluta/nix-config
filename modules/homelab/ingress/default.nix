@@ -8,6 +8,15 @@ let
   hl = config.homelab;
   cfg = hl.ingress;
 
+  # Addresses of this host's services that have their own Kanidm login. Their routes need
+  # no forward auth.
+  ssoUrls = lib.filter (url: url != null) (
+    map (name: lib.attrByPath [ name "url" ] null hl.services) (lib.attrNames hl.sso.clients)
+  );
+
+  # Where oauth2-proxy answers, and where it sends people to log in.
+  authUrl = hl.services.oauth2-proxy.url;
+
   lan = hl.networks.${config.networking.hostName}.lan.v4 or null;
   lanInterface = hl.networks.${config.networking.hostName}.lan.interface or null;
 
@@ -51,6 +60,18 @@ let
       (throw "homelab.ingress: no certificate on ${config.networking.hostName} covers ${name}")
       (lib.sort (a: b: depth a > depth b) (lib.attrNames cfg.certificates));
 
+  # Ask oauth2-proxy whether the request has a Kanidm login. It answers 401 when it has
+  # none, and then the visitor goes to oauth2-proxy to log in and comes back.
+  forwardAuth = ''
+    forward_auth https://${authUrl} {
+      uri /oauth2/auth
+      @unauthorized status 401
+      handle_response @unauthorized {
+        redir https://${authUrl}/oauth2/start?rd={scheme}://{host}{uri}
+      }
+    }
+  '';
+
   # Build the Caddy virtual host for one route. It terminates TLS with the certificate
   # covering its hostname and, when `upstream` is set, proxies requests to it. When
   # `upstream` is null, only the route's own extraConfig is used, which allows vhosts
@@ -58,55 +79,73 @@ let
   mkIngressVhost = url: r: upstream: {
     useACMEHost = certFor url r.serverAliases;
     serverAliases = r.serverAliases;
-    extraConfig = lib.concatStringsSep "\n" (
-      lib.filter (s: s != "") [
-        (lib.optionalString (upstream != null) (mkReverseProxy upstream r.upstreamCertName))
-        r.extraConfig
-      ]
-    );
+    extraConfig =
+      let
+        body = lib.concatStringsSep "\n" (
+          lib.filter (s: s != "") [
+            (lib.optionalString (upstream != null) (mkReverseProxy upstream r.upstreamCertName))
+            r.extraConfig
+          ]
+        );
+      in
+      # A route block keeps the directives in the order written, so the check comes first.
+      if r.forwardAuth then "route {\n${forwardAuth}${body}\n}" else body;
   };
 
-  routeType = lib.types.submodule {
-    options = {
-      port = lib.mkOption {
-        type = lib.types.nullOr lib.types.port;
-        default = null;
-        description = ''
-          Service port on 127.0.0.1 that Caddy forwards to. null with no `upstream` = a non-proxy
-          vhost rendered verbatim from `extraConfig` (e.g. static file serving).
-        '';
+  routeType = lib.types.submodule (
+    { name, ... }:
+    {
+      options = {
+        port = lib.mkOption {
+          type = lib.types.nullOr lib.types.port;
+          default = null;
+          description = ''
+            Service port on 127.0.0.1 that Caddy forwards to. null with no `upstream` = a non-proxy
+            vhost rendered verbatim from `extraConfig` (e.g. static file serving).
+          '';
+        };
+        upstream = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = "unix//run/gitlab/gitlab-workhorse.socket";
+          description = ''
+            Caddy upstream address to forward to, for services that do not listen on a
+            loopback port. Takes precedence over `port`.
+          '';
+        };
+        upstreamCertName = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = "Name to verify an HTTPS upstream's certificate against.";
+        };
+        extraConfig = lib.mkOption {
+          type = lib.types.lines;
+          default = "";
+          description = "Extra Caddy directives for this vhost.";
+        };
+        serverAliases = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [ ];
+          description = "Additional hostnames served by this vhost.";
+        };
+        shortcut = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = "One-word name that redirects to this route, such as git for http://git/.";
+        };
+        forwardAuth = lib.mkOption {
+          type = lib.types.bool;
+          default = !(lib.elem name ssoUrls);
+          defaultText = lib.literalMD "`true`, unless the route belongs to a service with its own Kanidm login";
+          description = ''
+            Require a Kanidm login through oauth2-proxy before Caddy forwards a request to
+            this route. Turn it off for the login pages themselves, for apps and machines
+            that cannot follow a login redirect, and for public pages.
+          '';
+        };
       };
-      upstream = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        example = "unix//run/gitlab/gitlab-workhorse.socket";
-        description = ''
-          Caddy upstream address to forward to, for services that do not listen on a
-          loopback port. Takes precedence over `port`.
-        '';
-      };
-      upstreamCertName = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        description = "Name to verify an HTTPS upstream's certificate against.";
-      };
-      extraConfig = lib.mkOption {
-        type = lib.types.lines;
-        default = "";
-        description = "Extra Caddy directives for this vhost.";
-      };
-      serverAliases = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        description = "Additional hostnames served by this vhost.";
-      };
-      shortcut = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        description = "One-word name that redirects to this route, such as git for http://git/.";
-      };
-    };
-  };
+    }
+  );
 in
 {
   options.homelab = {

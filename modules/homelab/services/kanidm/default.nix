@@ -80,6 +80,7 @@ in
       upstream = "https://${listenAddress}";
       upstreamCertName = cfg.url;
       shortcut = cfg.shortcut;
+      forwardAuth = false;
     };
   };
 }

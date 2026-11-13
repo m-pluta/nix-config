@@ -87,22 +87,29 @@ in
         in
         {
           ${domain} = {
+            forwardAuth = false;
             serverAliases = [
               "www.${domain}"
               "prod.${domain}"
             ];
             extraConfig = serve "${sitesDir}/${domain}/prod";
           };
-          "qa.${domain}".extraConfig = serve "${sitesDir}/${domain}/qa";
-          "*.sandbox.${domain}".extraConfig = ''
-            @sandbox vars_regexp {labels.${sandboxLabel}} ^pr-[0-9]+$
-            handle @sandbox {
-              ${serve "${sitesDir}/${domain}/sandbox/{labels.${sandboxLabel}}"}
-            }
-            handle {
-              respond 404
-            }
-          '';
+          "qa.${domain}" = {
+            forwardAuth = false;
+            extraConfig = serve "${sitesDir}/${domain}/qa";
+          };
+          "*.sandbox.${domain}" = {
+            forwardAuth = false;
+            extraConfig = ''
+              @sandbox vars_regexp {labels.${sandboxLabel}} ^pr-[0-9]+$
+              handle @sandbox {
+                ${serve "${sitesDir}/${domain}/sandbox/{labels.${sandboxLabel}}"}
+              }
+              handle {
+                respond 404
+              }
+            '';
+          };
         }
       ) cfg
     );

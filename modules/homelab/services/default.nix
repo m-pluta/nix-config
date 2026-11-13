@@ -58,6 +58,7 @@ in
     ./monitoring/grafana
     ./monitoring/victoriametrics
     ./navidrome
+    ./oauth2-proxy
     ./nextcloud
     ./paperless-ngx
     ./plausible
