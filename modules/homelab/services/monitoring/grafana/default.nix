@@ -55,6 +55,7 @@ in
           domain = cfg.url;
           root_url = "https://${cfg.url}/";
         };
+        auth.disable_login_form = true;
         "auth.generic_oauth" =
           let
             kanidm = "https://${hl.services.kanidm.url}";

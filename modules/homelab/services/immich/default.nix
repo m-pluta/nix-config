@@ -53,6 +53,7 @@ in
       # Immich's whole config, including settings once changed in the admin UI
       settings = {
         storageTemplate.enabled = true;
+        passwordLogin.enabled = false;
         server.externalDomain = "https://${cfg.url}";
         oauth = {
           enabled = true;

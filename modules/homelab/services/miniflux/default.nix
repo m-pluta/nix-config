@@ -39,6 +39,7 @@ in
         OAUTH2_CLIENT_SECRET_FILE = "/run/credentials/${service}.service/kanidm-secret";
         OAUTH2_REDIRECT_URL = "https://${cfg.url}/oauth2/oidc/callback";
         OAUTH2_USER_CREATION = 1;
+        DISABLE_LOCAL_AUTH = 1;
       };
     };
     age.secrets."${service}-kanidm-secret".file =
