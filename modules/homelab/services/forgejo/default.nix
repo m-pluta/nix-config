@@ -65,10 +65,12 @@ in
         log = {
           LEVEL = "Trace";
         };
-        # New accounts only through Kanidm
+        # New accounts and sign-ins only through Kanidm
         service = {
           ALLOW_ONLY_EXTERNAL_REGISTRATION = true;
           SHOW_REGISTRATION_BUTTON = false;
+          ENABLE_INTERNAL_SIGNIN = false;
+          ENABLE_BASIC_AUTHENTICATION = false;
           ENABLE_NOTIFY_MAIL = true;
           REGISTER_EMAIL_CONFIRM = true;
         };
