@@ -6,6 +6,7 @@
 }:
 let
   service = "traces";
+  serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.${service};
   forgejo = hl.services.forgejo;
@@ -26,49 +27,36 @@ let
   };
 in
 {
-  options.homelab.services.${service} = {
-    enable = lib.mkEnableOption "trace viewers";
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "traces.${hl.mainDomain}";
-    };
-    perfetto.enable = lib.mkEnableOption "the Perfetto UI at /perfetto/";
-    speedscope.enable = lib.mkEnableOption "the Speedscope UI at /speedscope/";
-    forgejo = {
-      enable = lib.mkEnableOption ''
-        serving Forgejo release attachments named timings.json under
-        /releases/<owner>/<repo>/<tag>/timings.json, so release notes can link straight to
-        a trace
-      '';
-      tokenFile = lib.mkOption {
-        type = lib.types.nullOr lib.types.path;
-        default = null;
-        description = ''
-          Environment file setting FORGEJO_TRACES_TOKEN to a read-only Forgejo token, used
-          to fetch traces from private repositories. Without it, only public repositories'
-          traces can be opened.
+  options.homelab.services.${service} =
+    serviceLib.mkServiceOptions {
+      url = "traces.${hl.mainDomain}";
+      homepage = {
+        name = "Traces";
+        description = "Trace viewers";
+        icon = "chrome-devtools.svg";
+        category = "Services";
+      };
+    }
+    // {
+      perfetto.enable = lib.mkEnableOption "the Perfetto UI at /perfetto/";
+      speedscope.enable = lib.mkEnableOption "the Speedscope UI at /speedscope/";
+      forgejo = {
+        enable = lib.mkEnableOption ''
+          serving Forgejo release attachments named timings.json under
+          /releases/<owner>/<repo>/<tag>/timings.json, so release notes can link straight to
+          a trace
         '';
+        tokenFile = lib.mkOption {
+          type = lib.types.nullOr lib.types.path;
+          default = null;
+          description = ''
+            Environment file setting FORGEJO_TRACES_TOKEN to a read-only Forgejo token, used
+            to fetch traces from private repositories. Without it, only public repositories'
+            traces can be opened.
+          '';
+        };
       };
     };
-    homepage = {
-      name = lib.mkOption {
-        type = lib.types.str;
-        default = "Traces";
-      };
-      description = lib.mkOption {
-        type = lib.types.str;
-        default = "Trace viewers";
-      };
-      icon = lib.mkOption {
-        type = lib.types.str;
-        default = "chrome-devtools.svg";
-      };
-      category = lib.mkOption {
-        type = lib.types.str;
-        default = "Services";
-      };
-    };
-  };
 
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
