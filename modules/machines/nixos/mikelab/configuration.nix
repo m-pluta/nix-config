@@ -75,6 +75,7 @@ in
   # Gigabyte's ACPI claims the chip's I/O ports, which otherwise blocks the driver
   boot.extraModprobeConfig = "options it87 ignore_resource_conflict=1";
   zramSwap.enable = true;
+  services.udisks2.enable = true;
   environment.systemPackages = with pkgs; [
     libva-utils
     nvtopPackages.full

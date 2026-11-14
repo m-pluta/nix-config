@@ -94,6 +94,7 @@
     iperf3
     nmap
     rsync
+    ookla-speedtest
 
     # System monitoring
     btop
@@ -106,5 +107,7 @@
     pciutils
     usbutils
     smartmontools
+    stress-ng
+    parted
   ];
 }

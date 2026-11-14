@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   nixpkgs = {
     overlays = [ ];
@@ -12,6 +12,7 @@
     username = "mikey";
     homeDirectory = "/home/mikey";
     stateVersion = "25.11";
+    packages = [ pkgs.helix ];
   };
 
   imports = [
