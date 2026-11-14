@@ -48,7 +48,7 @@ in
         enable = true;
         settings = {
           origin = "https://${cfg.url}";
-          domain = cfg.url;
+          domain = hl.mainDomain;
           bindaddress = listenAddress;
           # Kanidm only serves HTTPS, so it reuses the ingress wildcard certificate.
           tls_chain = "/run/credentials/kanidm.service/tls_chain";
