@@ -221,6 +221,26 @@
         "type": "github"
       }
     },
+    "nix-typstdrive": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794718764,
+        "narHash": "sha256-DtefPjRQgpBR7chd9k1D27ss/Of+FdnbGPsGNPuqOcA=",
+        "ref": "refs/heads/main",
+        "rev": "b13386e26b1b77fa57db10774b9e1aef1a894e60",
+        "revCount": 1,
+        "type": "git",
+        "url": "https://git.mpluta.dev/mikey/nix-typstdrive"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.mpluta.dev/mikey/nix-typstdrive"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1793865203,
@@ -263,6 +283,7 @@
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "nix-index-database": "nix-index-database",
+        "nix-typstdrive": "nix-typstdrive",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "secrets": "secrets",

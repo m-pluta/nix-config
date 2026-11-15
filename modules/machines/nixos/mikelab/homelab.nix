@@ -57,6 +57,7 @@
       vaultwarden.enable = true;
       paperless.enable = true;
       nextcloud.enable = true;
+      typstdrive.enable = true;
       navidrome = {
         enable = true;
         mediaDir = "/tank/media/library/music";

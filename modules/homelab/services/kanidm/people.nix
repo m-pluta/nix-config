@@ -11,6 +11,7 @@
       "paperless.access"
       "immich.access"
       "grafana.access"
+      "typstdrive.access"
     ];
   };
 }

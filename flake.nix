@@ -51,6 +51,10 @@
       url = "github:terranix/terranix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-typstdrive = {
+      url = "git+https://git.mpluta.dev/mikey/nix-typstdrive";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     secrets = {
       url = "git+ssh://forgejo@git.mpluta.dev/mikey/nix-secrets.git";
       flake = false;

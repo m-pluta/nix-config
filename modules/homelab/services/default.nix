@@ -63,6 +63,7 @@ in
     ./plausible
     ./sabnzbd
     ./traces
+    ./typstdrive
     ./uptime-kuma
     ./vaultwarden
   ];
