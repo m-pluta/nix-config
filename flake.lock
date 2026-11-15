@@ -208,11 +208,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794713337,
-        "narHash": "sha256-Ej9dFOzKbO1W1kNyIWABNcQnVDGyAUx7haEXjgT8KsQ=",
+        "lastModified": 1794715064,
+        "narHash": "sha256-FyTpkepkEe909JwAkV6PztwmgEHEPPLZ83GKfNlGn2s=",
         "ref": "testing",
-        "rev": "86e0f7c0b3667dc3857193d08ded8485aa6f75cf",
-        "revCount": 2,
+        "rev": "61f289745d22ef21638dd8eff10ef4a3a938c488",
+        "revCount": 3,
         "type": "git",
         "url": "https://git.mpluta.dev/mikey/nix-euro-office"
       },
