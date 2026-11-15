@@ -51,6 +51,10 @@
       url = "github:terranix/terranix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-euro-office = {
+      url = "git+https://git.mpluta.dev/mikey/nix-euro-office?ref=testing";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     secrets = {
       url = "git+ssh://forgejo@git.mpluta.dev/mikey/nix-secrets.git";
       flake = false;

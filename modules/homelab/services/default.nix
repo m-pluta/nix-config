@@ -45,6 +45,7 @@ in
     ./attic
     ./audiobookshelf
     ./deluge
+    ./euro-office
     ./forgejo
     ./forgejo-runner
     ./home-assistant
