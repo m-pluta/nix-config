@@ -19,9 +19,14 @@ let
       service:
       let
         format = icon: if lib.strings.hasSuffix "svg" icon then "svg" else "png";
-        iconlink =
+        # si- icons come from Simple Icons, in the brand colour.
+        iconUrl =
           icon:
-          "<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/${format icon}/${icon}' width=32 height=32>";
+          if lib.strings.hasPrefix "si-" icon then
+            "https://cdn.simpleicons.org/${lib.strings.removePrefix "si-" icon}"
+          else
+            "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/${format icon}/${icon}";
+        iconlink = icon: "<img src='${iconUrl icon}' width=32 height=32>";
         serviceConfig = (hl hostname).services.${service}.homepage;
         name = serviceConfig.name + lib.optionalString ((hl hostname).sso.clients ? ${service}) " 🔒";
       in

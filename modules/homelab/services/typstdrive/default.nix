@@ -22,7 +22,7 @@ in
     homepage = {
       name = "TypstDrive";
       description = "Typst editor";
-      icon = "overleaf.svg";
+      icon = "si-typst";
       category = "Services";
     };
   };

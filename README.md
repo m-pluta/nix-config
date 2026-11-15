@@ -35,7 +35,7 @@ Primary server hosting storage and the self-hosted services
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/seerr.svg' width=32 height=32>|Seerr|Media request and discovery manager|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/sonarr.svg' width=32 height=32>|Sonarr|TV show collection manager|Arr|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/chrome-devtools.svg' width=32 height=32>|Traces|Trace viewers|Services|
-|<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/overleaf.svg' width=32 height=32>|TypstDrive 🔒|Typst editor|Services|
+|<img src='https://cdn.simpleicons.org/typst' width=32 height=32>|TypstDrive 🔒|Typst editor|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/bitwarden.svg' width=32 height=32>|Vaultwarden|Password manager|Services|
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/victoriametrics.svg' width=32 height=32>|VictoriaMetrics|Time series database and monitoring|Observability|
 
