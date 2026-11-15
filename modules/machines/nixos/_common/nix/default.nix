@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  inputs,
+  ...
+}:
 {
   nix = {
     settings = {
@@ -28,6 +33,9 @@
       automatic = true;
       dates = [ "daily" ];
     };
+
+    # Keeps the nixpkgs-unstable source on the host, so the nightly GC does not delete it.
+    registry.nixpkgs-unstable.flake = inputs.nixpkgs-unstable;
   };
 
   nixpkgs = {
