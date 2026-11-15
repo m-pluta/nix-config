@@ -7,4 +7,5 @@ nextcloud-occ app:enable eurooffice
 
 nextcloud-occ config:app:set eurooffice DocumentServerUrl --value="$DOCUMENT_SERVER_URL"
 nextcloud-occ config:app:set eurooffice StorageUrl --value="$NEXTCLOUD_URL"
-nextcloud-occ config:app:set eurooffice jwt_secret --value="$(< "$CREDENTIALS_DIRECTORY/jwt")"
+# occ prints the value it sets, so its output does not go to the journal.
+nextcloud-occ config:app:set eurooffice jwt_secret --value="$(< "$CREDENTIALS_DIRECTORY/jwt")" >/dev/null
