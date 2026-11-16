@@ -1,5 +1,5 @@
-# SSO login clients. Each service declares its own on the host that runs it. The host that
-# runs Kanidm creates them all.
+# SSO login clients. Each service declares its own on every host when it runs on one of
+# them. The host that runs Kanidm creates them all.
 {
   config,
   lib,
@@ -61,16 +61,10 @@ in
       type = lib.types.attrsOf clientType;
       default = { };
       description = ''
-        Kanidm login clients for services on this host. Each needs a secret in nix-secrets
-        at services/kanidm/clients/<name>.age, readable by this host and Kanidm's, and
-        only members of the <name>.access group can log in.
+        Kanidm login clients for the services that run on any host. Each needs a secret in
+        nix-secrets at services/kanidm/clients/<name>.age, readable by the service's host and
+        Kanidm's, and only members of the <name>.access group can log in.
       '';
-    };
-    allClients = lib.mkOption {
-      type = lib.types.attrsOf lib.types.attrs;
-      default = { };
-      internal = true;
-      description = "Every host's clients, filled in from the flake.";
     };
   };
 
@@ -81,10 +75,10 @@ in
         file = "${inputs.secrets}/services/kanidm/clients/${name}.age";
         owner = "kanidm";
       }
-    ) hl.sso.allClients;
+    ) hl.sso.clients;
 
     services.kanidm.provision = {
-      groups = lib.mapAttrs' (name: _: lib.nameValuePair "${name}.access" { }) hl.sso.allClients;
+      groups = lib.mapAttrs' (name: _: lib.nameValuePair "${name}.access" { }) hl.sso.clients;
       systems.oauth2 = lib.mapAttrs (
         name: client:
         {
@@ -95,7 +89,7 @@ in
           scopeMaps."${name}.access" = client.scopes;
         }
         // client.settings
-      ) hl.sso.allClients;
+      ) hl.sso.clients;
     };
   };
 }

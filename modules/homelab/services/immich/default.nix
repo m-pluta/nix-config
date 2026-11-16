@@ -38,54 +38,58 @@ in
         type = lib.types.path;
       };
     };
-  config = lib.mkIf cfg.enable {
-    users.users.${service}.extraGroups = [
-      "media"
-      "video"
-      "render"
-    ];
-    services.${service} = {
-      enable = true;
-      package = unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.immich;
-      host = "127.0.0.1";
-      port = cfg.port;
-      mediaLocation = "${cfg.mediaDir}";
-      # Immich's whole config, including settings once changed in the admin UI
-      settings = {
-        storageTemplate.enabled = true;
-        passwordLogin.enabled = false;
-        server.externalDomain = "https://${cfg.url}";
-        oauth = {
-          enabled = true;
-          buttonText = "Log in with Kanidm";
-          issuerUrl = "https://${hl.services.kanidm.url}/oauth2/openid/${service}";
-          clientId = service;
-          clientSecret._secret = config.age.secrets."${service}-kanidm-secret".path;
-          scope = "openid email profile";
-          signingAlgorithm = "ES256";
-          autoRegister = true;
-          # Mobile app logins return through this page
-          mobileOverrideEnabled = true;
-          mobileRedirectUri = "https://${cfg.url}/api/oauth/mobile-redirect";
+  config = lib.mkMerge [
+    # On every host, so the host that runs Kanidm can create the client
+    (lib.mkIf (hl.serviceHosts ? ${service}) {
+      homelab.sso.clients.${service} = {
+        displayName = "Immich";
+        originUrl = [
+          "https://${cfg.url}/auth/login"
+          "https://${cfg.url}/user-settings"
+          "https://${cfg.url}/api/oauth/mobile-redirect"
+        ];
+        originLanding = "https://${cfg.url}/";
+      };
+    })
+    (lib.mkIf cfg.enable {
+      users.users.${service}.extraGroups = [
+        "media"
+        "video"
+        "render"
+      ];
+      services.${service} = {
+        enable = true;
+        package = unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.immich;
+        host = "127.0.0.1";
+        port = cfg.port;
+        mediaLocation = "${cfg.mediaDir}";
+        # Immich's whole config, including settings once changed in the admin UI
+        settings = {
+          storageTemplate.enabled = true;
+          passwordLogin.enabled = false;
+          server.externalDomain = "https://${cfg.url}";
+          oauth = {
+            enabled = true;
+            buttonText = "Log in with Kanidm";
+            issuerUrl = "https://${hl.services.kanidm.url}/oauth2/openid/${service}";
+            clientId = service;
+            clientSecret._secret = config.age.secrets."${service}-kanidm-secret".path;
+            scope = "openid email profile";
+            signingAlgorithm = "ES256";
+            autoRegister = true;
+            # Mobile app logins return through this page
+            mobileOverrideEnabled = true;
+            mobileRedirectUri = "https://${cfg.url}/api/oauth/mobile-redirect";
+          };
         };
       };
-    };
-    age.secrets."${service}-kanidm-secret".file =
-      "${inputs.secrets}/services/kanidm/clients/${service}.age";
-    homelab.sso.clients.${service} = {
-      displayName = "Immich";
-      originUrl = [
-        "https://${cfg.url}/auth/login"
-        "https://${cfg.url}/user-settings"
-        "https://${cfg.url}/api/oauth/mobile-redirect"
-      ];
-      originLanding = "https://${cfg.url}/";
-    };
-    systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
-    homelab.ingress.routes."${cfg.url}" = {
-      port = cfg.port;
-      shortcut = cfg.shortcut;
-    };
-  };
-
+      age.secrets."${service}-kanidm-secret".file =
+        "${inputs.secrets}/services/kanidm/clients/${service}.age";
+      systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
+      homelab.ingress.routes."${cfg.url}" = {
+        port = cfg.port;
+        shortcut = cfg.shortcut;
+      };
+    })
+  ];
 }
