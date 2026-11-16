@@ -8,6 +8,11 @@ let
   hl = config.homelab;
   cfg = hl.ingress;
 
+  # The addresses of the routes on each port
+  routesByPort = lib.groupBy' (urls: url: urls ++ [ url ]) [ ] (
+    url: toString cfg.routes.${url}.port
+  ) (lib.attrNames (lib.filterAttrs (_: r: r.port != null) cfg.routes));
+
   lan = hl.networks.${config.networking.hostName}.lan.v4 or null;
   lanInterface = hl.networks.${config.networking.hostName}.lan.interface or null;
 
@@ -142,7 +147,12 @@ in
           assertion = lan != null;
           message = "homelab.networks.${config.networking.hostName}.lan must be set so the ingress is served on the LAN";
         }
-      ];
+      ]
+      # Two routes on one port
+      ++ lib.mapAttrsToList (port: urls: {
+        assertion = lib.length urls == 1;
+        message = "homelab.ingress: ${lib.concatStringsSep " and " urls} use the same port, ${port}, on ${config.networking.hostName}.";
+      }) routesByPort;
 
       # Environment file holding CF_DNS_API_TOKEN and CF_API_EMAIL, which ACME uses to
       # prove domain ownership through Cloudflare DNS (the DNS-01 challenge).
