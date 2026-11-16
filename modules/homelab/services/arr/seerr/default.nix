@@ -14,7 +14,7 @@ in
     port = 5055;
     url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
-    monitoredServices = [ service ];
+    monitoredServices = [ "seerr.service" ];
     homepage = {
       name = "Seerr";
       description = "Media request and discovery manager";

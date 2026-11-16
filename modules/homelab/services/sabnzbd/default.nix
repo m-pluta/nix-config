@@ -14,6 +14,7 @@ in
     port = 8080;
     url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
+    monitoredServices = [ "sabnzbd.service" ];
     homepage = {
       name = "SABnzbd";
       description = "The free and easy binary newsreader";

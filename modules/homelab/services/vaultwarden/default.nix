@@ -10,6 +10,7 @@ in
     port = 8222;
     url = "pass.${hl.mainDomain}";
     configDir = "/var/lib/bitwarden_rs";
+    monitoredServices = [ "vaultwarden.service" ];
     homepage = {
       name = "Vaultwarden";
       description = "Password manager";

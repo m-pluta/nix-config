@@ -29,6 +29,7 @@ in
     port = 8443;
     url = "id.${hl.mainDomain}";
     shortcut = "id";
+    monitoredServices = [ "kanidm.service" ];
     homepage = {
       name = "Kanidm";
       description = "Identity and login";

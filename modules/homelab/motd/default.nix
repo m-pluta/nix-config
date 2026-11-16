@@ -11,16 +11,10 @@ let
 
   # Collect enabled homelab services and their monitored systemd units
   enabledServices = lib.filterAttrs (
-    _name: value: value != "enable" && value ? enable && value.enable
+    name: value: name != "enable" && lib.isAttrs value && value.enable or false
   ) hl.services;
 
-  monitoredServices = lib.concatMap (
-    name:
-    let
-      svc = enabledServices.${name};
-    in
-    if svc ? monitoredServices then svc.monitoredServices else [ name ]
-  ) (lib.attrNames enabledServices);
+  monitoredServices = lib.concatMap (svc: svc.monitoredServices) (lib.attrValues enabledServices);
 
   motd = pkgs.writeShellScriptBin "motd" ''
     #! /usr/bin/env bash
@@ -29,6 +23,7 @@ let
     RED="\e[31m"
     GREEN="\e[32m"
     YELLOW="\e[33m"
+    GREY="\e[90m"
     BOLD="\e[1m"
     ENDCOLOR="\e[0m"
 
@@ -74,13 +69,23 @@ let
     LOAD15=$(cat /proc/loadavg | awk {'print $3'})
     MEMORY=$(free -m | awk 'NR==2{printf "%s/%sMB (%.2f%%)\n", $3,$2,$3*100 / $2 }')
     uptime=$(cat /proc/uptime | cut -f1 -d.)
-    upDays=$((uptime/60/60/24))
+    upWeeks=$((uptime/60/60/24/7))
+    upDays=$((uptime/60/60/24%7))
     upHours=$((uptime/60/60%24))
     upMins=$((uptime/60%60))
     upSecs=$((uptime%60))
+    # Starts at the largest unit that is not 0
+    upText=""
+    for part in "$upWeeks"w "$upDays"d "$upHours"h "$upMins"m "$upSecs"s; do
+      if [ -n "$upText" ] || [ "''${part%?}" -gt 0 ]; then
+        upText="$upText $part"
+      fi
+    done
+    upText="''${upText# }"
+    upText="''${upText:-0s}"
     print_info "CPU usage" "$LOAD1, $LOAD5, $LOAD15 (1, 5, 15 min)"
     print_info "Memory" "$MEMORY"
-    print_info "System uptime" "$upDays days $upHours hours $upMins minutes $upSecs seconds"
+    print_info "System uptime" "$upText"
 
     # GPU status
     # Walks PCI display devices rather than DRM cards, so a GPU whose driver failed to probe still shows up
@@ -147,21 +152,23 @@ let
     }
     function get_service_status() {
       if systemctl is-active --quiet "$1"; then
-        printf "$GREEN• $ENDCOLOR%-''${PAD}s $GREEN[active]$ENDCOLOR\n" "$1"
+        COLOR=$GREEN STATE=active
       elif systemctl is-failed --quiet "$1"; then
-        printf "$RED• $ENDCOLOR%-''${PAD}s $RED[failed]$ENDCOLOR\n" "$1"
+        COLOR=$RED STATE=failed
       else
-        printf "$YELLOW• $ENDCOLOR%-''${PAD}s $YELLOW[unknown]$ENDCOLOR\n" "$1"
+        COLOR=$YELLOW STATE=unknown
       fi
+      # The unit name, then its type in grey and brackets, right next to the status
+      NAME="''${1%.*}" TYPE="(''${1##*.})"
+      printf "$COLOR• $ENDCOLOR%s%*s$GREY%s$ENDCOLOR $COLOR[%s]$ENDCOLOR\n" \
+        "$NAME" $((PAD - ''${#NAME} - ''${#TYPE})) "" "$TYPE" "$STATE"
     }
     ${lib.strings.concatStrings (lib.lists.forEach monitoredServices (x: "get_service_status ${x}\n"))}
   '';
 in
 {
   options.homelab.${service} = {
-    enable = lib.mkEnableOption {
-      description = "motd Greeting";
-    };
+    enable = lib.mkEnableOption "the login greeting (motd)";
     networkInterfaces = lib.mkOption {
       description = "Network interfaces to monitor";
       type = lib.types.listOf lib.types.str;
@@ -169,6 +176,10 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
+    assertions = map (unit: {
+      assertion = config.systemd.units ? ${unit};
+      message = "homelab.motd: the unit ${unit} is listed in monitoredServices but does not exist on ${config.networking.hostName}.";
+    }) monitoredServices;
     environment.systemPackages = [ motd ];
     programs.bash.interactiveShellInit = ''
       ${motd}/bin/motd

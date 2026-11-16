@@ -23,8 +23,8 @@ in
       url = "photos.${hl.mainDomain}";
       shortcut = "photos";
       monitoredServices = [
-        "immich-server"
-        "immich-machine-learning"
+        "immich-server.service"
+        "immich-machine-learning.service"
       ];
       homepage = {
         name = "Immich";

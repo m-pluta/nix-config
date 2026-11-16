@@ -15,6 +15,7 @@ in
     serviceLib.mkServiceOptions {
       port = 8428;
       url = "vm.${hl.mainDomain}";
+      monitoredServices = [ "victoriametrics.service" ];
       homepage = {
         name = "VictoriaMetrics";
         description = "Time series database and monitoring";

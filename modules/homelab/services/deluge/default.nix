@@ -23,9 +23,9 @@ in
     };
     configDir = "/var/lib/${service}";
     monitoredServices = [
-      "delugeweb"
-      "deluged-proxy"
-      "deluged"
+      "delugeweb.service"
+      "deluged-proxy.socket"
+      "deluged.service"
     ];
   };
   config = lib.mkIf cfg.enable {

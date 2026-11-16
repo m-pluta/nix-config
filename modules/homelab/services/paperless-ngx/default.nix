@@ -20,10 +20,10 @@ in
     url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
     monitoredServices = [
-      "paperless-consumer"
-      "paperless-scheduler"
-      "paperless-task-queue"
-      "paperless-web"
+      "paperless-consumer.service"
+      "paperless-scheduler.service"
+      "paperless-task-queue.service"
+      "paperless-web.service"
     ];
     homepage = {
       name = "Paperless-ngx";

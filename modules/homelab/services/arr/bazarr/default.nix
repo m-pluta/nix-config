@@ -10,6 +10,7 @@ in
     port = 6767;
     url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
+    monitoredServices = [ "bazarr.service" ];
     homepage = {
       name = "Bazarr";
       description = "Subtitle manager";

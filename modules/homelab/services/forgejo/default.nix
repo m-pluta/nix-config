@@ -32,6 +32,7 @@ in
     port = 3000;
     url = "git.${hl.mainDomain}";
     shortcut = "git";
+    monitoredServices = [ "forgejo.service" ];
     homepage = {
       name = "Forgejo";
       description = "A painless, self-hosted Git service";

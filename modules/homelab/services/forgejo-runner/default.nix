@@ -50,7 +50,7 @@ in
     monitoredServices = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
-        "gitea-runner-default"
+        "gitea-runner-default.service"
       ];
     };
   };

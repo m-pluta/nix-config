@@ -10,6 +10,7 @@ in
     port = 7878;
     url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
+    monitoredServices = [ "radarr.service" ];
     homepage = {
       name = "Radarr";
       description = "Movie collection manager";

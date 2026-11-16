@@ -15,6 +15,7 @@ in
       port = 8080;
       url = "bin.${hl.mainDomain}";
       configDir = "/var/lib/${service}";
+      monitoredServices = [ "microbin.service" ];
       homepage = {
         name = "Microbin";
         description = "A minimal pastebin";

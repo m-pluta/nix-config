@@ -10,6 +10,7 @@ in
     port = 8123;
     url = "hass.${hl.mainDomain}";
     configDir = "/var/lib/hass";
+    monitoredServices = [ "home-assistant.service" ];
     homepage = {
       name = "Home Assistant";
       description = "Home automation platform";

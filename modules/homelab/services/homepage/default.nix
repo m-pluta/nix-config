@@ -16,7 +16,7 @@ in
       port = 8082;
       url = "home.${hl.mainDomain}";
       shortcut = "home";
-      monitoredServices = [ upstream ];
+      monitoredServices = [ "${upstream}.service" ];
       homepage = {
         name = "Homepage";
         description = "Dashboard for the services";

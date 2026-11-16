@@ -15,6 +15,7 @@ in
     port = 8080;
     url = "news.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
+    monitoredServices = [ "miniflux.service" ];
     homepage = {
       name = "Miniflux";
       description = "Minimalist and opinionated feed reader";

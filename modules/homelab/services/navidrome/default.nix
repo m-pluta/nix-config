@@ -15,6 +15,7 @@ in
       port = 4533;
       url = "music.${hl.mainDomain}";
       configDir = "/var/lib/${service}";
+      monitoredServices = [ "navidrome.service" ];
       homepage = {
         name = "Navidrome";
         description = "Self-hosted music streaming service";

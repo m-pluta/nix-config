@@ -15,6 +15,7 @@ in
     port = 3000;
     url = "grafana.${hl.mainDomain}";
     shortcut = "grafana";
+    monitoredServices = [ "grafana.service" ];
     homepage = {
       name = "Grafana";
       description = "Platform for data analytics and monitoring";

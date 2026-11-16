@@ -16,6 +16,7 @@ in
     url = "${service}.${hl.mainDomain}";
     shortcut = "jellyfin";
     configDir = "/var/lib/${service}";
+    monitoredServices = [ "jellyfin.service" ];
     homepage = {
       name = "Jellyfin";
       description = "The Free Software Media System";

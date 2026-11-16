@@ -14,6 +14,7 @@ in
     serviceLib.mkServiceOptions {
       port = 8000;
       url = "numbers.${hl.mainDomain}";
+      monitoredServices = [ "plausible.service" ];
       homepage = {
         name = "Plausible";
         description = "Open-source web analytics platform";

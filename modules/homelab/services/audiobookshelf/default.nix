@@ -10,6 +10,7 @@ in
     port = 8000;
     url = "audiobooks.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
+    monitoredServices = [ "audiobookshelf.service" ];
     homepage = {
       name = "Audiobookshelf";
       description = "Audiobook and podcast player";

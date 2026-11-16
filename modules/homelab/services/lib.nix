@@ -7,7 +7,7 @@
       shortcut ? null,
       homepage,
       configDir ? null,
-      monitoredServices ? null,
+      monitoredServices,
     }:
     {
       enable = lib.mkEnableOption homepage.name;
@@ -51,10 +51,11 @@
         default = configDir;
       };
     }
-    // lib.optionalAttrs (monitoredServices != null) {
+    // {
       monitoredServices = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = monitoredServices;
+        description = "Full systemd unit names of the service that motd shows.";
       };
     };
 }

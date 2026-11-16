@@ -10,6 +10,7 @@ in
     port = 8989;
     url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
+    monitoredServices = [ "sonarr.service" ];
     homepage = {
       name = "Sonarr";
       description = "TV show collection manager";

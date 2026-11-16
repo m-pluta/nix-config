@@ -15,7 +15,7 @@ in
     serviceLib.mkServiceOptions {
       port = 8080;
       url = "cache.${hl.mainDomain}";
-      monitoredServices = [ "atticd" ];
+      monitoredServices = [ "atticd.service" ];
       homepage = {
         name = "Attic";
         description = "Nix binary cache";

@@ -10,6 +10,7 @@ in
     port = 8686;
     url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
+    monitoredServices = [ "lidarr.service" ];
     homepage = {
       name = "Lidarr";
       description = "Music collection manager";

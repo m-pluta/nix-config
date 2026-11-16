@@ -10,6 +10,7 @@ in
     port = 3001;
     url = "uptime.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
+    monitoredServices = [ "uptime-kuma.service" ];
     homepage = {
       name = "Uptime Kuma";
       description = "Service monitoring tool";

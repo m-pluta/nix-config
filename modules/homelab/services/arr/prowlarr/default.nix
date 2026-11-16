@@ -10,6 +10,7 @@ in
     port = 9696;
     url = "${service}.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
+    monitoredServices = [ "prowlarr.service" ];
     homepage = {
       name = "Prowlarr";
       description = "PVR indexer";

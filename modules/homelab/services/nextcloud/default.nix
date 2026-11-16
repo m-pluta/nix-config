@@ -19,7 +19,7 @@ in
       shortcut = "cloud";
       configDir = "/var/lib/${service}";
       monitoredServices = [
-        "phpfpm-nextcloud"
+        "phpfpm-nextcloud.service"
       ];
       homepage = {
         name = "Nextcloud";
