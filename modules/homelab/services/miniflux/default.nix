@@ -12,7 +12,7 @@ let
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 8067;
+    port = 8080;
     url = "news.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
     homepage = {

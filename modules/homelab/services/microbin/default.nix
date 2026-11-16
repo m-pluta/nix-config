@@ -12,7 +12,7 @@ in
 {
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
-      port = 8069;
+      port = 8080;
       url = "bin.${hl.mainDomain}";
       configDir = "/var/lib/${service}";
       homepage = {

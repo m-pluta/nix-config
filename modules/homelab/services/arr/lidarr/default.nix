@@ -18,7 +18,10 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    services.${service}.enable = true;
+    services.${service} = {
+      enable = true;
+      settings.server.port = cfg.port;
+    };
     users.users.${service}.extraGroups = [ "media" ];
     homelab.ingress.routes."${cfg.url}" = {
       port = cfg.port;

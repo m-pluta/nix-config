@@ -13,7 +13,7 @@ in
 {
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
-      port = 8070;
+      port = 8080;
       url = "cache.${hl.mainDomain}";
       monitoredServices = [ "atticd" ];
       homepage = {

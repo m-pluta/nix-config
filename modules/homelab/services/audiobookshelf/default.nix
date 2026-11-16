@@ -7,7 +7,7 @@ let
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 8113;
+    port = 8000;
     url = "audiobooks.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
     homepage = {

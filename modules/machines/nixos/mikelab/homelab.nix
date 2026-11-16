@@ -61,9 +61,18 @@
         enable = true;
         mediaDir = "/tank/media/library/music";
       };
-      miniflux.enable = true;
-      microbin.enable = true;
-      attic.enable = true;
+      miniflux = {
+        enable = true;
+        port = 8067;
+      };
+      microbin = {
+        enable = true;
+        port = 8069;
+      };
+      attic = {
+        enable = true;
+        port = 8070;
+      };
       forgejo-runner.enable = true;
       audiobookshelf.enable = true;
       traces = {

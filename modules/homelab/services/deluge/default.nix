@@ -33,6 +33,7 @@ in
     services.${service} = {
       enable = true;
       web.enable = true;
+      web.port = cfg.port;
     };
     users.users.${service}.extraGroups = [ "media" ];
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
