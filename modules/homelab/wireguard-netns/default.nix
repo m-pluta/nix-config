@@ -12,9 +12,7 @@ let
 in
 {
   options.homelab.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable Wireguard client network namespace";
-    };
+    enable = lib.mkEnableOption "the WireGuard client network namespace";
     server = lib.mkOption {
       type = lib.types.str;
       description = "Mullvad WireGuard server name, maps to agenix secret path";

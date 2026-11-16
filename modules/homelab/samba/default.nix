@@ -12,9 +12,7 @@ let
 in
 {
   options.homelab.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Samba shares for the homelab";
-    };
+    enable = lib.mkEnableOption "the Samba shares for the homelab";
     user = lib.mkOption {
       type = lib.types.str;
       default = "samba";

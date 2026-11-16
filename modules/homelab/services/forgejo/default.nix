@@ -29,7 +29,7 @@ let
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 3000;
+    port = 3001;
     url = "git.${hl.mainDomain}";
     shortcut = "git";
     homepage = {

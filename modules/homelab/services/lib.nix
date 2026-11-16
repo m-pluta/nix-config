@@ -10,7 +10,7 @@
       monitoredServices ? null,
     }:
     {
-      enable = lib.mkEnableOption { description = "Enable ${homepage.name}"; };
+      enable = lib.mkEnableOption homepage.name;
       url = lib.mkOption {
         type = lib.types.str;
         default = url;

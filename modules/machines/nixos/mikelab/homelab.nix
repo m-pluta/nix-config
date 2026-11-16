@@ -38,10 +38,7 @@
     };
     services = {
       enable = true;
-      forgejo = {
-        enable = true;
-        port = 3001;
-      };
+      forgejo.enable = true;
       jellyfin.enable = true;
       sabnzbd.enable = true;
       deluge.enable = true;

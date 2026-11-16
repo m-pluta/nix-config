@@ -20,6 +20,7 @@ in
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
+      settings.server.port = cfg.port;
     };
     homelab.ingress.routes."${cfg.url}" = {
       port = cfg.port;

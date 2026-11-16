@@ -11,7 +11,7 @@ let
 
   # Collect enabled homelab services and their monitored systemd units
   enabledServices = lib.filterAttrs (
-    _name: value: value != "enable" && value ? enable && value.enable
+    name: value: name != "enable" && lib.isAttrs value && value.enable or false
   ) hl.services;
 
   monitoredServices = lib.concatMap (
@@ -159,9 +159,7 @@ let
 in
 {
   options.homelab.${service} = {
-    enable = lib.mkEnableOption {
-      description = "motd Greeting";
-    };
+    enable = lib.mkEnableOption "the login greeting (motd)";
     networkInterfaces = lib.mkOption {
       description = "Network interfaces to monitor";
       type = lib.types.listOf lib.types.str;

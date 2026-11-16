@@ -5,13 +5,14 @@
 }:
 let
   service = "jellyfin";
+  # Jellyfin sets its own port. The NixOS module has no option for it.
+  port = 8096;
   serviceLib = import ../lib.nix { inherit lib; };
   hl = config.homelab;
   cfg = hl.services.${service};
 in
 {
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
-    port = 8096;
     url = "${service}.${hl.mainDomain}";
     shortcut = "jellyfin";
     configDir = "/var/lib/${service}";
@@ -46,7 +47,7 @@ in
     users.users.${service}.extraGroups = [ "media" ];
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     homelab.ingress.routes."${cfg.url}" = {
-      port = cfg.port;
+      inherit port;
       shortcut = cfg.shortcut;
     };
   };

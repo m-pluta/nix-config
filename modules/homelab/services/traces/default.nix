@@ -30,6 +30,7 @@ in
   options.homelab.services.${service} =
     serviceLib.mkServiceOptions {
       url = "traces.${hl.mainDomain}";
+      monitoredServices = [ ];
       homepage = {
         name = "Traces";
         description = "Trace viewers";
