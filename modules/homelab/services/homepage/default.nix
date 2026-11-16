@@ -135,7 +135,8 @@ in
           homepageServices =
             x:
             (lib.attrsets.filterAttrs (
-              name: value: name != service && value ? homepage && value.homepage.category == x
+              name: value:
+              name != service && hl.serviceHosts ? ${name} && value ? homepage && value.homepage.category == x
             ) hl.services);
         in
         lib.lists.forEach homepageCategories (cat: {

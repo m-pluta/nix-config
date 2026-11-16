@@ -46,10 +46,18 @@ let
     );
   };
 
-  # Every host's Kanidm login clients, so the host running Kanidm can create them all.
-  ssoClients = {
-    homelab.sso.allClients = lib.mkMerge (
-      map (host: self.nixosConfigurations.${host}.config.homelab.sso.clients) hostNames
+  # The host of every enabled service, so each host can see where the others run. Two
+  # hosts that enable the same service give conflicting values, and the build fails.
+  serviceHosts = {
+    homelab.serviceHosts = lib.mkMerge (
+      map (
+        host:
+        lib.mapAttrs (_: _: host) (
+          lib.filterAttrs (
+            _: value: lib.isAttrs value && value.enable or false
+          ) self.nixosConfigurations.${host}.config.homelab.services
+        )
+      ) hostNames
     );
   };
 
@@ -82,7 +90,7 @@ in
         (./. + "/${name}/configuration.nix")
         homeManagerCfg
         splitDnsRecords
-        ssoClients
+        serviceHosts
       ];
     }
   );
