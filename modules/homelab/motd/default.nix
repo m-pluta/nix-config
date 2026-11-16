@@ -167,6 +167,10 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
+    assertions = map (unit: {
+      assertion = config.systemd.services ? ${unit};
+      message = "homelab.motd: the unit ${unit} is listed in monitoredServices but does not exist on ${config.networking.hostName}.";
+    }) monitoredServices;
     environment.systemPackages = [ motd ];
     programs.bash.interactiveShellInit = ''
       ${motd}/bin/motd
