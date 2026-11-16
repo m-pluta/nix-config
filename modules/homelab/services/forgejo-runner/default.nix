@@ -42,9 +42,7 @@ let
 in
 {
   options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
+    enable = lib.mkEnableOption "the Forgejo Actions runner";
     runnerName = lib.mkOption {
       type = lib.types.str;
       default = config.networking.hostName;
