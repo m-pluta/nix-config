@@ -53,6 +53,20 @@ let
     );
   };
 
+  # Which host runs each service
+  serviceHosts = {
+    homelab.serviceHosts = lib.mkMerge (
+      map (
+        host:
+        lib.mapAttrs (_: _: host) (
+          lib.filterAttrs (
+            _: value: lib.isAttrs value && value.enable or false
+          ) self.nixosConfigurations.${host}.config.homelab.services
+        )
+      ) hostNames
+    );
+  };
+
   homeManagerCfg = {
     home-manager.useGlobalPkgs = false;
     home-manager.useUserPackages = false;
@@ -83,6 +97,7 @@ in
         homeManagerCfg
         splitDnsRecords
         ssoClients
+        serviceHosts
       ];
     }
   );

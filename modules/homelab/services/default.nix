@@ -12,6 +12,12 @@ in
     services = {
       enable = lib.mkEnableOption "Settings and services for the homelab";
     };
+    serviceHosts = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      internal = true;
+      description = "Which host runs each service.";
+    };
   };
 
   config = lib.mkIf hl.services.enable {
