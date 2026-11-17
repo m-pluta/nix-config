@@ -53,16 +53,11 @@ let
     );
   };
 
-  # Which host runs each service
-  serviceHosts = {
-    homelab.serviceHosts = lib.mkMerge (
+  # The services that are enabled on any host, with their settings from that host
+  allHostsServices = {
+    homelab.allHosts.services = lib.mkMerge (
       map (
-        host:
-        lib.mapAttrs (_: _: host) (
-          lib.filterAttrs (
-            _: value: lib.isAttrs value && value.enable or false
-          ) self.nixosConfigurations.${host}.config.homelab.services
-        )
+        host: lib.filterAttrs (_: s: s.enable) self.nixosConfigurations.${host}.config.homelab.services
       ) hostNames
     );
   };
@@ -97,7 +92,7 @@ in
         homeManagerCfg
         splitDnsRecords
         ssoClients
-        serviceHosts
+        allHostsServices
       ];
     }
   );

@@ -10,9 +10,7 @@ let
   cfg = hl.${service};
 
   # Collect enabled homelab services and their monitored systemd units
-  enabledServices = lib.filterAttrs (
-    name: value: name != "enable" && lib.isAttrs value && value.enable or false
-  ) hl.services;
+  enabledServices = lib.filterAttrs (_: s: s.enable) hl.services;
 
   monitoredServices = lib.concatMap (svc: svc.monitoredServices) (lib.attrValues enabledServices);
 

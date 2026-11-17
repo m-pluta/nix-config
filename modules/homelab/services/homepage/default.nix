@@ -133,23 +133,22 @@ in
             "Observability"
           ];
           homepageServices =
-            x:
-            (lib.attrsets.filterAttrs (
-              name: value:
-              name != service && hl.serviceHosts ? ${name} && value ? homepage && value.homepage.category == x
-            ) hl.services);
+            category:
+            lib.filterAttrs (
+              name: s: name != service && s ? homepage && s.homepage.category == category
+            ) hl.allHosts.services;
+
+          serviceEntry = _: s: {
+            "${s.homepage.name}" = {
+              icon = s.homepage.icon;
+              description = s.homepage.description;
+              href = "https://${s.url}";
+              siteMonitor = "https://${s.url}";
+            };
+          };
         in
-        lib.lists.forEach homepageCategories (cat: {
-          "${cat}" =
-            lib.lists.forEach (lib.attrsets.mapAttrsToList (name: _value: name) (homepageServices "${cat}"))
-              (x: {
-                "${hl.services.${x}.homepage.name}" = {
-                  icon = hl.services.${x}.homepage.icon;
-                  description = hl.services.${x}.homepage.description;
-                  href = "https://${hl.services.${x}.url}";
-                  siteMonitor = "https://${hl.services.${x}.url}";
-                };
-              });
+        lib.lists.forEach homepageCategories (category: {
+          "${category}" = lib.mapAttrsToList serviceEntry (homepageServices category);
         })
         ++ [ { Misc = cfg.misc; } ];
     };

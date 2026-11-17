@@ -9,18 +9,16 @@ let
 in
 {
   options.homelab = {
-    services = {
-      enable = lib.mkEnableOption "Settings and services for the homelab";
-    };
-    serviceHosts = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+    allHosts.services = lib.mkOption {
+      type = lib.types.attrsOf lib.types.raw;
       default = { };
       internal = true;
-      description = "Which host runs each service.";
+      description = "The services that are enabled on any host, with their settings from that host.";
     };
   };
 
-  config = lib.mkIf hl.services.enable {
+  # Homelab settings for Podman, on each host that uses Podman
+  config = lib.mkIf config.virtualisation.podman.enable {
     virtualisation.podman = {
       dockerCompat = true;
       autoPrune.enable = true;
@@ -36,9 +34,7 @@ in
       backend = "podman";
     };
 
-    networking.firewall.interfaces.podman0.allowedUDPPorts =
-      lib.lists.optionals config.virtualisation.podman.enable
-        [ 53 ];
+    networking.firewall.interfaces.podman0.allowedUDPPorts = [ 53 ];
   };
 
   imports = [

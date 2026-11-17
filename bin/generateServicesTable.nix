@@ -3,16 +3,7 @@ let
   lib = import <nixpkgs/lib>;
   hl = hostname: nixosConfigurations.${hostname}.config.homelab;
   enabledHomepageServices =
-    let
-      services = hostname: builtins.filter (x: x != "enable") (builtins.attrNames (hl hostname).services);
-    in
-    hostname:
-    builtins.filter (x: x != null) (
-      builtins.map (
-        x:
-        if ((hl hostname).services.${x}.enable && (hl hostname).services.${x} ? homepage) then x else null
-      ) (services hostname)
-    );
+    hostname: lib.attrNames (lib.filterAttrs (_: s: s.enable && s ? homepage) (hl hostname).services);
   homepageServicesData =
     hostname:
     builtins.map (

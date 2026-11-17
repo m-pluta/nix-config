@@ -37,7 +37,6 @@
       zfs.enable = true;
     };
     services = {
-      enable = true;
       forgejo = {
         enable = true;
         port = 3001;
