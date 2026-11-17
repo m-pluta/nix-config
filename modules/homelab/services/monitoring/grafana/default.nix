@@ -16,6 +16,10 @@ in
     url = "grafana.${hl.mainDomain}";
     shortcut = "grafana";
     monitoredServices = [ "grafana.service" ];
+    auth.oidc = {
+      enable = true;
+      redirectPaths = [ "/login/generic_oauth" ];
+    };
     homepage = {
       name = "Grafana";
       description = "Platform for data analytics and monitoring";
@@ -32,11 +36,6 @@ in
       "secret-key:${config.age.secrets."${service}-secret-key".path}"
       "kanidm-secret:${config.age.secrets."${service}-kanidm-secret".path}"
     ];
-    homelab.sso.clients.${service} = {
-      displayName = "Grafana";
-      originUrl = "https://${cfg.url}/login/generic_oauth";
-      originLanding = "https://${cfg.url}/";
-    };
     services.grafana = {
       enable = true;
       provision = {

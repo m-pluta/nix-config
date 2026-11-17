@@ -33,6 +33,10 @@ in
     url = "git.${hl.mainDomain}";
     shortcut = "git";
     monitoredServices = [ "forgejo.service" ];
+    auth.oidc = {
+      enable = true;
+      redirectPaths = [ "/user/oauth2/kanidm/callback" ];
+    };
     homepage = {
       name = "Forgejo";
       description = "A painless, self-hosted Git service";
@@ -93,11 +97,6 @@ in
     };
     age.secrets."${service}-kanidm-secret".file =
       "${inputs.secrets}/services/kanidm/clients/${service}.age";
-    homelab.sso.clients.${service} = {
-      displayName = "Forgejo";
-      originUrl = "https://${cfg.url}/user/oauth2/kanidm/callback";
-      originLanding = "https://${cfg.url}/";
-    };
     # Forgejo's Kanidm login source
     systemd.services."${service}-kanidm-login" = {
       description = "Add Forgejo's Kanidm login source";

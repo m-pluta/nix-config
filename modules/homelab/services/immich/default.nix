@@ -26,6 +26,14 @@ in
         "immich-server.service"
         "immich-machine-learning.service"
       ];
+      auth.oidc = {
+        enable = true;
+        redirectPaths = [
+          "/auth/login"
+          "/user-settings"
+          "/api/oauth/mobile-redirect"
+        ];
+      };
       homepage = {
         name = "Immich";
         description = "Self-hosted photo and video management solution";
@@ -72,15 +80,6 @@ in
     };
     age.secrets."${service}-kanidm-secret".file =
       "${inputs.secrets}/services/kanidm/clients/${service}.age";
-    homelab.sso.clients.${service} = {
-      displayName = "Immich";
-      originUrl = [
-        "https://${cfg.url}/auth/login"
-        "https://${cfg.url}/user-settings"
-        "https://${cfg.url}/api/oauth/mobile-redirect"
-      ];
-      originLanding = "https://${cfg.url}/";
-    };
     systemd.tmpfiles.rules = [ "d /var/lib/${service} 0700 ${service} ${service} - -" ];
     homelab.ingress.routes."${cfg.url}" = {
       port = cfg.port;

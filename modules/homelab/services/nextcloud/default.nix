@@ -21,6 +21,12 @@ in
       monitoredServices = [
         "phpfpm-nextcloud.service"
       ];
+      auth.oidc = {
+        enable = true;
+        redirectPaths = [ "/apps/user_oidc/code" ];
+        # user_oidc accepts only RS256 token signatures. Kanidm uses ES256 by default.
+        extraClientSettings.enableLegacyCrypto = true;
+      };
       homepage = {
         name = "Nextcloud";
         description = "File sync and sharing";
@@ -81,13 +87,6 @@ in
     };
     age.secrets."${service}-kanidm-secret".file =
       "${inputs.secrets}/services/kanidm/clients/${service}.age";
-    homelab.sso.clients.${service} = {
-      displayName = "Nextcloud";
-      originUrl = "https://${cfg.url}/apps/user_oidc/code";
-      originLanding = "https://${cfg.url}/";
-      # user_oidc accepts only RS256 token signatures. Kanidm uses ES256 by default.
-      settings.enableLegacyCrypto = true;
-    };
     # Nextcloud's Kanidm provider
     systemd.services."${service}-kanidm-login" = {
       description = "Add Nextcloud's Kanidm provider";

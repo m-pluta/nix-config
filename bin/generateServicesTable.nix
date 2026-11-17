@@ -14,9 +14,10 @@ let
           icon:
           "<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/${format icon}/${icon}' width=32 height=32>";
         serviceConfig = (hl hostname).services.${service}.homepage;
-        name = serviceConfig.name + lib.optionalString ((hl hostname).sso.clients ? ${service}) " 🔒";
+        auth = (hl hostname).services.${service}.auth;
+        check = enabled: if enabled then "✓" else "";
       in
-      "|${iconlink serviceConfig.icon}|${name}|${serviceConfig.description}|${serviceConfig.category}|"
+      "|${iconlink serviceConfig.icon}|${serviceConfig.name}|${serviceConfig.description}|${serviceConfig.category}|${check auth.oidc.enable}|${check auth.ldap.enable}|"
     ) (enabledHomepageServices hostname);
   hostSection =
     hostname:
@@ -33,8 +34,8 @@ let
           [ ]
         else
           [
-            "|Icon|Name|Description|Category|"
-            "|---|---|---|---|"
+            "|Icon|Name|Description|Category|OIDC|LDAP|"
+            "|---|---|---|---|---|---|"
             (lib.strings.concatLines rows)
           ]
       )

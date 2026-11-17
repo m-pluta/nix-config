@@ -16,6 +16,10 @@ in
     url = "news.${hl.mainDomain}";
     configDir = "/var/lib/${service}";
     monitoredServices = [ "miniflux.service" ];
+    auth.oidc = {
+      enable = true;
+      redirectPaths = [ "/oauth2/oidc/callback" ];
+    };
     homepage = {
       name = "Miniflux";
       description = "Minimalist and opinionated feed reader";
@@ -48,11 +52,6 @@ in
     systemd.services.${service}.serviceConfig.LoadCredential = [
       "kanidm-secret:${config.age.secrets."${service}-kanidm-secret".path}"
     ];
-    homelab.sso.clients.${service} = {
-      displayName = "Miniflux";
-      originUrl = "https://${cfg.url}/oauth2/oidc/callback";
-      originLanding = "https://${cfg.url}/";
-    };
     homelab.ingress.routes."${cfg.url}" = {
       port = cfg.port;
       shortcut = cfg.shortcut;

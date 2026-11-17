@@ -25,6 +25,10 @@ in
       "paperless-task-queue.service"
       "paperless-web.service"
     ];
+    auth.oidc = {
+      enable = true;
+      redirectPaths = [ "/accounts/oidc/kanidm/login/callback/" ];
+    };
     homepage = {
       name = "Paperless-ngx";
       description = "Document management system";
@@ -56,11 +60,6 @@ in
     };
     age.secrets."${service}-kanidm-secret".file =
       "${inputs.secrets}/services/kanidm/clients/${service}.age";
-    homelab.sso.clients.${service} = {
-      displayName = "Paperless";
-      originUrl = "https://${cfg.url}/accounts/oidc/kanidm/login/callback/";
-      originLanding = "https://${cfg.url}/";
-    };
     # Paperless's Kanidm provider settings, which hold the client secret
     systemd.services."${service}-kanidm-env" = {
       description = "Write Paperless's Kanidm provider settings";
