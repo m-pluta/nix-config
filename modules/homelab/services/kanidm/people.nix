@@ -11,7 +11,6 @@
       "paperless.access"
       "immich.access"
       "grafana.access"
-      "jellyfin.access"
     ];
   };
 }

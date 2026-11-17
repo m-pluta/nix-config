@@ -17,7 +17,6 @@ in
     shortcut = "jellyfin";
     configDir = "/var/lib/${service}";
     monitoredServices = [ "jellyfin.service" ];
-    auth.ldap.enable = true;
     homepage = {
       name = "Jellyfin";
       description = "The Free Software Media System";
