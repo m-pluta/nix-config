@@ -39,6 +39,11 @@ in
         default = 8073;
         description = "Port on 127.0.0.1 for the Chrome container that fetches pages.";
       };
+      ntfyTopic = lib.mkOption {
+        type = lib.types.str;
+        default = "changes";
+        description = "ntfy topic that gets the change notifications of all watches.";
+      };
     };
   config = lib.mkIf cfg.enable {
     services.changedetection-io = {
@@ -54,6 +59,15 @@ in
       environment.PLAYWRIGHT_DRIVER_URL = "ws://127.0.0.1:${toString cfg.puppetBrowserPort}";
       wants = [ "podman-changedetection-browser.service" ];
       after = [ "podman-changedetection-browser.service" ];
+      # Global notification URL in the changedetection.io settings
+      preStart = ''
+        settings=${config.services.changedetection-io.datastorePath}/changedetection.json
+        if [ -f "$settings" ]; then
+          ${lib.getExe pkgs.jq} --arg url ${lib.escapeShellArg "ntfys://${hl.services.ntfy.url}/${cfg.ntfyTopic}"} \
+            '.settings.application.notification_urls = [$url]' "$settings" > "$settings.tmp"
+          mv "$settings.tmp" "$settings"
+        fi
+      '';
     };
 
     virtualisation.oci-containers.containers.changedetection-browser = {
