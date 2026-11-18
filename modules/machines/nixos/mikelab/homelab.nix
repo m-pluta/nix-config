@@ -72,6 +72,7 @@
         enable = true;
         port = 8070;
       };
+      ntfy.enable = true;
       forgejo-runner.enable = true;
       audiobookshelf.enable = true;
       traces = {

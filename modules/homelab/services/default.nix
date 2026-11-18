@@ -61,6 +61,7 @@ in
     ./monitoring/victoriametrics
     ./navidrome
     ./nextcloud
+    ./ntfy
     ./paperless-ngx
     ./plausible
     ./sabnzbd
