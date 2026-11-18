@@ -30,10 +30,6 @@ in
     virtualisation.containers.containersConf.settings = {
       containers.dns_servers = [ hl.networks.${hl.splitDns.resolverHost}.lan.v4 ];
     };
-    virtualisation.oci-containers = {
-      backend = "podman";
-    };
-
     networking.firewall.interfaces.podman0.allowedUDPPorts = [ 53 ];
   };
 
@@ -46,6 +42,7 @@ in
     ./arr/sonarr
     ./attic
     ./audiobookshelf
+    ./changedetection
     ./deluge
     ./forgejo
     ./forgejo-runner

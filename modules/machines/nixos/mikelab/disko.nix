@@ -192,6 +192,11 @@
             mountpoint = "/var/lib/private/microbin";
             options."com.sun:auto-snapshot" = "true";
           };
+          "services/changedetection" = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/changedetection-io";
+            options."com.sun:auto-snapshot" = "true";
+          };
           "services/ntfy" = {
             type = "zfs_fs";
             mountpoint = "/var/lib/private/ntfy-sh";

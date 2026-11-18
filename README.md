@@ -18,6 +18,7 @@ Primary server hosting storage and the self-hosted services
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nixos.svg' width=32 height=32>|Attic|Nix binary cache|Services|||
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/audiobookshelf.svg' width=32 height=32>|Audiobookshelf|Audiobook and podcast player|Media|||
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/bazarr.svg' width=32 height=32>|Bazarr|Subtitle manager|Arr|||
+|<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/changedetection.png' width=32 height=32>|changedetection.io|Website change alerts|Services|||
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/deluge.svg' width=32 height=32>|Deluge|Torrent client|Downloads|||
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/forgejo.svg' width=32 height=32>|Forgejo|A painless, self-hosted Git service|Services|✓||
 |<img src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/grafana.svg' width=32 height=32>|Grafana|Platform for data analytics and monitoring|Observability|✓||
