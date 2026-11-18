@@ -6,6 +6,8 @@ let
   cfg = hl.services.${service};
 in
 {
+  imports = [ ./failed-unit-alerts.nix ];
+
   options.homelab.services.${service} = serviceLib.mkServiceOptions {
     port = 2586;
     url = "ntfy.${hl.mainDomain}";

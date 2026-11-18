@@ -74,6 +74,7 @@
   # powerManagement.powertop.enable = lib.mkDefault true;
 
   homelab.motd.enable = lib.mkDefault true;
+  homelab.services.ntfy.failedUnitAlerts.enable = lib.mkDefault true;
 
   age = {
     identityPaths = [
