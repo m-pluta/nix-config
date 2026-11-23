@@ -1,7 +1,4 @@
-{
-  config,
-  ...
-}:
+{ ... }:
 {
   imports = [
     ./disko.nix
@@ -21,10 +18,6 @@
     sites."mpluta.dev" = { };
     cloudflared = {
       enable = true;
-      expose.${config.homelab.mainDomain} = [
-        ""
-        "www"
-      ];
       tunnelId = "4874c13d-f0db-4b6a-a5dc-bd8e6d06bb82";
     };
     services.uptime-kuma.enable = true;
